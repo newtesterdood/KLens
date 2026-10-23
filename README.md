@@ -13,11 +13,10 @@ Recent foundational research has introduced rigorous mathematical frameworks to 
 
 **KLens was built to point the lens made possible by their research directly back at the mirror.** Rather than treating discussion as static textual outputs, KLens treats deliberative processes—across synthetic LLMs, human deliberation traces, and hybrid human-AI debates—as continuous-time nonlinear dynamical systems. By projecting non-linear belief trajectories into an observable Hilbert space, KLens investigates whether operator spectra can uncover the universal dynamics of how collectives form factions, isolate contrarians, and converge on key issue resolutions.
 
-For the full theoretical whitepaper and research agenda, see [docs/research_workbench.md](docs/research_workbench.md).
-
 ---
 
 ## Core Deliberation Inquiries
+
 
 The KLens workbench provides experimental tooling to investigate four fundamental facets of multi-party deliberation:
 
@@ -270,3 +269,11 @@ The theoretical architecture and algorithmic foundations of KLens are grounded i
 * **Paper:** *"When Agents Disagree: The Selection Bottleneck in Multi-Agent LLM Pipelines"* — Artem Maryanskyy et al. [17, 18].
 * **Core Concepts Used in the Code:**
   * **Divergence & Selection Dynamics:** Analyzing how agent disagreement creates bottlenecks and demonstrating why pruning uncooperative or rogue entities dramatically accelerates consensus pipeline performance [17, 18].
+
+---
+
+## License & Confidentiality Scope
+
+* **Open-Source Software**: The KLens engine, streaming processor, CLI, and test suite are licensed under the permissive [MIT License](LICENSE).
+* **Confidential Research Scope**: Proprietary research notes, novel deliberation experiments, conference telemetry designs, and private datasets residing in the `research/` directory are confidential, proprietary, and excluded from version control via `.gitignore`.
+

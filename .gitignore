@@ -41,13 +41,13 @@ secrets/
 private/
 confidential/
 
-# Local Transcripts & Proprietary Datasets (Confidential data kept local only)
+# Confidential Research, Notes & Proprietary Datasets (Kept strictly local - Never tracked or pushed)
+research/
 data/
 datasets/
 transcripts/confidential/
 transcripts/raw/
-research/private/
-research/confidential/
+
 
 # Editor & OS artifacts
 .DS_Store
