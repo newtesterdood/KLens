@@ -1,4 +1,9 @@
+# Virtual environment
 .venv/
+env/
+venv/
+
+# Python cache & build artifacts
 __pycache__/
 *.py[cod]
 *$py.class
@@ -8,5 +13,45 @@ build/
 .pytest_cache/
 .coverage
 htmlcov/
+
+# Local runtime outputs & logs
 out/
 *.log
+*.sqlite
+*.sqlite3
+
+# Secrets, Credentials, & Environment Variables (CRITICAL: NEVER COMMIT)
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+*.pfx
+*.p12
+*.crt
+*.cert
+*.secret
+*.secrets
+credentials.json
+token.json
+tokens.json
+*id_rsa*
+*id_ed25519*
+secrets/
+private/
+confidential/
+
+# Local Transcripts & Proprietary Datasets (Confidential data kept local only)
+data/
+datasets/
+transcripts/confidential/
+transcripts/raw/
+research/private/
+research/confidential/
+
+# Editor & OS artifacts
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.swo
