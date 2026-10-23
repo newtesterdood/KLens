@@ -68,16 +68,24 @@ klens run path/to/transcript.json --output out/metrics.csv
 ```python
 from klens import LiveTranscriptStreamProcessor, AlertConfig
 
-# 1. Configure processor and safety thresholds
+# 1. Configure processor, alert thresholds, and scaling
 config = AlertConfig(
     t_cert_limit=50,             # Alert if certified deadline > 50 rounds
     lambda_2_warning_limit=0.95, # Warning if spectral radius is sluggish
     lambda_2_critical_limit=0.99 # Critical alert if near divergence
 )
 
+# Configure scaling: toggle compression on or off
+comp_config = CompressionConfig(
+    enabled=False,        # Set False to "go big" (full compute on all agents), or True for macro-faction compression
+    max_factions=8,       # Max macro-faction centroids when compression is enabled
+    solver="auto",        # "auto" dynamically selects Snapshot Dual EDMD when S < P to prevent O(P^3) memory blowup
+)
+
 processor = LiveTranscriptStreamProcessor(
     csv_log_path="spectral_debate_log.csv",
     alert_config=config,
+    compression_config=comp_config,
 )
 
 # 2. Register callbacks (optional)
@@ -94,9 +102,38 @@ if metrics:
     print(f"Certified deadline:     {metrics.certified_deadline_rounds} rounds")
     print(f"Rogue agent:            {metrics.rogue_agent_detected}")
     print(f"Factions:               {metrics.factions_summary}")
+    print(f"Compressed mode active: {metrics.is_compressed}")
+
 ```
 
 ---
+
+## Scaling to Massive Agent Populations
+
+KLens supports scaling across two operational regimes:
+
+1. **Uncompressed Mode ("Go Big" / Default `enabled=False`)**:
+   - Models every individual agent directly in the lifted observable space.
+   - Ideal for small to medium groups ($N \le 50$) where full computational resolution across every agent is desired.
+   - When $S < P$, the built-in **Dual (Snapshot) Solver** automates eigendecomposition via the snapshot Gram matrix $G_{\text{snap}} = \Psi \Psi^T \in \mathbb{R}^{S \times S}$, eliminating the $\mathcal{O}(P^3)$ memory/compute crash.
+
+2. **Hierarchical Macro-Faction Compression (`enabled=True`)**:
+   - Compresses $N$ agent trajectories into $K = \min(N, \text{max\_factions})$ macro-faction centroids.
+   - Runs Koopman EDMD on the macro-centroid dynamics to certified convergence ($T_{\text{cert}}$).
+   - **Zero Loss in Rogue Detection**: Computes individual agent deviations in an $\mathcal{O}(Nd)$ streaming residual pass against the consensus centroid, guaranteeing that outlier rogue agents are accurately detected across all $N$ agents.
+
+### CLI Scaling Options
+
+```bash
+# Go big: full uncompressed resolution
+klens demo --solver auto
+
+# Scale up: enable faction compression with 4 macro-centroids
+klens demo --compress --max-factions 4
+```
+
+---
+
 
 ## Output CSV Schema
 

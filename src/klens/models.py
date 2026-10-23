@@ -29,6 +29,14 @@ class AlertConfig:
     enabled: bool = True
 
 
+@dataclass
+class CompressionConfig:
+    enabled: bool = False
+    max_factions: int = 8
+    solver: str = "auto"
+    seed: int = 42
+
+
 @dataclass(frozen=True)
 class TranscriptTurn:
     round_id: int
@@ -60,6 +68,8 @@ class SpectralMetrics:
     centroid_keywords_list: List[str] = field(default_factory=list)
     alerts: List[Alert] = field(default_factory=list)
     is_converging: bool = True
+    is_compressed: bool = False
+
 
     def to_csv_row(self) -> List[object]:
         return [

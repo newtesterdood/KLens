@@ -3,6 +3,7 @@ from __future__ import annotations
 import math
 from typing import List, Optional, Sequence, Tuple
 import numpy as np
+from sklearn.cluster import KMeans
 from sklearn.metrics.pairwise import cosine_similarity
 
 from klens.models import Faction
@@ -22,6 +23,7 @@ def compute_koopman_metrics(
     epsilon: float = 0.05,
     unit_filter: float = 0.985,
     seed: int = 42,
+    solver: str = "auto",
 ) -> Tuple[float, int, np.ndarray, np.ndarray]:
     T, N, d = Z.shape
     if T < 2 or N < 2:
@@ -42,11 +44,21 @@ def compute_koopman_metrics(
     Psi_plus = lift_state(Delta[1:, :], W_f, b_f)
 
     obs_dim = Psi.shape[1]
-    G = Psi.T @ Psi + ridge_rho * np.eye(obs_dim)
-    A = Psi.T @ Psi_plus
-    K_hat = np.linalg.solve(G, A)
+    S = Psi.shape[0]
 
-    eigenvalues, _ = np.linalg.eig(K_hat)
+    use_dual = (solver == "dual") or (solver == "auto" and S < obs_dim and obs_dim > 200)
+
+    if use_dual:
+        G_dual = Psi @ Psi.T + ridge_rho * np.eye(S)
+        A_dual = Psi_plus @ Psi.T
+        K_dual = np.linalg.solve(G_dual, A_dual)
+        eigenvalues, _ = np.linalg.eig(K_dual)
+    else:
+        G = Psi.T @ Psi + ridge_rho * np.eye(obs_dim)
+        A = Psi.T @ Psi_plus
+        K_hat = np.linalg.solve(G, A)
+        eigenvalues, _ = np.linalg.eig(K_hat)
+
     filtered_mask = np.abs(eigenvalues) < unit_filter
     valid_eigs = eigenvalues[filtered_mask]
 
@@ -69,6 +81,18 @@ def compute_koopman_metrics(
     return abs_l2, T_cert, Delta, Z_mean[:, 0, :]
 
 
+def detect_rogue_from_states(
+    Z: np.ndarray,
+    speakers: Sequence[str],
+) -> Tuple[str, int]:
+    T, N, d = Z.shape
+    Z_mean = Z.mean(axis=1, keepdims=True)
+    delta_3d = Z - Z_mean
+    avg_disagreements = np.linalg.norm(delta_3d, axis=2).mean(axis=0)
+    rogue_idx = int(np.argmax(avg_disagreements))
+    return speakers[rogue_idx], rogue_idx
+
+
 def detect_rogue_agent(
     Delta: np.ndarray,
     speakers: Sequence[str],
@@ -80,6 +104,45 @@ def detect_rogue_agent(
     avg_disagreements = np.linalg.norm(delta_3d, axis=2).mean(axis=0)
     rogue_idx = int(np.argmax(avg_disagreements))
     return speakers[rogue_idx], rogue_idx
+
+
+def compress_to_faction_centroids(
+    Z: np.ndarray,
+    speakers: Sequence[str],
+    max_factions: int = 8,
+    seed: int = 42,
+) -> Tuple[np.ndarray, List[Faction]]:
+    T, N, d = Z.shape
+    k = min(N, max_factions)
+
+    if k >= N:
+        factions = [Faction(id=i + 1, members=[speakers[i]]) for i in range(N)]
+        return Z, factions
+
+    agent_trajectories = Z.mean(axis=0)
+    unique_count = len(np.unique(agent_trajectories, axis=0))
+    if unique_count >= 2:
+        k = max(2, min(k, unique_count))
+    else:
+        k = min(2, N)
+
+    kmeans = KMeans(n_clusters=k, random_state=seed, n_init="auto").fit(agent_trajectories)
+    labels = kmeans.labels_
+
+
+    Z_macro = np.zeros((T, k, d))
+    factions: List[Faction] = []
+
+    for cluster_id in range(k):
+        member_indices = np.where(labels == cluster_id)[0]
+        if len(member_indices) > 0:
+            Z_macro[:, cluster_id, :] = Z[:, member_indices, :].mean(axis=1)
+            members = [speakers[idx] for idx in member_indices]
+        else:
+            members = []
+        factions.append(Faction(id=cluster_id + 1, members=members))
+
+    return Z_macro, factions
 
 
 def cluster_factions(

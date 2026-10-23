@@ -6,11 +6,13 @@ import numpy as np
 from klens.alerts import AlertMonitor
 from klens.encoders import TextEncoder, TfidfTextEncoder
 from klens.exporter import CSVLogExporter
-from klens.models import Alert, AlertConfig, SpectralMetrics, TranscriptTurn
+from klens.models import Alert, AlertConfig, CompressionConfig, SpectralMetrics, TranscriptTurn
 from klens.spectral import (
     cluster_factions,
+    compress_to_faction_centroids,
     compute_koopman_metrics,
     detect_rogue_agent,
+    detect_rogue_from_states,
     extract_centroid_keywords,
 )
 
@@ -21,6 +23,7 @@ class LiveTranscriptStreamProcessor:
         csv_log_path: str = "spectral_debate_log.csv",
         max_features: int = 30,
         alert_config: Optional[AlertConfig] = None,
+        compression_config: Optional[CompressionConfig] = None,
         encoder: Optional[TextEncoder] = None,
         sliding_window_rounds: Optional[int] = None,
         auto_init_csv: bool = True,
@@ -31,6 +34,7 @@ class LiveTranscriptStreamProcessor:
         self.transcript_buffer: List[TranscriptTurn] = []
         self.encoder: TextEncoder = encoder or TfidfTextEncoder(max_features=max_features)
         self.alert_monitor = AlertMonitor(config=alert_config)
+        self.compression_config = compression_config or CompressionConfig()
         self.exporter = CSVLogExporter(file_path=csv_log_path)
         self.round_callbacks: List[Callable[[SpectralMetrics], None]] = []
         self.alert_callbacks: List[Callable[[Alert], None]] = []
@@ -89,17 +93,35 @@ class LiveTranscriptStreamProcessor:
         Z, feature_names = self.encoder.encode_grid(text_grid, rounds, speakers)
         d = len(feature_names)
 
-        l2_mag, t_cert, Delta, Z_mean = compute_koopman_metrics(Z)
-
-        rogue_speaker, rogue_idx = detect_rogue_agent(Delta, speakers, T, N, d)
-
-        final_states = Z[-1]
-        factions = cluster_factions(
-            final_states=final_states,
-            speakers=speakers,
-            rogue_idx=rogue_idx,
-            similarity_threshold=0.65,
-        )
+        is_compressed = False
+        if self.compression_config.enabled and N > self.compression_config.max_factions:
+            Z_macro, factions = compress_to_faction_centroids(
+                Z=Z,
+                speakers=speakers,
+                max_factions=self.compression_config.max_factions,
+                seed=self.compression_config.seed,
+            )
+            l2_mag, t_cert, _, Z_mean = compute_koopman_metrics(
+                Z_macro,
+                solver=self.compression_config.solver,
+                seed=self.compression_config.seed,
+            )
+            rogue_speaker, _ = detect_rogue_from_states(Z, speakers)
+            is_compressed = True
+        else:
+            l2_mag, t_cert, Delta, Z_mean = compute_koopman_metrics(
+                Z,
+                solver=self.compression_config.solver,
+                seed=self.compression_config.seed,
+            )
+            rogue_speaker, rogue_idx = detect_rogue_agent(Delta, speakers, T, N, d)
+            final_states = Z[-1]
+            factions = cluster_factions(
+                final_states=final_states,
+                speakers=speakers,
+                rogue_idx=rogue_idx,
+                similarity_threshold=0.65,
+            )
 
         final_centroid = Z_mean[-1]
         centroid_keywords = extract_centroid_keywords(final_centroid, feature_names, top_k=4)
@@ -119,6 +141,7 @@ class LiveTranscriptStreamProcessor:
             factions=factions,
             centroid_keywords_list=centroid_keywords,
             is_converging=(l2_mag < 1.0),
+            is_compressed=is_compressed,
         )
 
         new_alerts = self.alert_monitor.evaluate(metrics)
