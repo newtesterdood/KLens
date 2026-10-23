@@ -38,7 +38,7 @@ $$T_{\text{cert}} = \left\lceil \frac{\ln(1/\epsilon)}{-\ln|\lambda_2|} \right\r
 ## Installation
 
 ```bash
-git clone https://github.com/mc1628/KLens.git
+git clone https://github.com/newtesterdood/KLens.git
 cd KLens
 python3 -m venv .venv
 source .venv/bin/activate
