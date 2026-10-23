@@ -214,12 +214,15 @@ pytest -v
 
 ## Future Research Horizons
 
+For active engineering epics, streaming ingestion protocols, and task tracking, see [BACKLOG.md](BACKLOG.md).
 
 ### 1. Live Telemetry & Real-Time Deliberation Visualization
 The next phase of the KLens workbench integrates a live graphical cockpit for ongoing meetings and deliberations:
+* **Streaming Inputs to Dynamic Dashboard**: Ingesting real-time WebSocket / SSE turns into an interactive web dashboard.
 * **Complex Unit Disk Telemetry**: Real-time streaming plot of the operator eigenvalues $\{\mu_j\} \subset \mathbb{C}$. Clustering near the unit circle visually flags ideological deadlock.
 * **Dynamic Manifold Animation**: 2D/3D low-dimensional projections tracking participant attraction, faction clustering, and consensus trajectory drift in real time.
 * **$T_{\text{cert}}$ Early-Warning Gauges**: Live countdown cones alerting facilitators when debate dynamics turn non-contractive ($|\lambda_2| \ge 1.0$).
+
 
 ### 2. Multimodal Discussion Telemetry: Audio, Visual, and Verbal Signals
 While text embeddings capture literal propositions, human and embodied multi-agent deliberations are deeply multimodal. A primary research inquiry for KLens is:

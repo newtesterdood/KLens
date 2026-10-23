@@ -123,3 +123,6 @@ $$\Gamma_i(t) = \frac{1}{3} \left[ \cos(z_i^v(t), z_i^a(t)) + \cos(z_i^v(t), z_i
 - Real-Time Faction Manifold                      - Rogue Agent Flags & Alerts
 - Multimodal Congruence Radar                     - Consensus Centroid Keywords
 ```
+
+For engineering implementation tasks and active development tracking, see the platform [BACKLOG.md](../BACKLOG.md).
+
