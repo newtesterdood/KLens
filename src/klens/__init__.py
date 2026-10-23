@@ -9,6 +9,7 @@ from klens.models import (
     AlertLevel,
     CompressionConfig,
     Faction,
+    HierarchicalConfig,
     SpectralMetrics,
     TranscriptTurn,
 )
@@ -34,7 +35,9 @@ __all__ = [
     "CompressionConfig",
     "DEFAULT_COLUMNS",
     "Faction",
+    "HierarchicalConfig",
     "LiveTranscriptStreamProcessor",
+
     "SpectralMetrics",
     "TextEncoder",
     "TfidfTextEncoder",

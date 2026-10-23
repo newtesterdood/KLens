@@ -174,16 +174,18 @@ def main(argv: Optional[List[str]] = None) -> int:
         help="Certified deadline alert threshold (default: 50 rounds)",
     )
     demo_parser.add_argument(
+        "--hierarchical",
         "--compress",
+        dest="compress",
         action="store_true",
         default=False,
-        help="Enable faction centroid compression for high-agent scaling",
+        help="Enable hierarchical macro-faction coarse-graining for high-agent scaling",
     )
     demo_parser.add_argument(
         "--max-factions",
         type=int,
         default=8,
-        help="Max faction centroids when compression is enabled (default: 8)",
+        help="Max faction centroids when hierarchical mode is enabled (default: 8)",
     )
     demo_parser.add_argument(
         "--solver",
@@ -207,11 +209,14 @@ def main(argv: Optional[List[str]] = None) -> int:
         help="Certified deadline alert threshold (default: 50 rounds)",
     )
     run_parser.add_argument(
+        "--hierarchical",
         "--compress",
+        dest="compress",
         action="store_true",
         default=False,
-        help="Enable faction centroid compression for high-agent scaling",
+        help="Enable hierarchical macro-faction coarse-graining for high-agent scaling",
     )
+
     run_parser.add_argument(
         "--max-factions",
         type=int,

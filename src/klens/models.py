@@ -30,11 +30,16 @@ class AlertConfig:
 
 
 @dataclass
-class CompressionConfig:
+class HierarchicalConfig:
     enabled: bool = False
     max_factions: int = 8
     solver: str = "auto"
     seed: int = 42
+
+
+# Backward compatibility alias
+CompressionConfig = HierarchicalConfig
+
 
 
 @dataclass(frozen=True)
@@ -66,9 +71,17 @@ class SpectralMetrics:
     centroid_top_keywords: str
     factions: List[Faction] = field(default_factory=list)
     centroid_keywords_list: List[str] = field(default_factory=list)
-    alerts: List[Alert] = field(default_factory=list)
     is_converging: bool = True
+    is_hierarchical: bool = False
     is_compressed: bool = False
+
+    def __post_init__(self) -> None:
+        if self.is_compressed and not self.is_hierarchical:
+            self.is_hierarchical = self.is_compressed
+        elif self.is_hierarchical and not self.is_compressed:
+            self.is_compressed = self.is_hierarchical
+
+
 
 
     def to_csv_row(self) -> List[object]:
