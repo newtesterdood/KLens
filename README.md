@@ -1,8 +1,31 @@
-# KLens: Koopman Spectral Consensus Tracking for Multi-Agent LLM Debates
+# KLens: Koopman Spectral Consensus Workbench & Trace Analysis Platform
 
-**KLens** is a Python library and CLI tool for real-time dynamical analysis of multi-agent LLM debates. It applies **Koopman Operator Theory** via **Extended Dynamic Mode Decomposition (EDMD)** with **Random Fourier Features (RFF)** to quantify consensus convergence, identify polarized factions, flag rogue divergent agents, certify convergence deadlines ($T_{\text{cert}}$), and trigger automated anomaly alerts.
+**KLens** is an experimental research platform and trace analysis workbench developed to investigate whether **Koopman Operator Theory** can decode the latent dynamical geometry of multi-party discussion—enabling real-time tracking of text-based debate, issue emergence, faction crystallization, and consensus resolution.
 
 ---
+
+### The Paradigm: Pointing the Lens at the Mirror
+
+Recent foundational research has introduced rigorous mathematical frameworks to certify collective reasoning and model diversity in artificial multi-agent systems:
+* **Khan & Dey (2024)** introduced Koopman spectral certification, state-centering, and Random Fourier Feature lifting to bound consensus deadlines in multi-agent networks.
+* **Yang et al. (2024)** proved that massive agent swarms suffer from diminishing returns and collapse into a small number of effective reasoning channels (factions).
+* **Maryanskyy et al. (2024)** established the selection bottleneck, proving that unresolved contrarian disagreements stall decision pipelines.
+
+**KLens was built to point the lens made possible by their research directly back at the mirror.** Rather than treating discussion as static textual outputs, KLens treats deliberative processes—across synthetic LLMs, human deliberation traces, and hybrid human-AI debates—as continuous-time nonlinear dynamical systems. By projecting non-linear belief trajectories into an observable Hilbert space, KLens investigates whether operator spectra can uncover the universal dynamics of how collectives form factions, isolate contrarians, and converge on key issue resolutions.
+
+For the full theoretical whitepaper and research agenda, see [docs/research_workbench.md](docs/research_workbench.md).
+
+---
+
+## Core Deliberation Inquiries
+
+The KLens workbench provides experimental tooling to investigate four fundamental facets of multi-party deliberation:
+
+1. **Text-Based Debate Trajectories**: Ingesting turn-by-turn dialogue embeddings to reconstruct centered disagreement manifolds $\Delta(t) = Z(t) - \bar{Z}(t)$ across arbitrary rounds.
+2. **Issue Identification & Resolution**: Tracking consensus centroids $\bar{z}(t)$ as they drift through semantic space, isolating the exact coordinates and keywords where compromise solidifies.
+3. **Faction Formation & Polarization**: Employing sub-dominant eigenvector mode attribution and cosine clustering to reveal emergent metastable ideological blocs before they openly declare opposition.
+4. **Rogue Entity & Bottleneck Isolation**: Tracking micro-level residual deviations to pinpoint contrarian entities that anchor discussion, enabling principled pruning or mediation.
+
 
 ## Mathematical Foundations
 
@@ -33,7 +56,15 @@ $$T_{\text{cert}} = \left\lceil \frac{\ln(1/\epsilon)}{-\ln|\lambda_2|} \right\r
 - **Rogue Detection**: $\arg\max_i \frac{1}{T} \sum_{t=1}^T \|\Delta_i(t)\|_2$
 - **Faction Clustering**: Pairwise cosine similarity on non-rogue final states with threshold $\ge 0.65$.
 
+### 6. Forward Agent Trajectory Prediction
+Because the finite-dimensional Koopman operator $\hat{K}$ acts as a linear forward transition generator in the lifted observable space ($\Psi_{t+1} \approx \Psi_t \hat{K}$), KLens projects agent positions $k$ rounds ahead:
+$$\hat{\Psi}(t+k) = \Psi(t) \hat{K}^k$$
+Extracting the unlifted state indices $\hat{\Delta}(t+k) = \hat{\Psi}(t+k)[:, 1 : 1 + Nd]$ yields forward forecasting:
+* **Projected Rogue Agent**: $\arg\max_i \|\hat{\Delta}_i(t+k)\|_2$, forecasting which participant will drift furthest into contrarian disagreement in future rounds.
+* **Projected Contraction Rate**: $\frac{\|\hat{\Delta}(t+k)\|}{\|\Delta(t)\|}$, predicting whether upcoming debate rounds will contract toward consensus ($< 1.0$) or expand into deadlock ($> 1.0$).
+
 ---
+
 
 ## Installation
 
@@ -179,10 +210,35 @@ Run the full test suite with:
 pytest -v
 ```
 
+---
 
-research references:
+## Future Research Horizons
 
-The primary papers that serve as the foundation for this code and its theoretical architecture are:
+
+### 1. Live Telemetry & Real-Time Deliberation Visualization
+The next phase of the KLens workbench integrates a live graphical cockpit for ongoing meetings and deliberations:
+* **Complex Unit Disk Telemetry**: Real-time streaming plot of the operator eigenvalues $\{\mu_j\} \subset \mathbb{C}$. Clustering near the unit circle visually flags ideological deadlock.
+* **Dynamic Manifold Animation**: 2D/3D low-dimensional projections tracking participant attraction, faction clustering, and consensus trajectory drift in real time.
+* **$T_{\text{cert}}$ Early-Warning Gauges**: Live countdown cones alerting facilitators when debate dynamics turn non-contractive ($|\lambda_2| \ge 1.0$).
+
+### 2. Multimodal Discussion Telemetry: Audio, Visual, and Verbal Signals
+While text embeddings capture literal propositions, human and embodied multi-agent deliberations are deeply multimodal. A primary research inquiry for KLens is:
+
+> *Do acoustic and visual signals help or hinder the predictive accuracy of Koopman spectral consensus certificates?*
+
+* **Acoustic Channels ($z^{\text{audio}}$)**: Prosodic dynamics, pitch variance ($F_0$), vocal intensity, speech cadence, and conversational turn-taking latency.
+* **Visual Channels ($z^{\text{visual}}$)**: Facial action unit activations (FACS), head pose kinematics, gaze direction, and visual attention synchrony.
+* **The Cross-Modal Congruence Factor ($\Gamma_i(t)$)**:
+  Measuring the alignment between verbal semantics, vocal prosody, and facial affect:
+  $$\Gamma_i(t) = \frac{1}{3} \left[ \cos(z_i^v, z_i^a) + \cos(z_i^v, z_i^{vis}) + \cos(z_i^a, z_i^{vis}) \right]$$
+* **The Congruence Experiment**: Investigating whether high multimodal congruence stabilizes the Koopman transfer operator, and whether cross-modal dissonance (e.g. verbal concession masked by acoustic tension or averted gaze) injects non-conservative perturbation energy into $\hat{K}$, exposing latent disagreement long before it appears in text.
+
+---
+
+## Research References & Attribution
+
+The theoretical architecture and algorithmic foundations of KLens are grounded in the following primary papers:
+
 
 ---
 

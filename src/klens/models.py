@@ -74,12 +74,15 @@ class SpectralMetrics:
     is_converging: bool = True
     is_hierarchical: bool = False
     is_compressed: bool = False
+    predicted_next_rogue: Optional[str] = None
+    predicted_contraction_ratio: Optional[float] = None
 
     def __post_init__(self) -> None:
         if self.is_compressed and not self.is_hierarchical:
             self.is_hierarchical = self.is_compressed
         elif self.is_hierarchical and not self.is_compressed:
             self.is_compressed = self.is_hierarchical
+
 
 
 

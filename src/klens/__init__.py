@@ -21,6 +21,7 @@ from klens.spectral import (
     detect_rogue_from_states,
     extract_centroid_keywords,
     lift_state,
+    predict_agent_trajectories,
 )
 from klens.stream import LiveTranscriptStreamProcessor
 
@@ -37,7 +38,6 @@ __all__ = [
     "Faction",
     "HierarchicalConfig",
     "LiveTranscriptStreamProcessor",
-
     "SpectralMetrics",
     "TextEncoder",
     "TfidfTextEncoder",
@@ -49,4 +49,6 @@ __all__ = [
     "detect_rogue_from_states",
     "extract_centroid_keywords",
     "lift_state",
+    "predict_agent_trajectories",
 ]
+

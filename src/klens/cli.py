@@ -83,6 +83,11 @@ def run_demo(
             print(format_metrics_table_row(metrics))
             print(f"  Centroid keywords: {metrics.centroid_top_keywords}")
             print(f"  Factions: {metrics.factions_summary}")
+            if metrics.predicted_next_rogue:
+                pred_str = f"  Forecast (Round {r+1}): Projected Rogue -> {metrics.predicted_next_rogue}"
+                if metrics.predicted_contraction_ratio is not None:
+                    pred_str += f" | Contraction Rate -> {metrics.predicted_contraction_ratio:.2f}x"
+                print(pred_str)
         else:
             print(f"Round {r:2d} | Buffered {len(round_turns)} turns (need >= 2 rounds to compute transfer operator)")
         print("-" * 80)
@@ -144,8 +149,14 @@ def run_file(
             print(format_metrics_table_row(metrics))
             print(f"  Keywords: {metrics.centroid_top_keywords}")
             print(f"  Factions: {metrics.factions_summary}")
+            if metrics.predicted_next_rogue:
+                pred_str = f"  Forecast (Round {r+1}): Projected Rogue -> {metrics.predicted_next_rogue}"
+                if metrics.predicted_contraction_ratio is not None:
+                    pred_str += f" | Contraction Rate -> {metrics.predicted_contraction_ratio:.2f}x"
+                print(pred_str)
         else:
             print(f"Round {r:2d} | Insufficient history for spectral decomposition (< 2 rounds)")
+
 
     print(f"\nProcessing complete. Output saved to: {os.path.abspath(output_csv)}")
     return 0

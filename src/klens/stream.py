@@ -21,7 +21,9 @@ from klens.spectral import (
     detect_rogue_agent,
     detect_rogue_from_states,
     extract_centroid_keywords,
+    predict_agent_trajectories,
 )
+
 
 
 class LiveTranscriptStreamProcessor:
@@ -142,6 +144,14 @@ class LiveTranscriptStreamProcessor:
         factions_str = " | ".join([f.format_summary() for f in factions])
         centroid_str = ";".join(centroid_keywords)
 
+        pred_rogue, pred_contraction, _ = predict_agent_trajectories(
+            Z=Z,
+            speakers=speakers,
+            steps_ahead=1,
+            seed=self.hierarchical_config.seed,
+            solver=self.hierarchical_config.solver,
+        )
+
         metrics = SpectralMetrics(
             round_id=current_round,
             active_agents_count=N,
@@ -154,13 +164,16 @@ class LiveTranscriptStreamProcessor:
             factions=factions,
             centroid_keywords_list=centroid_keywords,
             is_converging=(l2_mag < 1.0),
-            is_compressed=is_compressed,
+            is_hierarchical=is_compressed,
+            predicted_next_rogue=pred_rogue,
+            predicted_contraction_ratio=pred_contraction,
         )
 
         new_alerts = self.alert_monitor.evaluate(metrics)
         metrics.alerts = new_alerts
 
         self.exporter.log_metrics(metrics)
+
 
         for cb in self.round_callbacks:
             cb(metrics)
