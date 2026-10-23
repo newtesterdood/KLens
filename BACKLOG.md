@@ -52,6 +52,8 @@ Enable real-time, bidirectional streaming of multi-party deliberation inputs (te
 - [ ] **External Connectors**:
   - Connectors for OpenAI Realtime API / Gemini Live API multi-agent simulations.
   - Adapter for live meeting transcript streams (Zoom/Teams/Google Meet webhook ingestion).
+  - **Conference Room RTMP/RTSP Hardware Connector**: Ingest live multi-feed camera and ceiling microphone streams from physical conference rooms (Cisco Webex RoomOS, Poly, Owl Labs, Logitech Tap) over RTMP/RTSP. Demux into real-time speaker diarization, speech-to-text, prosody extraction, and visual affect tracking to drive live in-room consensus telemetry.
+
 
 #### 2. Online / Incremental Koopman State Updater
 - [ ] **Recursive EDMD**: Implement rank-1 Woodbury/Sherman-Morrison updates for Gram matrix $G(t+1) = G(t) + \psi_t \psi_t^T$ to eliminate re-computing from scratch at every turn.
