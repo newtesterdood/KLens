@@ -178,3 +178,36 @@ Run the full test suite with:
 ```bash
 pytest -v
 ```
+
+
+research references:
+
+The primary papers that serve as the foundation for this code and its theoretical architecture are:
+
+---
+
+### 1. Primary Algorithmic Source
+* **Paper:** *"Certifying Collective Reasoning in Multi-Agent Systems via Koopman Spectral Analysis"* — Nuzhat Khan and Indrakshi Dey [1, 2].
+* **Core Concepts Used in the Code:**
+  * **State Centering:** Subtracting the mean consensus vector (\\(\delta(t) = z(t) - \bar{z}(t)\\)) to remove trivial unit eigenvalues and isolate disagreement dynamics [3, 4].
+  * **Random Fourier Feature (RFF) Lifting:** Lifting nonlinear belief trajectories into an observable feature space \\(\Psi(\delta)\\) [4, 5].
+  * **Extended Dynamic Mode Decomposition (EDMD):** Solving for the finite-dimensional Koopman matrix estimate \\(\hat{\mathbf{K}}\\) via regularized ridge regression [3, 4, 6].
+  * **Sub-dominant Eigenvalue Extraction (\\(\lambda_2\\)):** Filtering out residual near-unit modes (\\(|\lambda| \ge 0.985\\)) and isolating the slowest-decaying disagreement mode [4, 7].
+  * **Certified Convergence Deadline (\\(T_{\text{cert}}\\)):** Calculating \\(T_{\text{cert}} = \left\lceil \frac{\ln(1/\epsilon)}{-\ln |\lambda_2|} \right\rceil\\) to guarantee consensus bounds [7, 8].
+  * **Mode Attribution & Faction Diagnostics:** Using sub-dominant eigenvectors to identify slow-decaying agent partitions and metastable factions [7, 9].
+
+---
+
+### 2. Scaling, Diversity, & Faction Compression Source
+* **Paper:** *"Understanding Agent Scaling in LLM-Based Multi-Agent Systems via Diversity"* — Yingxuan Yang et al. [10, 11].
+* **Core Concepts Used in the Code:**
+  * **Effective Channel Count (\\(K^*\\)):** Quantifying non-redundant reasoning paths rather than raw agent count \\(N\\) [12, 13].
+  * **Diminishing Returns of Scale:** Demonstrating why scaling homogeneous agents leads to correlated output redundancy [14, 15].
+  * **Centroid & PCA Compression:** Exploiting the principle that massive agent populations (\\(N = 10,000+\\)) naturally collapse into a small number of effective reasoning channels (factions), enabling \\(O(N)\\) scaling for thousand-agent traces [12, 16].
+
+---
+
+### 3. Disagreement & Selector Bottleneck Source
+* **Paper:** *"When Agents Disagree: The Selection Bottleneck in Multi-Agent LLM Pipelines"* — Artem Maryanskyy et al. [17, 18].
+* **Core Concepts Used in the Code:**
+  * **Divergence & Selection Dynamics:** Analyzing how agent disagreement creates bottlenecks and demonstrating why pruning uncooperative or rogue entities dramatically accelerates consensus pipeline performance [17, 18].
