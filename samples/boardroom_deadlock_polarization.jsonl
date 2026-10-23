@@ -1,0 +1,32 @@
+{"round": 1, "speaker": "VP_Engineering", "text": "We need to migrate our core workloads to public cloud to scale and eliminate hardware depreciation."}
+{"round": 1, "speaker": "Director_Infra", "text": "Public cloud is an operational trap. Data sovereignty and hardware control dictate staying 100 percent on-prem."}
+{"round": 1, "speaker": "Lead_Architect", "text": "Kubernetes on public cloud gives elasticity and container portability across cloud providers."}
+{"round": 1, "speaker": "CISO", "text": "Security compliance and encryption key custody require dedicated on-prem hardware modules."}
+{"round": 1, "speaker": "VP_Product", "text": "Feature velocity on public cloud APIs is 5x faster; staying on-prem slows our product releases."}
+{"round": 1, "speaker": "CFO", "text": "Operating expenditure on cloud scales unpredictably; capital expenditure for on-prem servers is predictable."}
+{"round": 1, "speaker": "Head_DevOps", "text": "Managed cloud databases and serverless save hundreds of engineering maintenance hours."}
+{"round": 1, "speaker": "Lead_DBA", "text": "High throughput low latency database clusters run far cheaper on owned bare-metal hardware."}
+{"round": 2, "speaker": "VP_Engineering", "text": "Public cloud elasticity remains our strategic goal. We can compromise on hybrid egress control."}
+{"round": 2, "speaker": "Director_Infra", "text": "Zero cloud migration. I will veto any budget proposal that outsources our core server racks."}
+{"round": 2, "speaker": "Lead_Architect", "text": "A hybrid model running Anthos or OpenShift spans cloud elasticity and existing on-prem hardware."}
+{"round": 2, "speaker": "CISO", "text": "If customer PII stays in our private datacenter, secondary analytical services could leverage cloud."}
+{"round": 2, "speaker": "VP_Product", "text": "We cannot wait months for server rack procurement; cloud migration is critical for competitive velocity."}
+{"round": 2, "speaker": "CFO", "text": "Reserved instances and committed use discounts in cloud could mitigate operational cost spikes."}
+{"round": 2, "speaker": "Head_DevOps", "text": "Automated Terraform workflows unify deployment across on-prem clusters and cloud instances."}
+{"round": 2, "speaker": "Lead_DBA", "text": "Database replication latency across hybrid boundary introduces unacceptable failover risks."}
+{"round": 3, "speaker": "VP_Engineering", "text": "The executive committee consensus is leaning toward a hybrid cloud model with private database core."}
+{"round": 3, "speaker": "Director_Infra", "text": "I refuse hybrid compromises. Cloud is insecure, exorbitant, and unnecessary. On-prem datacenter only."}
+{"round": 3, "speaker": "Lead_Architect", "text": "Hybrid architecture isolates sensitive databases on-prem while frontends burst into cloud."}
+{"round": 3, "speaker": "CISO", "text": "Hybrid satisfies security policy provided the HSM keys never leave the private datacenter."}
+{"round": 3, "speaker": "VP_Product", "text": "Product team endorses hybrid as long as web services deploy to elastic cloud infrastructure."}
+{"round": 3, "speaker": "CFO", "text": "Hybrid model caps upfront capital expense while controlling variable cloud operational costs."}
+{"round": 3, "speaker": "Head_DevOps", "text": "Hybrid CI/CD pipeline is validated and ready for staged deployment."}
+{"round": 3, "speaker": "Lead_DBA", "text": "Keeping databases on-prem resolves my latency concerns; I can accept hybrid compromise."}
+{"round": 4, "speaker": "VP_Engineering", "text": "We are calling for final approval on the hybrid architecture rollout plan."}
+{"round": 4, "speaker": "Director_Infra", "text": "I register formal dissent and veto. No cloud services under any circumstances. On-prem only."}
+{"round": 4, "speaker": "Lead_Architect", "text": "Hybrid design finalized; seven of eight leaders approve implementation."}
+{"round": 4, "speaker": "CISO", "text": "Security boundary approved for hybrid implementation."}
+{"round": 4, "speaker": "VP_Product", "text": "Product roadmaps scheduled for hybrid cloud release."}
+{"round": 4, "speaker": "CFO", "text": "Capital allocation approved for hybrid implementation."}
+{"round": 4, "speaker": "Head_DevOps", "text": "Infrastructure automation scripts staged for hybrid deployment."}
+{"round": 4, "speaker": "Lead_DBA", "text": "Local database replication verified for hybrid boundary."}

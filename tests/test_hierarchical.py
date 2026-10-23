@@ -1,8 +1,9 @@
 import numpy as np
 import pytest
 
-from klens.models import CompressionConfig
+from klens.models import CompressionConfig, HierarchicalConfig
 from klens.spectral import (
+    coarse_grain_faction_centroids,
     compress_to_faction_centroids,
     compute_koopman_metrics,
     detect_rogue_from_states,
@@ -22,7 +23,7 @@ def test_primal_vs_dual_solver_equivalence():
     assert t_primal == t_dual
 
 
-def test_compress_to_faction_centroids():
+def test_coarse_grain_faction_centroids():
     T, N, d = 3, 30, 4
     speakers = [f"Agent_{i}" for i in range(N)]
     np.random.seed(42)
@@ -39,7 +40,7 @@ def test_compress_to_faction_centroids():
         noise = np.random.normal(0, 0.05, size=(T, d))
         Z[:, i, :] = cluster_centers[c_idx] + noise
 
-    Z_macro, factions = compress_to_faction_centroids(Z, speakers, max_factions=3, seed=42)
+    Z_macro, factions = coarse_grain_faction_centroids(Z, speakers, max_factions=3, seed=42)
 
     assert Z_macro.shape == (T, 3, d)
     assert len(factions) == 3
@@ -47,19 +48,24 @@ def test_compress_to_faction_centroids():
     total_members = sum(len(f.members) for f in factions)
     assert total_members == 30
 
+    # Test alias compatibility
+    Z_alias, factions_alias = compress_to_faction_centroids(Z, speakers, max_factions=3, seed=42)
+    assert Z_alias.shape == Z_macro.shape
+    assert len(factions_alias) == len(factions)
 
-def test_stream_processor_with_compression_toggle():
-    # Test toggled OFF (default full compute)
+
+def test_stream_processor_with_hierarchical_toggle():
+    # Test toggled OFF (default full micro compute)
     proc_full = LiveTranscriptStreamProcessor(
         csv_log_path="out/test_full.csv",
-        compression_config=CompressionConfig(enabled=False),
+        hierarchical_config=HierarchicalConfig(enabled=False),
         auto_init_csv=False,
     )
 
-    # Test toggled ON (compressed macro mode)
-    proc_comp = LiveTranscriptStreamProcessor(
-        csv_log_path="out/test_comp.csv",
-        compression_config=CompressionConfig(enabled=True, max_factions=2),
+    # Test toggled ON (hierarchical macro mode)
+    proc_hier = LiveTranscriptStreamProcessor(
+        csv_log_path="out/test_hier.csv",
+        hierarchical_config=HierarchicalConfig(enabled=True, max_factions=2),
         auto_init_csv=False,
     )
 
@@ -74,17 +80,19 @@ def test_stream_processor_with_compression_toggle():
         for i in range(4):
             txt = distinct_texts[i] + f" Round {r}"
             proc_full.ingest_turn(r, f"Agent_{i}", txt)
-            proc_comp.ingest_turn(r, f"Agent_{i}", txt)
+            proc_hier.ingest_turn(r, f"Agent_{i}", txt)
 
     m_full = proc_full.process_round_event(2)
-    m_comp = proc_comp.process_round_event(2)
+    m_hier = proc_hier.process_round_event(2)
 
     assert m_full is not None
-    assert m_comp is not None
+    assert m_hier is not None
 
+    assert m_full.is_hierarchical is False
     assert m_full.is_compressed is False
-    assert m_comp.is_compressed is True
-    assert m_comp.faction_count == 2
+    assert m_hier.is_hierarchical is True
+    assert m_hier.is_compressed is True
+    assert m_hier.faction_count == 2
 
 
 def test_large_agent_population_scaling_and_rogue_detection():
@@ -93,7 +101,7 @@ def test_large_agent_population_scaling_and_rogue_detection():
     speakers = [f"Agent_{i}" for i in range(N)]
     proc = LiveTranscriptStreamProcessor(
         csv_log_path="out/test_scale_60.csv",
-        compression_config=CompressionConfig(enabled=True, max_factions=4),
+        hierarchical_config=HierarchicalConfig(enabled=True, max_factions=4),
         auto_init_csv=False,
     )
 
@@ -116,7 +124,6 @@ def test_large_agent_population_scaling_and_rogue_detection():
     metrics = proc.process_round_event(2)
     assert metrics is not None
     assert metrics.active_agents_count == 60
-    assert metrics.is_compressed is True
-    # The rogue agent must be accurately identified as Agent_42 despite compression!
+    assert metrics.is_hierarchical is True
     assert metrics.rogue_agent_detected == "Agent_42"
     assert metrics.faction_count == 4

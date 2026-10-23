@@ -85,10 +85,19 @@ pip install -e ".[dev]"
 klens demo --output spectral_debate_log.csv --t-cert-limit 50
 ```
 
-### Analyze a Transcript File (JSON or JSONL)
+### Analyze Transcript Files (JSON or JSONL)
+
+KLens comes with realistic deliberation samples in the [samples/](samples/) directory:
 
 ```bash
-klens run path/to/transcript.json --output out/metrics.csv
+# 1. Multi-Agent LLM Safety Consensus Debate (JSON)
+klens run samples/llm_safety_consensus.json --output out/metrics_safety.csv
+
+# 2. Executive Boardroom Polarization & Deadlock (JSONL)
+klens run samples/boardroom_deadlock_polarization.jsonl --output out/metrics_deadlock.csv
+
+# 3. 24-Agent Swarm with Hierarchical Coarse-Graining (JSONL)
+klens run samples/swarm_deliberation_24agents.jsonl --hierarchical --max-factions 4 --output out/metrics_swarm.csv
 ```
 
 ---
@@ -96,7 +105,7 @@ klens run path/to/transcript.json --output out/metrics.csv
 ## Python API Usage
 
 ```python
-from klens import LiveTranscriptStreamProcessor, AlertConfig
+from klens import LiveTranscriptStreamProcessor, AlertConfig, HierarchicalConfig
 
 # 1. Configure processor, alert thresholds, and scaling
 config = AlertConfig(
@@ -105,17 +114,17 @@ config = AlertConfig(
     lambda_2_critical_limit=0.99 # Critical alert if near divergence
 )
 
-# Configure scaling: toggle compression on or off
-comp_config = CompressionConfig(
-    enabled=False,        # Set False to "go big" (full compute on all agents), or True for macro-faction compression
-    max_factions=8,       # Max macro-faction centroids when compression is enabled
+# Configure scaling: toggle hierarchical coarse-graining on or off
+hier_config = HierarchicalConfig(
+    enabled=False,        # Set False to "go big" (full compute on all agents), or True for macro-faction coarse-graining
+    max_factions=8,       # Max macro-faction centroids when hierarchical mode is enabled
     solver="auto",        # "auto" dynamically selects Snapshot Dual EDMD when S < P to prevent O(P^3) memory blowup
 )
 
 processor = LiveTranscriptStreamProcessor(
     csv_log_path="spectral_debate_log.csv",
     alert_config=config,
-    compression_config=comp_config,
+    hierarchical_config=hier_config,
 )
 
 # 2. Register callbacks (optional)
@@ -132,7 +141,7 @@ if metrics:
     print(f"Certified deadline:     {metrics.certified_deadline_rounds} rounds")
     print(f"Rogue agent:            {metrics.rogue_agent_detected}")
     print(f"Factions:               {metrics.factions_summary}")
-    print(f"Compressed mode active: {metrics.is_compressed}")
+    print(f"Hierarchical mode active: {metrics.is_hierarchical}")
 
 ```
 
@@ -142,24 +151,24 @@ if metrics:
 
 KLens supports scaling across two operational regimes:
 
-1. **Uncompressed Mode ("Go Big" / Default `enabled=False`)**:
+1. **Micro-Level Resolution ("Go Big" / Default `enabled=False`)**:
    - Models every individual agent directly in the lifted observable space.
    - Ideal for small to medium groups ($N \le 50$) where full computational resolution across every agent is desired.
    - When $S < P$, the built-in **Dual (Snapshot) Solver** automates eigendecomposition via the snapshot Gram matrix $G_{\text{snap}} = \Psi \Psi^T \in \mathbb{R}^{S \times S}$, eliminating the $\mathcal{O}(P^3)$ memory/compute crash.
 
-2. **Hierarchical Macro-Faction Compression (`enabled=True`)**:
-   - Compresses $N$ agent trajectories into $K = \min(N, \text{max\_factions})$ macro-faction centroids.
+2. **Hierarchical Multi-Scale Decomposition & Macro-Faction Coarse-Graining (`enabled=True`)**:
+   - Coarse-grains $N$ agent trajectories into $K = \min(N, \text{max\_factions})$ macro-faction centroids based on time-scale separation (fast intra-faction decay vs. slow inter-faction consensus drift).
    - Runs Koopman EDMD on the macro-centroid dynamics to certified convergence ($T_{\text{cert}}$).
    - **Zero Loss in Rogue Detection**: Computes individual agent deviations in an $\mathcal{O}(Nd)$ streaming residual pass against the consensus centroid, guaranteeing that outlier rogue agents are accurately detected across all $N$ agents.
 
 ### CLI Scaling Options
 
 ```bash
-# Go big: full uncompressed resolution
+# Go big: full micro-level resolution
 klens demo --solver auto
 
-# Scale up: enable faction compression with 4 macro-centroids
-klens demo --compress --max-factions 4
+# Scale up: enable hierarchical coarse-graining with 4 macro-centroids
+klens demo --hierarchical --max-factions 4
 ```
 
 ---
@@ -256,12 +265,12 @@ The theoretical architecture and algorithmic foundations of KLens are grounded i
 
 ---
 
-### 2. Scaling, Diversity, & Faction Compression Source
+### 2. Scaling, Diversity, & Faction Coarse-Graining Source
 * **Paper:** *"Understanding Agent Scaling in LLM-Based Multi-Agent Systems via Diversity"* — Yingxuan Yang et al. [10, 11].
 * **Core Concepts Used in the Code:**
   * **Effective Channel Count (\\(K^*\\)):** Quantifying non-redundant reasoning paths rather than raw agent count \\(N\\) [12, 13].
   * **Diminishing Returns of Scale:** Demonstrating why scaling homogeneous agents leads to correlated output redundancy [14, 15].
-  * **Centroid & PCA Compression:** Exploiting the principle that massive agent populations (\\(N = 10,000+\\)) naturally collapse into a small number of effective reasoning channels (factions), enabling \\(O(N)\\) scaling for thousand-agent traces [12, 16].
+  * **Centroid Coarse-Graining & Dimension Reduction:** Exploiting the principle that massive agent populations (\\(N = 10,000+\\)) naturally collapse into a small number of effective reasoning channels (factions), enabling \\(O(N)\\) scaling for thousand-agent traces [12, 16].
 
 ---
 

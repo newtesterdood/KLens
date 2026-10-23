@@ -15,6 +15,7 @@ from klens.models import (
 )
 from klens.spectral import (
     cluster_factions,
+    coarse_grain_faction_centroids,
     compress_to_faction_centroids,
     compute_koopman_metrics,
     detect_rogue_agent,
@@ -23,6 +24,7 @@ from klens.spectral import (
     lift_state,
     predict_agent_trajectories,
 )
+
 from klens.stream import LiveTranscriptStreamProcessor
 
 __version__ = "0.2.0"
@@ -43,7 +45,9 @@ __all__ = [
     "TfidfTextEncoder",
     "TranscriptTurn",
     "cluster_factions",
+    "coarse_grain_faction_centroids",
     "compress_to_faction_centroids",
+
     "compute_koopman_metrics",
     "detect_rogue_agent",
     "detect_rogue_from_states",

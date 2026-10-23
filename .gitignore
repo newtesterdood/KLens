@@ -17,6 +17,7 @@ htmlcov/
 # Local runtime outputs & logs
 out/
 *.log
+*.csv
 *.sqlite
 *.sqlite3
 

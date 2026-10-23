@@ -106,7 +106,7 @@ def detect_rogue_agent(
     return speakers[rogue_idx], rogue_idx
 
 
-def compress_to_faction_centroids(
+def coarse_grain_faction_centroids(
     Z: np.ndarray,
     speakers: Sequence[str],
     max_factions: int = 8,
@@ -129,7 +129,6 @@ def compress_to_faction_centroids(
     kmeans = KMeans(n_clusters=k, random_state=seed, n_init="auto").fit(agent_trajectories)
     labels = kmeans.labels_
 
-
     Z_macro = np.zeros((T, k, d))
     factions: List[Faction] = []
 
@@ -143,6 +142,11 @@ def compress_to_faction_centroids(
         factions.append(Faction(id=cluster_id + 1, members=members))
 
     return Z_macro, factions
+
+
+# Backward compatibility alias
+compress_to_faction_centroids = coarse_grain_faction_centroids
+
 
 
 def cluster_factions(

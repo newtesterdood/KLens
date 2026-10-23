@@ -16,13 +16,14 @@ from klens.models import (
 )
 from klens.spectral import (
     cluster_factions,
-    compress_to_faction_centroids,
+    coarse_grain_faction_centroids,
     compute_koopman_metrics,
     detect_rogue_agent,
     detect_rogue_from_states,
     extract_centroid_keywords,
     predict_agent_trajectories,
 )
+
 
 
 
@@ -108,27 +109,28 @@ class LiveTranscriptStreamProcessor:
         Z, feature_names = self.encoder.encode_grid(text_grid, rounds, speakers)
         d = len(feature_names)
 
-        is_compressed = False
-        if self.compression_config.enabled and N > self.compression_config.max_factions:
-            Z_macro, factions = compress_to_faction_centroids(
+        is_hierarchical = False
+        if self.hierarchical_config.enabled and N > self.hierarchical_config.max_factions:
+            Z_macro, factions = coarse_grain_faction_centroids(
                 Z=Z,
                 speakers=speakers,
-                max_factions=self.compression_config.max_factions,
-                seed=self.compression_config.seed,
+                max_factions=self.hierarchical_config.max_factions,
+                seed=self.hierarchical_config.seed,
             )
             l2_mag, t_cert, _, Z_mean = compute_koopman_metrics(
                 Z_macro,
-                solver=self.compression_config.solver,
-                seed=self.compression_config.seed,
+                solver=self.hierarchical_config.solver,
+                seed=self.hierarchical_config.seed,
             )
             rogue_speaker, _ = detect_rogue_from_states(Z, speakers)
-            is_compressed = True
+            is_hierarchical = True
         else:
             l2_mag, t_cert, Delta, Z_mean = compute_koopman_metrics(
                 Z,
-                solver=self.compression_config.solver,
-                seed=self.compression_config.seed,
+                solver=self.hierarchical_config.solver,
+                seed=self.hierarchical_config.seed,
             )
+
             rogue_speaker, rogue_idx = detect_rogue_agent(Delta, speakers, T, N, d)
             final_states = Z[-1]
             factions = cluster_factions(
@@ -164,8 +166,9 @@ class LiveTranscriptStreamProcessor:
             factions=factions,
             centroid_keywords_list=centroid_keywords,
             is_converging=(l2_mag < 1.0),
-            is_hierarchical=is_compressed,
+            is_hierarchical=is_hierarchical,
             predicted_next_rogue=pred_rogue,
+
             predicted_contraction_ratio=pred_contraction,
         )
 

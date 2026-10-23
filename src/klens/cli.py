@@ -7,7 +7,7 @@ import sys
 from typing import List, Optional
 
 from klens import __version__
-from klens.models import AlertConfig, CompressionConfig, SpectralMetrics
+from klens.models import AlertConfig, HierarchicalConfig, SpectralMetrics
 from klens.stream import LiveTranscriptStreamProcessor
 
 SAMPLE_DEBATE_TURNS = [
@@ -37,7 +37,7 @@ SAMPLE_DEBATE_TURNS = [
 
 def format_metrics_table_row(m: SpectralMetrics) -> str:
     status_indicator = "✓ Converging" if m.is_converging else "✗ Diverging"
-    mode_str = f" [Compressed K={m.faction_count}]" if m.is_compressed else ""
+    mode_str = f" [Hierarchical K={m.faction_count}]" if m.is_hierarchical else ""
     return (
         f"Round {m.round_id:2d} | Agents: {m.active_agents_count} | "
         f"λ2: {m.lambda_2_magnitude:.4f} | T_cert: {m.certified_deadline_rounds:3d} rounds | "
@@ -48,25 +48,26 @@ def format_metrics_table_row(m: SpectralMetrics) -> str:
 def run_demo(
     output_csv: str,
     t_cert_limit: int,
-    compression_enabled: bool,
+    hierarchical_enabled: bool,
     max_factions: int,
     solver: str,
 ) -> int:
-    mode_descr = f"Compressed (max_factions={max_factions})" if compression_enabled else "Uncompressed (full compute)"
+    mode_descr = f"Hierarchical Coarse-Graining (max_factions={max_factions})" if hierarchical_enabled else "Micro-Level (full compute)"
     print(f"KLens v{__version__} - Spectral Multi-Agent Consensus Monitor")
     print(f"Simulating 6-Agent Debate across 3 rounds | Mode: {mode_descr} | Solver: {solver} | Log -> {output_csv}\n")
 
     alert_cfg = AlertConfig(t_cert_limit=t_cert_limit)
-    comp_cfg = CompressionConfig(
-        enabled=compression_enabled,
+    hier_cfg = HierarchicalConfig(
+        enabled=hierarchical_enabled,
         max_factions=max_factions,
         solver=solver,
     )
     processor = LiveTranscriptStreamProcessor(
         csv_log_path=output_csv,
         alert_config=alert_cfg,
-        compression_config=comp_cfg,
+        hierarchical_config=hier_cfg,
     )
+
 
     processor.add_alert_callback(
         lambda a: print(f"  [ALERT {a.level.value}] {a.code}: {a.message}")
@@ -100,7 +101,7 @@ def run_file(
     transcript_file: str,
     output_csv: str,
     t_cert_limit: int,
-    compression_enabled: bool,
+    hierarchical_enabled: bool,
     max_factions: int,
     solver: str,
 ) -> int:
@@ -109,16 +110,17 @@ def run_file(
         return 1
 
     alert_cfg = AlertConfig(t_cert_limit=t_cert_limit)
-    comp_cfg = CompressionConfig(
-        enabled=compression_enabled,
+    hier_cfg = HierarchicalConfig(
+        enabled=hierarchical_enabled,
         max_factions=max_factions,
         solver=solver,
     )
     processor = LiveTranscriptStreamProcessor(
         csv_log_path=output_csv,
         alert_config=alert_cfg,
-        compression_config=comp_cfg,
+        hierarchical_config=hier_cfg,
     )
+
 
     processor.add_alert_callback(
         lambda a: print(f"  [ALERT {a.level.value}] {a.code}: {a.message}")
@@ -187,7 +189,7 @@ def main(argv: Optional[List[str]] = None) -> int:
     demo_parser.add_argument(
         "--hierarchical",
         "--compress",
-        dest="compress",
+        dest="hierarchical",
         action="store_true",
         default=False,
         help="Enable hierarchical macro-faction coarse-graining for high-agent scaling",
@@ -222,17 +224,16 @@ def main(argv: Optional[List[str]] = None) -> int:
     run_parser.add_argument(
         "--hierarchical",
         "--compress",
-        dest="compress",
+        dest="hierarchical",
         action="store_true",
         default=False,
         help="Enable hierarchical macro-faction coarse-graining for high-agent scaling",
     )
-
     run_parser.add_argument(
         "--max-factions",
         type=int,
         default=8,
-        help="Max faction centroids when compression is enabled (default: 8)",
+        help="Max faction centroids when hierarchical mode is enabled (default: 8)",
     )
     run_parser.add_argument(
         "--solver",
@@ -247,7 +248,7 @@ def main(argv: Optional[List[str]] = None) -> int:
         return run_demo(
             args.output,
             args.t_cert_limit,
-            args.compress,
+            args.hierarchical,
             args.max_factions,
             args.solver,
         )
@@ -256,7 +257,7 @@ def main(argv: Optional[List[str]] = None) -> int:
             args.transcript,
             args.output,
             args.t_cert_limit,
-            args.compress,
+            args.hierarchical,
             args.max_factions,
             args.solver,
         )
