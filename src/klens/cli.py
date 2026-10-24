@@ -45,6 +45,29 @@ def format_metrics_table_row(m: SpectralMetrics) -> str:
     )
 
 
+def format_semantic_synthesis_summary(m: SpectralMetrics) -> str:
+    synth = m.topic_synthesis
+    if not synth:
+        return ""
+    lines = [
+        "\n=== Deliberation Semantic Synthesis ===",
+        f"• Center of Disagreement: {synth.center_of_disagreement}",
+        f"  \"{synth.center_of_disagreement_statement}\"",
+        f"• Consensus Centroid Concept: {synth.centroid_concept}",
+        f"  \"{synth.centroid_statement}\"",
+        "\n--- Faction Topics & Positions ---",
+    ]
+    for f in synth.factions:
+        lines.append(f"• Faction {f.id} ({len(f.members)} members): {f.topic}")
+        lines.append(f"  Position: \"{f.representative_statement}\"")
+    if synth.rogue_stance:
+        r = synth.rogue_stance
+        lines.append(f"\n--- Rogue Dissent Position ({r.members[0]}) ---")
+        lines.append(f"• Stance: {r.topic}")
+        lines.append(f"  Position: \"{r.representative_statement}\"")
+    return "\n".join(lines)
+
+
 def run_demo(
     output_csv: str,
     t_cert_limit: int,
@@ -93,6 +116,9 @@ def run_demo(
         else:
             print(f"Round {r:2d} | Buffered {len(round_turns)} turns (need >= 2 rounds to compute transfer operator)")
         print("-" * 80)
+
+    if processor.latest_metrics and processor.latest_metrics.topic_synthesis:
+        print(format_semantic_synthesis_summary(processor.latest_metrics))
 
     print(f"\nCompleted debate simulation. Log written to: {os.path.abspath(output_csv)}")
 
@@ -173,6 +199,9 @@ def run_file(
                 print(pred_str)
         else:
             print(f"Round {r:2d} | Insufficient history for spectral decomposition (< 2 rounds)")
+
+    if processor.latest_metrics and processor.latest_metrics.topic_synthesis:
+        print(format_semantic_synthesis_summary(processor.latest_metrics))
 
     print(f"\nProcessing complete. Output saved to: {os.path.abspath(output_csv)}")
 

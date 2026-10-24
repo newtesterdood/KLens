@@ -228,36 +228,60 @@ def render_faction_rogue_dashboard(
     ax4.axis("off")
 
     centroid_keywords = extract_centroid_keywords(Z_mean[-1], feature_names, top_k=5)
-    centroid_summary_str = " ".join(centroid_keywords[:3]).capitalize() + " with selective auditing."
 
-    # Build Factions Description
-    faction_lines = []
-    letters = ["A", "B", "C", "D"]
-    for idx, f in enumerate(factions[:2]):
-        letter = letters[idx]
-        members_str = ", ".join(f.members)
-        if idx == 0:
-            focus_str = "Small model ensembles, speed, cost efficiency."
-            label_str = "SLM Advocates"
-        elif idx == 1:
-            focus_str = "Large model depth, clinical auditing, safety."
-            label_str = "Safety & Governance Auditors"
-        else:
-            focus_str = "Balanced compromise architecture."
-            label_str = "Consensus Group"
-        faction_lines.append(f"• Faction {letter} ({label_str}): {members_str}\n  - Focus: {focus_str}")
+    synth = None
+    if hasattr(source, "latest_metrics") and source.latest_metrics:
+        synth = source.latest_metrics.topic_synthesis
 
-    factions_block = "\n\n".join(faction_lines)
+    if synth:
+        disagreement_block = f"• Center of Disagreement:\n  {synth.center_of_disagreement}\n\n"
+        centroid_title = synth.centroid_concept
+        centroid_summary_str = synth.centroid_statement or (" ".join(centroid_keywords[:3]).capitalize() + " with selective auditing.")
+        if len(centroid_summary_str) > 75:
+            centroid_summary_str = centroid_summary_str[:72] + "..."
+
+        faction_lines = []
+        letters = ["A", "B", "C", "D", "E"]
+        for idx, f in enumerate(synth.factions[:2]):
+            letter = letters[idx]
+            members_str = ", ".join(f.members)
+            pos_stmt = f.representative_statement
+            if len(pos_stmt) > 65:
+                pos_stmt = pos_stmt[:62] + "..."
+            faction_lines.append(f"• Faction {letter} ({f.topic}): {members_str}\n  - Position: \"{pos_stmt}\"")
+        factions_block = "\n\n".join(faction_lines)
+    else:
+        disagreement_block = ""
+        centroid_title = "Consensus Landmark"
+        centroid_summary_str = " ".join(centroid_keywords[:3]).capitalize() + " with selective auditing."
+
+        faction_lines = []
+        letters = ["A", "B", "C", "D"]
+        for idx, f in enumerate(factions[:2]):
+            letter = letters[idx]
+            members_str = ", ".join(f.members)
+            if idx == 0:
+                focus_str = "Small model ensembles, speed, cost efficiency."
+                label_str = "SLM Advocates"
+            elif idx == 1:
+                focus_str = "Large model depth, clinical auditing, safety."
+                label_str = "Safety & Governance Auditors"
+            else:
+                focus_str = "Balanced compromise architecture."
+                label_str = "Consensus Group"
+            faction_lines.append(f"• Faction {letter} ({label_str}): {members_str}\n  - Focus: {focus_str}")
+        factions_block = "\n\n".join(faction_lines)
 
     summary_text = (
-        "SPECTRAL DIAGNOSTIC SUMMARY:\n"
+        "SPECTRAL DIAGNOSTIC & SEMANTIC SUMMARY:\n"
         "---------------------------------------------------------------------------\n\n"
+        f"{disagreement_block}"
         f"{factions_block}\n\n"
         f"• Rogue Agent Flagged: {rogue_speaker}\n"
         f"  - Outlier Score: {outlier_score:.2f}x median threshold (Divergent)\n"
         f"  - Action: Prune {rogue_speaker.split('(')[0].strip()} to drop λ2 from {l2_all:.2f} -> {l2_pruned:.2f}\n"
         f"            (Accelerates T_cert from {t_cert_all} to {t_cert_pruned} rounds).\n\n"
-        "• Centroid (Landmark Consensus):\n"
+        f"• Centroid ({centroid_title}):\n"
         f"  \"{centroid_summary_str}\""
     )
 
@@ -266,12 +290,12 @@ def render_faction_rogue_dashboard(
         0.95,
         summary_text,
         transform=ax4.transAxes,
-        fontsize=8.5,
+        fontsize=8.0,
         family="monospace",
         verticalalignment="top",
         bbox=dict(boxstyle="round,pad=1.0", facecolor="#f8fafc", edgecolor="#cbd5e1", linewidth=1.2),
     )
-    ax4.set_title("Spectral Diagnostic Summary", fontsize=10.5, fontweight="bold", pad=8)
+    ax4.set_title("Spectral Diagnostic & Semantic Summary", fontsize=10.5, fontweight="bold", pad=8)
 
     plt.tight_layout()
 

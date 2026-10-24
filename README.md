@@ -107,6 +107,32 @@ Extracting the unlifted state indices $\hat{\Delta}(t+k) = \hat{\Psi}(t+k)[:, 1 
 * **Projected Rogue Agent**: $\arg\max_i \|\hat{\Delta}_i(t+k)\|_2$, forecasting which participant will drift furthest into contrarian disagreement in future rounds.
 * **Projected Contraction Rate**: $\frac{\|\hat{\Delta}(t+k)\|}{\|\Delta(t)\|}$, predicting whether upcoming debate rounds will contract toward consensus ($< 1.0$) or expand into deadlock ($> 1.0$).
 
+### 7. Semantic Topic Synthesis & Position Content Extraction
+To bridge geometric dynamics with human reasoning, KLens extracts human-interpretable concepts, the principal center of disagreement, faction positions, and the consensus centroid:
+* **Center of Disagreement (Principal Contention Axis)**: Singular Value Decomposition of the centered disagreement matrix $\Delta(T) = U \Sigma V^T$ yields the dominant singular vector $v_1 \in \mathbb{R}^d$. The positive and negative loadings isolate the opposing ideological poles:
+  $$\text{Pole}_+ = \text{TopKeywords}(v_1^+), \quad \text{Pole}_- = \text{TopKeywords}(v_1^-)$$
+  Synthesizing the primary conflict: e.g. *"Zero AI vs. Selective Judge Auditing"*.
+* **Faction Topics & Positions**: For each cluster $F_k$, distinctive weighting $\delta_{F_k} = z_{F_k} - \bar{z}$ isolates characteristic themes. Verbatim position statements are extracted via recency-weighted projection:
+  $$s^*_{F_k} = \arg\max_{s \in \text{Turns}(F_k)} \cos(v_s, z_{F_k}) \cdot \left(1 + 0.35 \frac{r_s}{T}\right)$$
+* **Consensus Centroid Concept & Statement**: Verbatim consensus compromise representing the moving landmark $\bar{z}$:
+  $$s^*_{\text{centroid}} = \arg\max_{s} \cos(v_s, \bar{z}) \cdot \left(1 + 0.35 \frac{r_s}{T}\right)$$
+
+```
+=== Deliberation Semantic Synthesis ===
+• Center of Disagreement: Zero AI vs. Selective Judge Auditing
+  "The primary debate axis centers on the trade-off between zero ai and selective judge auditing."
+• Consensus Centroid Concept: Selective Judge Auditing & Hybrid SLM Orchestration
+  "Agreement on hybrid SLM orchestration with selective judge auditing for clinical rigor."
+
+--- Faction Topics & Positions ---
+• Faction 1 (5 members): Selective Judge Auditing
+  Position: "Agreement on hybrid SLM orchestration with selective judge auditing for clinical rigor."
+
+--- Rogue Dissent Position (Agent 5 (Regulatory/Adversary)) ---
+• Stance:   Zero AI
+  Position: "AI must not touch clinical decisions under any condition."
+```
+
 ---
 
 

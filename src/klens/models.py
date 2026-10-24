@@ -46,9 +46,33 @@ class TranscriptTurn:
 
 
 @dataclass(frozen=True)
+class FactionStance:
+    id: int
+    members: List[str]
+    topic: str
+    keywords: List[str]
+    representative_statement: str
+    position_summary: str
+
+
+@dataclass(frozen=True)
+class DeliberationTopicSynthesis:
+    center_of_disagreement: str
+    center_of_disagreement_statement: str
+    centroid_concept: str
+    centroid_statement: str
+    disagreement_poles: tuple[str, str]
+    disagreement_keywords: List[str]
+    factions: List[FactionStance]
+    rogue_stance: Optional[FactionStance] = None
+
+
+@dataclass(frozen=True)
 class Faction:
     id: int
     members: List[str]
+    topic: str = ""
+    representative_statement: str = ""
 
     def format_summary(self) -> str:
         return f"F{self.id}:({','.join(self.members)})"
@@ -70,6 +94,10 @@ class SpectralMetrics:
     is_hierarchical: bool = False
     predicted_next_rogue: Optional[str] = None
     predicted_contraction_ratio: Optional[float] = None
+    topic_synthesis: Optional[DeliberationTopicSynthesis] = None
+    center_of_disagreement: str = ""
+    centroid_concept: str = ""
+    centroid_statement: str = ""
 
 
 

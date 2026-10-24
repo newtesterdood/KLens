@@ -22,6 +22,8 @@ from klens.spectral import (
     extract_centroid_keywords,
     predict_agent_trajectories,
 )
+from klens.semantic import synthesize_deliberation_topics
+
 
 
 
@@ -153,6 +155,18 @@ class LiveTranscriptStreamProcessor:
             solver=self.hierarchical_config.solver,
         )
 
+        vectorizer = getattr(self.encoder, "vectorizer", None)
+        topic_synth = synthesize_deliberation_topics(
+            records=records,
+            Z=Z,
+            feature_names=feature_names,
+            speakers=speakers,
+            rounds=rounds,
+            factions=factions,
+            rogue_speaker=rogue_speaker,
+            vectorizer=vectorizer,
+        )
+
         metrics = SpectralMetrics(
             round_id=current_round,
             active_agents_count=N,
@@ -167,8 +181,11 @@ class LiveTranscriptStreamProcessor:
             is_converging=(l2_mag < 1.0),
             is_hierarchical=is_hierarchical,
             predicted_next_rogue=pred_rogue,
-
             predicted_contraction_ratio=pred_contraction,
+            topic_synthesis=topic_synth,
+            center_of_disagreement=topic_synth.center_of_disagreement if topic_synth else "",
+            centroid_concept=topic_synth.centroid_concept if topic_synth else "",
+            centroid_statement=topic_synth.centroid_statement if topic_synth else "",
         )
 
         new_alerts = self.alert_monitor.evaluate(metrics)

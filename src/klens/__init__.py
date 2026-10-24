@@ -7,11 +7,14 @@ from klens.models import (
     Alert,
     AlertConfig,
     AlertLevel,
+    DeliberationTopicSynthesis,
     Faction,
+    FactionStance,
     HierarchicalConfig,
     SpectralMetrics,
     TranscriptTurn,
 )
+from klens.semantic import synthesize_deliberation_topics
 from klens.spectral import (
     cluster_factions,
     coarse_grain_faction_centroids,
@@ -35,7 +38,9 @@ __all__ = [
     "AlertMonitor",
     "CSVLogExporter",
     "DEFAULT_COLUMNS",
+    "DeliberationTopicSynthesis",
     "Faction",
+    "FactionStance",
     "HierarchicalConfig",
     "LiveTranscriptStreamProcessor",
     "SpectralMetrics",
@@ -52,5 +57,6 @@ __all__ = [
     "plot_from_transcript_file",
     "predict_agent_trajectories",
     "render_spectral_dashboard",
+    "synthesize_deliberation_topics",
 ]
 

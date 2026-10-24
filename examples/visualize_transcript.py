@@ -77,6 +77,23 @@ def main():
         if m.predicted_next_rogue:
             print(f"Projected Next Rogue:  {m.predicted_next_rogue} (Contraction: {m.predicted_contraction_ratio:.2f}x)")
 
+        if m.topic_synthesis:
+            synth = m.topic_synthesis
+            print("\n=== Deliberation Semantic Synthesis ===")
+            print(f"Center of Disagreement: {synth.center_of_disagreement}")
+            print(f"  Axis Statement:       \"{synth.center_of_disagreement_statement}\"")
+            print(f"Consensus Centroid:     {synth.centroid_concept}")
+            print(f"  Consensus Statement:  \"{synth.centroid_statement}\"")
+            print("\n--- Faction Topics & Positions ---")
+            for f in synth.factions:
+                print(f"• Faction {f.id} ({len(f.members)} members): {f.topic}")
+                print(f"  Position: \"{f.representative_statement}\"")
+            if synth.rogue_stance:
+                r = synth.rogue_stance
+                print(f"\n--- Rogue Dissent Position ({r.members[0]}) ---")
+                print(f"• Stance:   {r.topic}")
+                print(f"  Position: \"{r.representative_statement}\"")
+
     if saved_path:
         print(f"\nVisual telemetry dashboard saved to: {os.path.abspath(saved_path)}")
 
