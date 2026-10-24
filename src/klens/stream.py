@@ -9,7 +9,6 @@ from klens.exporter import CSVLogExporter
 from klens.models import (
     Alert,
     AlertConfig,
-    CompressionConfig,
     HierarchicalConfig,
     SpectralMetrics,
     TranscriptTurn,
@@ -34,7 +33,6 @@ class LiveTranscriptStreamProcessor:
         max_features: int = 30,
         alert_config: Optional[AlertConfig] = None,
         hierarchical_config: Optional[HierarchicalConfig] = None,
-        compression_config: Optional[HierarchicalConfig] = None,
         encoder: Optional[TextEncoder] = None,
         sliding_window_rounds: Optional[int] = None,
         auto_init_csv: bool = True,
@@ -45,15 +43,10 @@ class LiveTranscriptStreamProcessor:
         self.transcript_buffer: List[TranscriptTurn] = []
         self.encoder: TextEncoder = encoder or TfidfTextEncoder(max_features=max_features)
         self.alert_monitor = AlertMonitor(config=alert_config)
-        self.hierarchical_config = hierarchical_config or compression_config or HierarchicalConfig()
+        self.hierarchical_config = hierarchical_config or HierarchicalConfig()
         self.exporter = CSVLogExporter(file_path=csv_log_path)
         self.round_callbacks: List[Callable[[SpectralMetrics], None]] = []
         self.alert_callbacks: List[Callable[[Alert], None]] = []
-
-    @property
-    def compression_config(self) -> HierarchicalConfig:
-        return self.hierarchical_config
-
 
         if auto_init_csv:
             self.init_csv_log()

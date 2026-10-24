@@ -7,7 +7,6 @@ from klens.models import (
     Alert,
     AlertConfig,
     AlertLevel,
-    CompressionConfig,
     Faction,
     HierarchicalConfig,
     SpectralMetrics,
@@ -16,7 +15,6 @@ from klens.models import (
 from klens.spectral import (
     cluster_factions,
     coarse_grain_faction_centroids,
-    compress_to_faction_centroids,
     compute_koopman_metrics,
     detect_rogue_agent,
     detect_rogue_from_states,
@@ -35,7 +33,6 @@ __all__ = [
     "AlertLevel",
     "AlertMonitor",
     "CSVLogExporter",
-    "CompressionConfig",
     "DEFAULT_COLUMNS",
     "Faction",
     "HierarchicalConfig",
@@ -46,7 +43,6 @@ __all__ = [
     "TranscriptTurn",
     "cluster_factions",
     "coarse_grain_faction_centroids",
-    "compress_to_faction_centroids",
 
     "compute_koopman_metrics",
     "detect_rogue_agent",

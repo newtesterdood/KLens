@@ -37,11 +37,6 @@ class HierarchicalConfig:
     seed: int = 42
 
 
-# Backward compatibility alias
-CompressionConfig = HierarchicalConfig
-
-
-
 @dataclass(frozen=True)
 class TranscriptTurn:
     round_id: int
@@ -73,15 +68,8 @@ class SpectralMetrics:
     centroid_keywords_list: List[str] = field(default_factory=list)
     is_converging: bool = True
     is_hierarchical: bool = False
-    is_compressed: bool = False
     predicted_next_rogue: Optional[str] = None
     predicted_contraction_ratio: Optional[float] = None
-
-    def __post_init__(self) -> None:
-        if self.is_compressed and not self.is_hierarchical:
-            self.is_hierarchical = self.is_compressed
-        elif self.is_hierarchical and not self.is_compressed:
-            self.is_compressed = self.is_hierarchical
 
 
 

@@ -144,11 +144,6 @@ def coarse_grain_faction_centroids(
     return Z_macro, factions
 
 
-# Backward compatibility alias
-compress_to_faction_centroids = coarse_grain_faction_centroids
-
-
-
 def cluster_factions(
     final_states: np.ndarray,
     speakers: Sequence[str],

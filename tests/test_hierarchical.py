@@ -1,10 +1,9 @@
 import numpy as np
 import pytest
 
-from klens.models import CompressionConfig, HierarchicalConfig
+from klens.models import HierarchicalConfig
 from klens.spectral import (
     coarse_grain_faction_centroids,
-    compress_to_faction_centroids,
     compute_koopman_metrics,
     detect_rogue_from_states,
 )
@@ -48,11 +47,6 @@ def test_coarse_grain_faction_centroids():
     total_members = sum(len(f.members) for f in factions)
     assert total_members == 30
 
-    # Test alias compatibility
-    Z_alias, factions_alias = compress_to_faction_centroids(Z, speakers, max_factions=3, seed=42)
-    assert Z_alias.shape == Z_macro.shape
-    assert len(factions_alias) == len(factions)
-
 
 def test_stream_processor_with_hierarchical_toggle():
     # Test toggled OFF (default full micro compute)
@@ -89,9 +83,7 @@ def test_stream_processor_with_hierarchical_toggle():
     assert m_hier is not None
 
     assert m_full.is_hierarchical is False
-    assert m_full.is_compressed is False
     assert m_hier.is_hierarchical is True
-    assert m_hier.is_compressed is True
     assert m_hier.faction_count == 2
 
 

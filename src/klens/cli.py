@@ -188,8 +188,6 @@ def main(argv: Optional[List[str]] = None) -> int:
     )
     demo_parser.add_argument(
         "--hierarchical",
-        "--compress",
-        dest="hierarchical",
         action="store_true",
         default=False,
         help="Enable hierarchical macro-faction coarse-graining for high-agent scaling",
@@ -223,8 +221,6 @@ def main(argv: Optional[List[str]] = None) -> int:
     )
     run_parser.add_argument(
         "--hierarchical",
-        "--compress",
-        dest="hierarchical",
         action="store_true",
         default=False,
         help="Enable hierarchical macro-faction coarse-graining for high-agent scaling",
