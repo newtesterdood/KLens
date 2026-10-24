@@ -26,6 +26,29 @@ The KLens workbench provides experimental tooling to investigate four fundamenta
 4. **Rogue Entity & Bottleneck Isolation**: Tracking micro-level residual deviations to pinpoint contrarian entities that anchor discussion, enabling principled pruning or mediation.
 
 
+## Visual Telemetry & Spectral Diagnostics
+
+KLens visualizes the geometric and spectral properties of multi-party deliberation across four integrated analytical views:
+
+![KLens Telemetry Dashboard](assets/klens_telemetry_dashboard.png)
+
+### Telemetry Views Explained
+
+1. **Koopman Spectrum on Complex Unit Disk (Panel A)**:
+   - Maps all eigenvalues $\{\mu_j\} \subset \mathbb{C}$ of the empirical transfer operator $\hat{K}$ relative to the unit disk ($|\mu| = 1.0$).
+   - The sub-dominant eigenvalue $\lambda_2$ (highlighted in red) defines the spectral radius of the non-trivial modes. Modes clustering near the unit circle ($|\lambda_2| \ge 0.985$) visually expose ideological deadlock and slow consensus decay.
+2. **Certified Convergence Deadline Envelope (Panel B)**:
+   - Plots the empirical disagreement norm $\|\Delta(t)\|$ across debate rounds against the theoretical exponential decay envelope $C |\lambda_2|^t$.
+   - The certified deadline $T_{\text{cert}}$ (vertical dashed line) guarantees the round index where residual disagreement falls beneath tolerance $\epsilon = 0.05$.
+3. **2D Semantic Manifold & Centroid Drift (Panel C)**:
+   - Projects lifted state trajectories into principal semantic observable coordinates (PC 1 vs. PC 2).
+   - Tracks the continuous drift of the **Consensus Centroid $\bar{z}(t)$** (dashed gold path) as participants shift positions toward compromise.
+4. **Forward Trajectory Projection & Contraction Cone (Panel D)**:
+   - Projects agent belief states forward $k$ rounds using $\hat{\Psi}_{t+k} = \Psi_t \hat{K}^k$.
+   - The confidence envelope models the projected contraction rate ($\|\hat{\Delta}(t+k)\| / \|\Delta(t)\|$), forecasting whether subsequent debate rounds will converge into agreement or expand into deadlock.
+
+---
+
 ## Mathematical Foundations
 
 ### 1. State Formulation & Centering
@@ -54,6 +77,10 @@ $$T_{\text{cert}} = \left\lceil \frac{\ln(1/\epsilon)}{-\ln|\lambda_2|} \right\r
 ### 5. Rogue Agent Detection & Faction Clustering
 - **Rogue Detection**: $\arg\max_i \frac{1}{T} \sum_{t=1}^T \|\Delta_i(t)\|_2$
 - **Faction Clustering**: Pairwise cosine similarity on non-rogue final states with threshold $\ge 0.65$.
+
+![Metastable Faction Polarization & Consensus Centroid Contraction](assets/faction_centroid_drift.png)
+
+*Figure: Metastable faction clustering and consensus centroid contraction during a 6-agent deliberation. The consensus centroid $\bar{z}(t)$ acts as a moving semantic attractor pulling factions toward resolution.*
 
 ### 6. Forward Agent Trajectory Prediction
 Because the finite-dimensional Koopman operator $\hat{K}$ acts as a linear forward transition generator in the lifted observable space ($\Psi_{t+1} \approx \Psi_t \hat{K}$), KLens projects agent positions $k$ rounds ahead:
