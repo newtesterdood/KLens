@@ -28,24 +28,42 @@ The KLens workbench provides experimental tooling to investigate four fundamenta
 
 ## Visual Telemetry & Spectral Diagnostics
 
-KLens visualizes the geometric and spectral properties of multi-party deliberation across four integrated analytical views:
+KLens visualizes the dynamical geometry and operator spectra of multi-party deliberation across three complementary diagnostic dashboards:
+
+### 1. Multi-Agent Spectral Analysis: Faction Identification & Rogue Detection
+
+The primary diagnostic dashboard isolates contrarian agents, measures disagreement decay relative to the theoretical isolation threshold, visualizes faction cohesion via cosine similarity, and synthesizes operational spectral certificates:
+
+![Multi-Agent Spectral Analysis](assets/multi_agent_spectral_analysis.png)
+
+* **Panel 1: PCA Opinion Space with Landmark Centroid**: 2D projection of agent belief states alongside the evolving consensus centroid $\bar{z}(t)$, highlighting isolated rogue agents.
+* **Panel 2: Agent Disagreement Magnitude $\|z_i(t) - \bar{z}(t)\|$**: Turn-by-turn disagreement norm plotted against the Rogue Isolation Threshold ($\mu + 1.5\sigma$).
+* **Panel 3: Pairwise Cosine Similarity Heatmap**: 6x6 cohesion matrix revealing intra-faction alignment and inter-faction antagonism with exact cosine coefficients.
+* **Panel 4: Monospace Spectral Diagnostic Summary**: Real-time summary detailing the subdominant eigenvalue $\lambda_2$, certified convergence deadline $T_{\text{cert}}$, faction clusters, and counterfactual rogue pruning impact (e.g. accelerating consensus by $3.8\times$).
+
+---
+
+### 2. Consensus Acceleration via Centroid Token Injection (Spectral Shortcuts)
+
+When deliberation stalls due to stubborn factions or rogue dissenters, KLens models the impact of injecting consensus centroid tokens $\bar{z}(t)$ directly into agent prompt contexts:
+
+![Consensus Acceleration via Centroid Token Injection](assets/centroid_shortcut_comparison.png)
+
+* **Baseline Deliberation (Sluggish Decay)**: Slow natural consensus with $|\lambda_2| = 0.941$ yielding an extended certified deadline of $T_{\text{cert}} = 49$ rounds.
+* **Centroid Shortcut (Rapid Collapse)**: Dynamic injection of the consensus centroid token at round 8 breaks ideological deadlock, shifting the spectral radius to $|\lambda_2| = 0.724$ and contracting the certified deadline to just 13 rounds ($3.8\times$ speedup).
+
+---
+
+### 3. Unit Disk Spectrum & Convergence Envelope
+
+For low-level dynamical systems tracking, KLens plots the Koopman eigenvalues on the complex unit disk and traces the empirical disagreement norm against the theoretical exponential decay envelope:
 
 ![KLens Telemetry Dashboard](assets/klens_telemetry_dashboard.png)
 
-### Telemetry Views Explained
-
-1. **Koopman Spectrum on Complex Unit Disk (Panel A)**:
-   - Maps all eigenvalues $\{\mu_j\} \subset \mathbb{C}$ of the empirical transfer operator $\hat{K}$ relative to the unit disk ($|\mu| = 1.0$).
-   - The sub-dominant eigenvalue $\lambda_2$ (highlighted in red) defines the spectral radius of the non-trivial modes. Modes clustering near the unit circle ($|\lambda_2| \ge 0.985$) visually expose ideological deadlock and slow consensus decay.
-2. **Certified Convergence Deadline Envelope (Panel B)**:
-   - Plots the empirical disagreement norm $\|\Delta(t)\|$ across debate rounds against the theoretical exponential decay envelope $C |\lambda_2|^t$.
-   - The certified deadline $T_{\text{cert}}$ (vertical dashed line) guarantees the round index where residual disagreement falls beneath tolerance $\epsilon = 0.05$.
-3. **2D Semantic Manifold & Centroid Drift (Panel C)**:
-   - Projects lifted state trajectories into principal semantic observable coordinates (PC 1 vs. PC 2).
-   - Tracks the continuous drift of the **Consensus Centroid $\bar{z}(t)$** (dashed gold path) as participants shift positions toward compromise.
-4. **Forward Trajectory Projection & Contraction Cone (Panel D)**:
-   - Projects agent belief states forward $k$ rounds using $\hat{\Psi}_{t+k} = \Psi_t \hat{K}^k$.
-   - The confidence envelope models the projected contraction rate ($\|\hat{\Delta}(t+k)\| / \|\Delta(t)\|$), forecasting whether subsequent debate rounds will converge into agreement or expand into deadlock.
+* **Koopman Spectrum on Complex Unit Disk (Panel A)**: Maps all eigenvalues $\{\mu_j\} \subset \mathbb{C}$ of the empirical transfer operator $\hat{K}$ relative to the unit disk ($|\mu| = 1.0$). Modes clustering near the unit circle ($|\lambda_2| \ge 0.985$) visually expose ideological deadlock and slow consensus decay.
+* **Certified Convergence Deadline Envelope (Panel B)**: Plots empirical disagreement norm $\|\Delta(t)\|$ across debate rounds against the theoretical decay envelope $C |\lambda_2|^t$, with certified deadline $T_{\text{cert}}$ at $\epsilon = 0.05$.
+* **2D Semantic Manifold & Centroid Drift (Panel C)**: Projects lifted state trajectories into principal observable coordinates (PC 1 vs. PC 2) and tracks the drift of the **Consensus Centroid $\bar{z}(t)$** (dashed gold path).
+* **Forward Trajectory Projection & Contraction Cone (Panel D)**: Projects agent belief states forward $k$ rounds ($\hat{\Psi}_{t+k} = \Psi_t \hat{K}^k$) to forecast whether subsequent rounds will contract toward consensus or expand into deadlock.
 
 ---
 
@@ -106,25 +124,40 @@ pip install -e ".[dev]"
 
 ## Quickstart
 
-### Run Built-in 6-Agent Simulation
+### 1. Render Visual Diagnostic Dashboard (One-Liner)
+
+Pass any multi-agent transcript (JSON or JSONL) to `klens plot` or the standalone file loader script:
 
 ```bash
-klens demo --output spectral_debate_log.csv --t-cert-limit 50
+# Render 4-panel diagnostic dashboard matching the clinical debate benchmark
+klens plot samples/clinical_slm_debate.json --output out/clinical_telemetry.png
+
+# Or use the standalone Python file loader
+python examples/visualize_transcript.py samples/clinical_slm_debate.json --output out/clinical_telemetry.png
 ```
 
-### Analyze Transcript Files (JSON or JSONL)
-
-KLens comes with realistic deliberation samples in the [samples/](samples/) directory:
+### 2. Run Built-in 6-Agent Simulation
 
 ```bash
-# 1. Multi-Agent LLM Safety Consensus Debate (JSON)
-klens run samples/llm_safety_consensus.json --output out/metrics_safety.csv
+klens demo --plot out/demo_telemetry.png --output spectral_debate_log.csv --t-cert-limit 50
+```
 
-# 2. Executive Boardroom Polarization & Deadlock (JSONL)
-klens run samples/boardroom_deadlock_polarization.jsonl --output out/metrics_deadlock.csv
+### 3. Analyze & Plot Transcript Files (JSON or JSONL)
 
-# 3. 24-Agent Swarm with Hierarchical Coarse-Graining (JSONL)
-klens run samples/swarm_deliberation_24agents.jsonl --hierarchical --max-factions 4 --output out/metrics_swarm.csv
+KLens includes realistic deliberation traces in [samples/](samples/) covering diverse multi-agent topologies:
+
+```bash
+# 1. Clinical SLM Deployment & Regulatory Audit (JSON)
+klens run samples/clinical_slm_debate.json --plot out/clinical_telemetry.png --output out/metrics_clinical.csv
+
+# 2. Multi-Agent LLM Safety Consensus Debate (JSON)
+klens run samples/llm_safety_consensus.json --plot out/safety_telemetry.png --output out/metrics_safety.csv
+
+# 3. Executive Boardroom Polarization & Deadlock (JSONL)
+klens run samples/boardroom_deadlock_polarization.jsonl --plot out/deadlock_telemetry.png --output out/metrics_deadlock.csv
+
+# 4. 24-Agent Swarm with Hierarchical Coarse-Graining (JSONL)
+klens run samples/swarm_deliberation_24agents.jsonl --hierarchical --max-factions 4 --plot out/swarm_telemetry.png --output out/metrics_swarm.csv
 ```
 
 ---
@@ -132,8 +165,21 @@ klens run samples/swarm_deliberation_24agents.jsonl --hierarchical --max-faction
 ## Python API Usage
 
 ```python
-from klens import LiveTranscriptStreamProcessor, AlertConfig, HierarchicalConfig
+from klens import (
+    LiveTranscriptStreamProcessor,
+    AlertConfig,
+    HierarchicalConfig,
+    plot_from_transcript_file,
+)
 
+# --- Option A: One-line transcript visualization ---
+processor, saved_path = plot_from_transcript_file(
+    transcript_path="samples/clinical_slm_debate.json",
+    output_path="out/clinical_telemetry.png",
+    show=False,
+)
+
+# --- Option B: Streaming ingestion & real-time monitoring ---
 # 1. Configure processor, alert thresholds, and scaling
 config = AlertConfig(
     t_cert_limit=50,             # Alert if certified deadline > 50 rounds
@@ -169,7 +215,6 @@ if metrics:
     print(f"Rogue agent:            {metrics.rogue_agent_detected}")
     print(f"Factions:               {metrics.factions_summary}")
     print(f"Hierarchical mode active: {metrics.is_hierarchical}")
-
 ```
 
 ---

@@ -51,6 +51,8 @@ def run_demo(
     hierarchical_enabled: bool,
     max_factions: int,
     solver: str,
+    plot_path: Optional[str] = None,
+    show_plot: bool = False,
 ) -> int:
     mode_descr = f"Hierarchical Coarse-Graining (max_factions={max_factions})" if hierarchical_enabled else "Micro-Level (full compute)"
     print(f"KLens v{__version__} - Spectral Multi-Agent Consensus Monitor")
@@ -67,7 +69,6 @@ def run_demo(
         alert_config=alert_cfg,
         hierarchical_config=hier_cfg,
     )
-
 
     processor.add_alert_callback(
         lambda a: print(f"  [ALERT {a.level.value}] {a.code}: {a.message}")
@@ -94,6 +95,19 @@ def run_demo(
         print("-" * 80)
 
     print(f"\nCompleted debate simulation. Log written to: {os.path.abspath(output_csv)}")
+
+    if plot_path is not None or show_plot:
+        from klens.vis import render_spectral_dashboard
+        resolved_plot = plot_path if (plot_path and len(plot_path) > 0) else "out/demo_telemetry.png"
+        render_spectral_dashboard(
+            processor,
+            output_path=resolved_plot if (plot_path is not None or not show_plot) else None,
+            show=show_plot,
+            title="KLens Reference Demo Deliberation",
+        )
+        if resolved_plot and (plot_path is not None or not show_plot):
+            print(f"Spectral telemetry dashboard saved to: {os.path.abspath(resolved_plot)}")
+
     return 0
 
 
@@ -104,6 +118,8 @@ def run_file(
     hierarchical_enabled: bool,
     max_factions: int,
     solver: str,
+    plot_path: Optional[str] = None,
+    show_plot: bool = False,
 ) -> int:
     if not os.path.exists(transcript_file):
         print(f"Error: file not found: {transcript_file}", file=sys.stderr)
@@ -120,7 +136,6 @@ def run_file(
         alert_config=alert_cfg,
         hierarchical_config=hier_cfg,
     )
-
 
     processor.add_alert_callback(
         lambda a: print(f"  [ALERT {a.level.value}] {a.code}: {a.message}")
@@ -159,8 +174,27 @@ def run_file(
         else:
             print(f"Round {r:2d} | Insufficient history for spectral decomposition (< 2 rounds)")
 
-
     print(f"\nProcessing complete. Output saved to: {os.path.abspath(output_csv)}")
+
+    if plot_path is not None or show_plot:
+        from klens.vis import render_spectral_dashboard
+        if plot_path is not None and len(plot_path) > 0:
+            resolved_plot = plot_path
+        elif plot_path is not None:
+            base = os.path.splitext(os.path.basename(transcript_file))[0]
+            resolved_plot = os.path.join("out", f"{base}_telemetry.png")
+        else:
+            resolved_plot = None
+
+        render_spectral_dashboard(
+            processor,
+            output_path=resolved_plot,
+            show=show_plot,
+            title=f"KLens Telemetry: {os.path.basename(transcript_file)}",
+        )
+        if resolved_plot:
+            print(f"Spectral telemetry dashboard saved to: {os.path.abspath(resolved_plot)}")
+
     return 0
 
 
@@ -204,6 +238,19 @@ def main(argv: Optional[List[str]] = None) -> int:
         default="auto",
         help="Koopman solver mode: auto, primal, or dual (default: auto)",
     )
+    demo_parser.add_argument(
+        "--plot",
+        nargs="?",
+        const="out/demo_telemetry.png",
+        default=None,
+        help="Generate visual telemetry dashboard PNG (default: out/demo_telemetry.png)",
+    )
+    demo_parser.add_argument(
+        "--show",
+        action="store_true",
+        default=False,
+        help="Display the plot in an interactive window",
+    )
 
     run_parser = subparsers.add_parser("run", help="Process transcript JSON or JSONL file")
     run_parser.add_argument("transcript", help="Path to transcript JSON or JSONL file")
@@ -237,6 +284,63 @@ def main(argv: Optional[List[str]] = None) -> int:
         default="auto",
         help="Koopman solver mode: auto, primal, or dual (default: auto)",
     )
+    run_parser.add_argument(
+        "--plot",
+        nargs="?",
+        const="",
+        default=None,
+        help="Generate visual telemetry dashboard PNG (default: out/<basename>_telemetry.png)",
+    )
+    run_parser.add_argument(
+        "--show",
+        action="store_true",
+        default=False,
+        help="Display the plot in an interactive window",
+    )
+
+    plot_parser = subparsers.add_parser("plot", help="Load transcript file and generate visual dashboard")
+    plot_parser.add_argument("transcript", help="Path to transcript JSON or JSONL file")
+    plot_parser.add_argument(
+        "--output",
+        "-o",
+        default=None,
+        help="Path for output PNG (default: out/<basename>_telemetry.png)",
+    )
+    plot_parser.add_argument(
+        "--show",
+        action="store_true",
+        default=False,
+        help="Display the plot in an interactive window",
+    )
+    plot_parser.add_argument(
+        "--csv",
+        default=None,
+        help="Optional path to also export CSV log",
+    )
+    plot_parser.add_argument(
+        "--t-cert-limit",
+        type=int,
+        default=50,
+        help="Certified deadline alert threshold (default: 50 rounds)",
+    )
+    plot_parser.add_argument(
+        "--hierarchical",
+        action="store_true",
+        default=False,
+        help="Enable hierarchical macro-faction coarse-graining for high-agent scaling",
+    )
+    plot_parser.add_argument(
+        "--max-factions",
+        type=int,
+        default=8,
+        help="Max faction centroids when hierarchical mode is enabled (default: 8)",
+    )
+    plot_parser.add_argument(
+        "--solver",
+        choices=["auto", "primal", "dual"],
+        default="auto",
+        help="Koopman solver mode: auto, primal, or dual (default: auto)",
+    )
 
     args = parser.parse_args(argv)
 
@@ -247,6 +351,8 @@ def main(argv: Optional[List[str]] = None) -> int:
             args.hierarchical,
             args.max_factions,
             args.solver,
+            plot_path=args.plot,
+            show_plot=args.show,
         )
     elif args.command == "run":
         return run_file(
@@ -256,7 +362,31 @@ def main(argv: Optional[List[str]] = None) -> int:
             args.hierarchical,
             args.max_factions,
             args.solver,
+            plot_path=args.plot,
+            show_plot=args.show,
         )
+    elif args.command == "plot":
+        temp_csv = args.csv or os.path.join("out", f"_tmp_{os.path.basename(args.transcript)}.csv")
+        plot_target = args.output
+        if not plot_target and not args.show:
+            base = os.path.splitext(os.path.basename(args.transcript))[0]
+            plot_target = os.path.join("out", f"{base}_telemetry.png")
+        ret = run_file(
+            args.transcript,
+            temp_csv,
+            args.t_cert_limit,
+            args.hierarchical,
+            args.max_factions,
+            args.solver,
+            plot_path=plot_target,
+            show_plot=args.show,
+        )
+        if args.csv is None and os.path.exists(temp_csv):
+            try:
+                os.remove(temp_csv)
+            except OSError:
+                pass
+        return ret
     else:
         parser.print_help()
         return 0

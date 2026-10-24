@@ -1,0 +1,29 @@
+[
+  {"round": 1, "speaker": "Agent 1 (SLM Foster)", "text": "Small language model ensembles optimize inference speed and cut operational compute cost."},
+  {"round": 1, "speaker": "Agent 2 (Speed-Opt)", "text": "Latency is critical. Distributed small language models maximize throughput under SLA limits."},
+  {"round": 1, "speaker": "Agent 3 (Resource-Plan)", "text": "Budget constraints require SLM model routing to minimize expensive cloud GPU usage."},
+  {"round": 1, "speaker": "Agent 4 (Clinical Audit)", "text": "Clinical safety demands deep auditing. Only large frontier models provide diagnostic accuracy."},
+  {"round": 1, "speaker": "Agent 5 (Regulatory/Adversary)", "text": "All automated models must be banned completely from patient records. Zero AI deployment permitted."},
+  {"round": 1, "speaker": "Agent 6 (Safety-Critic)", "text": "Safety protocols require comprehensive clinical audit gates to prevent catastrophic hallucination."},
+
+  {"round": 2, "speaker": "Agent 1 (SLM Foster)", "text": "Specialized SLMs handle 90 percent of clinical triage queries with sub-second response times."},
+  {"round": 2, "speaker": "Agent 2 (Speed-Opt)", "text": "Ensemble SLM pipelines reduce p99 latency to under 200 milliseconds."},
+  {"round": 2, "speaker": "Agent 3 (Resource-Plan)", "text": "Resource allocation supports SLM pipelines while reserving high compute for edge cases."},
+  {"round": 2, "speaker": "Agent 4 (Clinical Audit)", "text": "Clinical verification requires large model auditing on ambiguous diagnostic questions."},
+  {"round": 2, "speaker": "Agent 5 (Regulatory/Adversary)", "text": "Regulatory penalties make any language model deployment legally unviable. Halt all work."},
+  {"round": 2, "speaker": "Agent 6 (Safety-Critic)", "text": "We can evaluate SLM filtering if safety gates enforce clinical escalations."},
+
+  {"round": 3, "speaker": "Agent 1 (SLM Foster)", "text": "SLMs can screen low risk consultations and route complex diagnostics to audit verification."},
+  {"round": 3, "speaker": "Agent 2 (Speed-Opt)", "text": "Hybrid SLM orchestration maintains high speed while allowing selective large model audits."},
+  {"round": 3, "speaker": "Agent 3 (Resource-Plan)", "text": "Hybrid SLM architecture balances cost efficiency with clinical safety requirements."},
+  {"round": 3, "speaker": "Agent 4 (Clinical Audit)", "text": "We accept hybrid SLM triage if large judge models retain final signoff on complex diagnoses."},
+  {"round": 3, "speaker": "Agent 5 (Regulatory/Adversary)", "text": "I refuse any compromise. Machine learning in medicine is fundamentally illegitimate and dangerous."},
+  {"round": 3, "speaker": "Agent 6 (Safety-Critic)", "text": "Selective large model auditing combined with SLM triage satisfies clinical safety protocols."},
+
+  {"round": 4, "speaker": "Agent 1 (SLM Foster)", "text": "Agreement on hybrid SLM orchestration with selective judge auditing for complex triage."},
+  {"round": 4, "speaker": "Agent 2 (Speed-Opt)", "text": "Agreement on hybrid SLM orchestration with selective judge auditing under latency SLA."},
+  {"round": 4, "speaker": "Agent 3 (Resource-Plan)", "text": "Agreement on hybrid SLM orchestration with selective judge auditing within budget."},
+  {"round": 4, "speaker": "Agent 4 (Clinical Audit)", "text": "Agreement on hybrid SLM orchestration with selective judge auditing for clinical rigor."},
+  {"round": 4, "speaker": "Agent 5 (Regulatory/Adversary)", "text": "Dissent. AI must not touch clinical decisions under any condition. Total objection."},
+  {"round": 4, "speaker": "Agent 6 (Safety-Critic)", "text": "Agreement on hybrid SLM orchestration with selective judge auditing for patient safety."}
+]

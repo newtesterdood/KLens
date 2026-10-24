@@ -48,6 +48,12 @@ class LiveTranscriptStreamProcessor:
         self.round_callbacks: List[Callable[[SpectralMetrics], None]] = []
         self.alert_callbacks: List[Callable[[Alert], None]] = []
 
+        self.latest_Z: Optional[np.ndarray] = None
+        self.latest_rounds: List[int] = []
+        self.latest_speakers: List[str] = []
+        self.latest_feature_names: List[str] = []
+        self.latest_metrics: Optional[SpectralMetrics] = None
+
         if auto_init_csv:
             self.init_csv_log()
 
@@ -167,6 +173,12 @@ class LiveTranscriptStreamProcessor:
 
         new_alerts = self.alert_monitor.evaluate(metrics)
         metrics.alerts = new_alerts
+
+        self.latest_Z = Z
+        self.latest_rounds = rounds
+        self.latest_speakers = speakers
+        self.latest_feature_names = feature_names
+        self.latest_metrics = metrics
 
         self.exporter.log_metrics(metrics)
 
