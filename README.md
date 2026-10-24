@@ -39,7 +39,7 @@ The primary diagnostic dashboard isolates contrarian agents, measures disagreeme
 * **Panel 1: PCA Opinion Space with Landmark Centroid**: 2D projection of agent belief states alongside the evolving consensus centroid $\bar{z}(t)$, highlighting isolated rogue agents.
 * **Panel 2: Agent Disagreement Magnitude $\|z_i(t) - \bar{z}(t)\|$**: Turn-by-turn disagreement norm plotted against the Rogue Isolation Threshold ($\mu + 1.5\sigma$).
 * **Panel 3: Pairwise Cosine Similarity Heatmap**: 6x6 cohesion matrix revealing intra-faction alignment and inter-faction antagonism with exact cosine coefficients.
-* **Panel 4: Monospace Spectral Diagnostic Summary**: Real-time summary detailing the subdominant eigenvalue $\lambda_2$, certified convergence deadline $T_{\text{cert}}$, faction clusters, and counterfactual rogue pruning impact (e.g. accelerating consensus by $3.8\times$).
+* **Panel 4: Monospace Spectral Diagnostic & Semantic Summary**: Real-time summary detailing the primary Center of Disagreement, Faction Topics & verbatim Positions, Rogue Dissent Position, Consensus Centroid statement, subdominant eigenvalue $\lambda_2$, certified deadline $T_{\text{cert}}$, and counterfactual pruning impact.
 
 ---
 
@@ -64,6 +64,69 @@ For low-level dynamical systems tracking, KLens plots the Koopman eigenvalues on
 * **Certified Convergence Deadline Envelope (Panel B)**: Plots empirical disagreement norm $\|\Delta(t)\|$ across debate rounds against the theoretical decay envelope $C |\lambda_2|^t$, with certified deadline $T_{\text{cert}}$ at $\epsilon = 0.05$.
 * **2D Semantic Manifold & Centroid Drift (Panel C)**: Projects lifted state trajectories into principal observable coordinates (PC 1 vs. PC 2) and tracks the drift of the **Consensus Centroid $\bar{z}(t)$** (dashed gold path).
 * **Forward Trajectory Projection & Contraction Cone (Panel D)**: Projects agent belief states forward $k$ rounds ($\hat{\Psi}_{t+k} = \Psi_t \hat{K}^k$) to forecast whether subsequent rounds will contract toward consensus or expand into deadlock.
+
+---
+
+## Human-Understandable Semantic Topic Synthesis
+
+While Koopman operators track the continuous-time geometry of belief vectors in observable space, human facilitators and decision-makers require plain-English semantic clarity. KLens automatically decodes abstract state manifolds into four interpretable semantic layers:
+
+1. **Center of Disagreement (Principal Contention Axis)**: Identifies the core ideological trade-off dividing the debate (via SVD on the centered disagreement matrix $\Delta(T) = U \Sigma V^T$).
+2. **Faction Topics & Content of Positions**: Formulates the human-understandable concept each faction represents, accompanied by the verbatim representative statement spoken by its members.
+3. **Consensus Centroid Concept & Statement**: Translates the moving consensus landmark $\bar{z}(t)$ into an authentic, readable resolution statement extracted from the discussion.
+4. **Rogue Dissent Stance & Objection**: Identifies the exact contrarian stance and verbatim dissent statement anchoring consensus progress.
+
+### Live Benchmark Outputs
+
+#### 1. Clinical SLM Deployment Benchmark (`samples/clinical_slm_debate.json`)
+Six specialist agents deliberate deploying Small Language Models in hospital triage. A contrarian regulatory entity objects to automated clinical decisions:
+
+```
+=== Deliberation Semantic Synthesis ===
+• Center of Disagreement: Zero AI vs. Selective Judge Auditing
+  "The primary debate axis centers on the trade-off between zero ai and selective judge auditing."
+• Consensus Centroid Concept: Selective Judge Auditing & Hybrid SLM Orchestration
+  "Agreement on hybrid SLM orchestration with selective judge auditing for clinical rigor."
+
+--- Faction Topics & Positions ---
+• Faction 1 (5 members): Selective Judge Auditing
+  Position: "Agreement on hybrid SLM orchestration with selective judge auditing for clinical rigor."
+
+--- Rogue Dissent Position (Agent 5 (Regulatory/Adversary)) ---
+• Stance:   Zero AI
+  Position: "AI must not touch clinical decisions under any condition."
+```
+
+#### 2. Executive Boardroom Infrastructure Benchmark (`samples/boardroom_deadlock_polarization.jsonl`)
+Eight C-suite leaders debate public cloud migration vs. on-prem hardware. Seven leaders converge on hybrid architecture while the Infrastructure Director dissents:
+
+```
+=== Deliberation Semantic Synthesis ===
+• Center of Disagreement: Cloud Services vs. Hybrid Implementation
+  "The primary debate axis centers on the trade-off between cloud services and hybrid implementation."
+• Consensus Centroid Concept: Hybrid Implementation & Hybrid Cloud
+  "Security boundary approved for hybrid implementation."
+
+--- Faction Topics & Positions ---
+• Faction 1 (CFO): Capital Allocation Approved
+  Position: "Capital allocation approved for hybrid implementation."
+• Faction 2 (CISO): Security Boundary Approved
+  Position: "Security boundary approved for hybrid implementation."
+• Faction 3 (Director_Infra): Cloud Services Dissent
+  Position: "No cloud services under any circumstances."
+• Faction 4 (Lead_Architect): Approve Implementation
+  Position: "Hybrid design finalized; seven of eight leaders approve implementation."
+• Faction 5 (Lead_DBA): Database Replication
+  Position: "Local database replication verified for hybrid boundary."
+• Faction 6 (VP_Engineering): Architecture Rollout
+  Position: "We are calling for final approval on the hybrid architecture rollout plan."
+• Faction 7 (VP_Product): Product Releases
+  Position: "Product roadmaps scheduled for hybrid cloud release."
+
+--- Rogue Dissent Position (Head_DevOps) ---
+• Stance:   Staged Deployment
+  Position: "Infrastructure automation scripts staged for hybrid deployment."
+```
 
 ---
 
@@ -241,6 +304,15 @@ if metrics:
     print(f"Rogue agent:            {metrics.rogue_agent_detected}")
     print(f"Factions:               {metrics.factions_summary}")
     print(f"Hierarchical mode active: {metrics.is_hierarchical}")
+
+    # 5. Access human-readable semantic concepts and verbatim positions
+    if metrics.topic_synthesis:
+        synth = metrics.topic_synthesis
+        print(f"Center of Disagreement: {synth.center_of_disagreement}")
+        print(f"Consensus Centroid:     {synth.centroid_concept}")
+        print(f"Consensus Statement:   \"{synth.centroid_statement}\"")
+        for f in synth.factions:
+            print(f"[{f.topic}] {f.members} -> \"{f.representative_statement}\"")
 ```
 
 ---
