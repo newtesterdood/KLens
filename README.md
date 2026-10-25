@@ -131,6 +131,8 @@ Eight C-suite leaders debate public cloud migration vs. on-prem hardware. Seven 
 #### 3. US Supreme Court Oral Argument Benchmark (`samples/scotus_bruen_oral_argument.json`)
 370 verbatim human turns across 12 speakers (9 Supreme Court Justices and 3 Advocates in *NYSRA v. Bruen*). Early debate rounds exhibit severe friction ($\lambda_2 = 0.9833, T_{\text{cert}} = 179$ rounds) before collapsing toward the constitutional *Heller* text/history standard ($\lambda_2 = 0.7126, T_{\text{cert}} = 9$ rounds):
 
+![SCOTUS Bruen Oral Argument Telemetry](assets/scotus_bruen_telemetry.png)
+
 ```
 === Deliberation Semantic Synthesis ===
 • Center of Disagreement: Second Amendment vs. Other States
@@ -154,6 +156,8 @@ Eight C-suite leaders debate public cloud migration vs. on-prem hardware. Seven 
 #### 4. Federal Reserve FOMC Monetary Policy Benchmark (`samples/fomc_monetary_policy_aug2011.json`)
 258 substantive turns across 25 Federal Reserve policymakers debating explicit calendar-date forward guidance ("mid-2013"). KLens tracks mounting ideological resistance ($\lambda_2 = 0.9841, T_{\text{cert}} = 187$ rounds), isolates the historic 3-way dissent, and pinpoints Dallas Fed President Richard Fisher as the persistent contrarian:
 
+![FOMC Monetary Policy Telemetry](assets/fomc_telemetry.png)
+
 ```
 === Deliberation Semantic Synthesis ===
 • Center of Disagreement: Language From Alternative vs. Monetary Policy
@@ -173,6 +177,8 @@ Eight C-suite leaders debate public cloud migration vs. on-prem hardware. Seven 
 • Stance:   Persistent Dissenter (Dallas Fed President)
   Position: "Chairman, could you read the full sentence for me, please?"
 ```
+
+> **Detailed Guide**: For complete preprocessing pipelines, sourcing instructions, and mathematical interpretations on human deliberation traces, see [docs/HUMAN_DELIBERATION_BENCHMARKS.md](docs/HUMAN_DELIBERATION_BENCHMARKS.md).
 
 ---
 
@@ -293,6 +299,12 @@ klens run samples/boardroom_deadlock_polarization.jsonl --plot out/deadlock_tele
 
 # 4. 24-Agent Swarm with Hierarchical Coarse-Graining (JSONL)
 klens run samples/swarm_deliberation_24agents.jsonl --hierarchical --max-factions 4 --plot out/swarm_telemetry.png --output out/metrics_swarm.csv
+
+# 5. Real-World Human Deliberation: SCOTUS Bruen Oral Argument (JSON, 370 turns across 12 Justices & Advocates)
+klens run samples/scotus_bruen_oral_argument.json --plot out/scotus_bruen_telemetry.png --output out/metrics_bruen.csv
+
+# 6. Real-World Human Deliberation: Federal Reserve FOMC Monetary Policy Meeting (JSON, 258 turns across 25 Fed Policymakers)
+klens run samples/fomc_monetary_policy_aug2011.json --plot out/fomc_telemetry.png --output out/metrics_fomc.csv --t-cert-limit 50
 ```
 
 ---

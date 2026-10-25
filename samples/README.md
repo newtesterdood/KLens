@@ -21,12 +21,22 @@ This directory contains reference datasets and discussion transcripts for testin
 
 ### 1. Analyze Real-World Human Discussion Traces
 
+For full methodology and empirical findings on real human deliberation, see the [Human Deliberation Benchmarks Guide](../docs/HUMAN_DELIBERATION_BENCHMARKS.md).
+
 ```bash
 # 1. SCOTUS Oral Argument (370 turns across 12 Justices & Counsel)
-klens plot samples/scotus_bruen_oral_argument.json --output out/scotus_telemetry.png
+klens run samples/scotus_bruen_oral_argument.json \
+  --plot out/scotus_bruen_telemetry.png \
+  --output out/metrics_bruen.csv
 
 # 2. Federal Reserve FOMC Rate Deliberation (258 turns across 25 Fed Leaders)
-klens plot samples/fomc_monetary_policy_aug2011.json --output out/fomc_telemetry.png
+klens run samples/fomc_monetary_policy_aug2011.json \
+  --plot out/fomc_telemetry.png \
+  --output out/metrics_fomc.csv \
+  --t-cert-limit 50
+
+# 3. Direct 4-Panel Visualization Plot (One-Liner)
+klens plot samples/scotus_bruen_oral_argument.json --output out/scotus_telemetry.png
 ```
 
 ### 2. Multi-Agent LLM Safety Debate (JSON)
