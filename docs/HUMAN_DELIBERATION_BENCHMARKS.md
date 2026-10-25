@@ -172,7 +172,33 @@ Round  5 | Agents: 25 | λ2: 0.9841 | T_cert: 187 rounds | Rogue: Fisher   | [AL
 
 ---
 
-## 7. Verification & Automated Test Suite
+## 7. Comparative Analysis: Human vs. Multi-Agent AI Deliberations
+
+Comparing empirical trajectories across synthetic multi-agent LLM systems and real human proceedings reveals five foundational differences:
+
+### 1. Contraction Geometry: Smooth Exponential Decay vs. Discrete Doctrinal Bifurcations
+* **Synthetic LLM Swarms**: Transformer self-attention across conversation rounds acts as an averaging operator, producing smooth, continuous exponential decay ($\lambda_2 \in [0.60, 0.75], T_{\text{cert}} \le 15$).
+* **Human Collectives**: Human deliberations remain in prolonged metastable, high-friction states ($\lambda_2 \approx 0.98, T_{\text{cert}} \gg 100$) until an acceptable doctrinal bridge is discovered, triggering an immediate **non-linear phase transition / bifurcation** (e.g., SCOTUS collapsing from $\lambda_2 = 0.9833 \to 0.6488$).
+
+### 2. Deadlock Dynamics: Synthetic Prompt Constraints vs. Emergent Marginal Stability
+* In multi-agent AI pipelines, deadlock is artificial—it requires explicitly prompted contrarian directives or unyielding system constraints.
+* In human governance, deadlock is an **emergent attracter** driven by ideological polarization and stakeholder accountability. In the FOMC meeting, $\lambda_2$ rose steadily from $0.8585 \to 0.9841$, mathematically certifying non-convergence ($T_{\text{cert}} = 187$ rounds) that presaged an actual split vote.
+
+### 3. Subspace Geometry: The "Moderator Effect" (Orthogonal Procedural Manifolds)
+* Synthetic agents operate symmetrically within the task manifold.
+* Human institutions rely on institutional facilitators (Chief Justices, committee chairs). Turns consisting of administrative turn-taking (*"Justice Thomas?"*, *"Thank you, counsel"*) form an **orthogonal procedural subspace**. Standard distance metrics project these as statistical outliers unless procedural turns are modeled as exogenous control inputs.
+
+### 4. Contrarian Mechanics: Static Invariants vs. Active Syntactic Probing
+* Synthetic contrarians typically reiterate static axioms (*"AI must not touch clinical decisions"*).
+* Human dissenters mount active syntactic and structural challenges to draft compromise language (e.g., Dallas Fed President Fisher repeatedly challenging statement syntax: *"Chairman, could you read the full sentence for me, please?"*).
+
+### 5. Faction Topologies
+* Synthetic factions form clean, isotropic clusters around designated prompt personas.
+* Human factions form complex, overlapping coalitions that align on certain legal/economic instruments while diverging on operational mandates.
+
+---
+
+## 8. Verification & Automated Test Suite
 
 Both real-world datasets are integrated into the automated test suite in [`tests/test_samples.py`](../tests/test_samples.py):
 

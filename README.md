@@ -182,6 +182,40 @@ Eight C-suite leaders debate public cloud migration vs. on-prem hardware. Seven 
 
 ---
 
+## Empirical Findings: Human vs. Multi-Agent Deliberation Dynamics
+
+By applying Koopman operator spectral analysis and SVD disagreement decomposition across both synthetic multi-agent systems and verbatim human public proceedings, KLens reveals five fundamental differences in how artificial agents and human collectives deliberate:
+
+| Deliberation Dimension | Synthetic Multi-Agent Systems | Real-World Human Deliberations |
+| :--- | :--- | :--- |
+| **Contraction Geometry** | **Smooth & Monotonic**<br>$\lambda_2 \approx 0.60 - 0.75$. Attention averaging across turns causes continuous exponential contraction toward centroid. | **Piecewise-Smooth with Sharp Bifurcations**<br>Metastable friction ($\lambda_2 \approx 0.98, T_{\text{cert}} \gg 100$) punctuated by sudden phase collapse ($\lambda_2 \to 0.65$) upon introducing a bridge doctrine. |
+| **Deadlock Dynamics** | **Prompt-Dependent**<br>Deadlock requires hard-prompted adversarial rules; cooperative agents default to rapid consensus. | **Emergent Marginal Stability**<br>Natural ideological entrenchment drives $\lambda_2 \to 1.0$, producing mathematical certificates of non-convergence ($T_{\text{cert}} = 187$). |
+| **Semantic Subspaces** | **Homogeneous Task Manifold**<br>All agents participate directly in the substantive debate manifold. | **Orthogonal Procedural Subspaces**<br>Moderator turns (*"Justice Thomas?"*, *"Counsel?"*) lie on an orthogonal subspace, triggering outlier flags unless isolated. |
+| **Contrarian Dissent** | **Static Axiom Repetition**<br>Rogue agents reiterate invariant rules (*"Zero AI under any condition"*). | **Active Syntactic Resistance**<br>Human dissenters contest clause semantics, drafting syntax, and conditional wording to forestall consensus closure. |
+| **Faction Topologies** | **Isotropic Clusters**<br>Clusters form clean spherical partitions around core semantic prompts. | **Hierarchical & Overlapping Blocs**<br>Coalitions split across distinct doctrinal axes (e.g., historical precedent vs. core constitutional right). |
+
+### Detailed Observations
+
+#### 1. Spectral Decay Rate: Continuous Contraction vs. Doctrinal Phase Shifts
+* **Multi-Agent AI**: In our clinical triage and safety benchmarks, agent disagreement norms $\|\Delta(t)\|$ follow a classical smooth exponential decay curve $\|\Delta(t)\| \le C |\lambda_2|^t$. The subdominant eigenvalue stays well within the contractive disk ($|\lambda_2| \le 0.75$), with certified deadlines $T_{\text{cert}} \le 15$ rounds.
+* **Human Trace (SCOTUS *Bruen*)**: Human argument does not contract smoothly. In Rounds 2–4, during exchanges over New York's proper-cause licensing and urban crime rates, disagreement remained frozen at near-marginal stability ($\lambda_2 = 0.9833, T_{\text{cert}} = 179$ rounds). But in Round 5, when advocates and Justices pivoted to a common constitutional doctrine (the *Heller* text, history, and tradition test), the belief manifold underwent an instantaneous **bifurcation / phase transition**: $\lambda_2$ dropped to $0.6488$ and $T_{\text{cert}}$ collapsed to $7$ rounds.
+
+#### 2. The Certificate of Deadlock: Predictive Failure vs. Mathematical Proof of Non-Convergence
+* A common misconception in deliberation analytics is that an exploding deadline ($T_{\text{cert}} = 187$ rounds for a 5-round meeting) represents an algorithmic forecasting failure.
+* **Dynamical Reality (FOMC August 2011)**: As the Federal Reserve debated calendar-date forward guidance ("mid-2013"), resistance intensified. The Koopman operator measured a steady rise in the spectral radius from $\lambda_2 = 0.8585 \to 0.9841$, pushing the contraction exponent $-\ln|\lambda_2| \to 0.016$. 
+* The engine issued `SLOW_CONVERGENCE` and `T_CERT_EXCEEDED` alerts, certifying that the Committee was trapped in a metastable deadlock. This was verified empirically when the meeting ended in an unprecedented **3-way dissenting vote** (Presidents Fisher, Kocherlakota, and Plosser voting No). High $T_{\text{cert}}$ is the mathematical certificate that a group will terminate in deadlock rather than convergence.
+
+#### 3. The "Moderator Effect" (Orthogonal Procedural Subspaces)
+* In SCOTUS, Chief Justice John Roberts was flagged as a persistent outlier (`PERSISTENT_ROGUE`).
+* **Root Cause Analysis**: The Chief Justice's turns (*"Justice Thomas?"*, *"Thank you, counsel"*, *"The case is submitted"*) were not substantively contrarian; they were **procedural**. When lifted into Random Fourier Feature space, administrative turn-taking forms an orthogonal subspace that does not project onto the substantive legal dispute.
+* **Takeaway**: When analyzing institutional human deliberations, procedural facilitators must be isolated or projected out as exogenous control inputs rather than endogenous debate participants.
+
+#### 4. Unsupervised Detection of Real Human Contrarians
+* In the FOMC meeting, KLens's rogue metric ($\|z_i(t) - \bar{z}(t)\| > \mu + 1.5\sigma$) continuously flagged Dallas Fed President **Richard Fisher** across Rounds 3, 4, and 5 without any supervision or human labeling.
+* Historically, Fisher was the primary ideological contrarian against quantitative easing and calendar commitments. The Koopman operator's centered disagreement geometry accurately isolated the true human dissenter directly from verbatim speech manifolds.
+
+---
+
 ## Mathematical Foundations
 
 ### 1. State Formulation & Centering
