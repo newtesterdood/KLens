@@ -8,6 +8,8 @@ This directory contains reference datasets and discussion transcripts for testin
 
 | File | Format | Agents | Rounds | Scenario & Deliberation Dynamics |
 | :--- | :--- | :--- | :--- | :--- |
+| `scotus_bruen_oral_argument.json` | JSON | 12 | 6 | **US Supreme Court Oral Argument (*NYSRA v. Bruen*, 2021)**<br>370 real human dialogue turns between 9 Supreme Court Justices and 3 Advocates. Demonstrates early deadline spike ($T_{\text{cert}} = 179$ rounds), constitutional text/history faction alignment, and Chief Justice procedural isolation. |
+| `fomc_monetary_policy_aug2011.json` | JSON | 25 | 5 | **Federal Reserve FOMC Monetary Policy Meeting (Aug 9, 2011)**<br>258 real human debate turns across 25 Fed Governors and Presidents debating calendar-date forward guidance ("mid-2013"). Isolates persistent dissenter (Richard Fisher), flags sluggish consensus ($\lambda_2 = 0.9841$), and reveals 3-way dissent deadlock. |
 | `clinical_slm_debate.json` | JSON | 6 | 4 | **Clinical SLM Deployment & Regulatory Audit (Rogue Benchmark)**<br>Six specialist agents debate deploying Small Language Models in clinical triage. Isolates contrarian dissenter (Agent 5) and demonstrates spectral faction identification. |
 | `llm_safety_consensus.json` | JSON | 6 | 4 | **LLM AI Safety Evaluation Debate**<br>Six autonomous LLM agents debate judge models vs. human review. Demonstrates smooth contraction towards a hybrid architecture. |
 | `boardroom_deadlock_polarization.jsonl` | JSONL | 8 | 4 | **Executive Committee Infrastructure Strategy**<br>Eight leaders debate cloud migration vs. on-prem. Demonstrates entrenched faction polarization, high spectral radius ($\|\lambda_2\| \ge 0.97$), and persistent contrarian dissent. |
@@ -17,11 +19,14 @@ This directory contains reference datasets and discussion transcripts for testin
 
 ## Running the Samples
 
-### 1. Render Visual Diagnostic Dashboard (One-Liner)
+### 1. Analyze Real-World Human Discussion Traces
 
 ```bash
-# Load transcript and render 4-panel spectral analysis & rogue diagnostic figure
-klens plot samples/clinical_slm_debate.json --output out/clinical_diagnostic.png
+# 1. SCOTUS Oral Argument (370 turns across 12 Justices & Counsel)
+klens plot samples/scotus_bruen_oral_argument.json --output out/scotus_telemetry.png
+
+# 2. Federal Reserve FOMC Rate Deliberation (258 turns across 25 Fed Leaders)
+klens plot samples/fomc_monetary_policy_aug2011.json --output out/fomc_telemetry.png
 ```
 
 ### 2. Multi-Agent LLM Safety Debate (JSON)

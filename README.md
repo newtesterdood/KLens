@@ -128,6 +128,52 @@ Eight C-suite leaders debate public cloud migration vs. on-prem hardware. Seven 
   Position: "Infrastructure automation scripts staged for hybrid deployment."
 ```
 
+#### 3. US Supreme Court Oral Argument Benchmark (`samples/scotus_bruen_oral_argument.json`)
+370 verbatim human turns across 12 speakers (9 Supreme Court Justices and 3 Advocates in *NYSRA v. Bruen*). Early debate rounds exhibit severe friction ($\lambda_2 = 0.9833, T_{\text{cert}} = 179$ rounds) before collapsing toward the constitutional *Heller* text/history standard ($\lambda_2 = 0.7126, T_{\text{cert}} = 9$ rounds):
+
+```
+=== Deliberation Semantic Synthesis ===
+• Center of Disagreement: Second Amendment vs. Other States
+  "The primary debate axis centers on the trade-off between second amendment and other states."
+• Consensus Centroid Concept: Second Amendment & I Think
+  "As to the general question about Heller, we agree completely that the Court ought to apply the method from Heller, which we, like I think all the parties, take to be look to the text, history, and tradition of the Second Amendment right..."
+
+--- Faction Topics & Positions ---
+• Faction 3 (Brett M. Kavanaugh, Brian H. Fletcher): History and Tradition
+  Position: "Clement responded to what you're saying on history and tradition by saying you have to look at carry laws more generally."
+• Faction 6 (Neil Gorsuch): Text and History
+  Position: "Others say, yes, text and history is appropriate, but we're not going to extend the Heller right until and unless the Court first does so through its own text and history analysis."
+• Faction 7 (Paul D. Clement, Samuel A. Alito, Jr.): Second Amendment
+  Position: "In a country with the Second Amendment as a fundamental right, simply having more firearms cannot be a problem and can't be a government interest just to put a cap on the number of firearms."
+
+--- Rogue Dissent Position (John G. Roberts, Jr.) ---
+• Stance:   Justice Gorsuch
+  Position: "Justice Thomas?"  [Flagged: procedural moderator turns lie on an orthogonal subspace]
+```
+
+#### 4. Federal Reserve FOMC Monetary Policy Benchmark (`samples/fomc_monetary_policy_aug2011.json`)
+258 substantive turns across 25 Federal Reserve policymakers debating explicit calendar-date forward guidance ("mid-2013"). KLens tracks mounting ideological resistance ($\lambda_2 = 0.9841, T_{\text{cert}} = 187$ rounds), isolates the historic 3-way dissent, and pinpoints Dallas Fed President Richard Fisher as the persistent contrarian:
+
+```
+=== Deliberation Semantic Synthesis ===
+• Center of Disagreement: Language From Alternative vs. Monetary Policy
+  "The primary debate axis centers on the trade-off between language from alternative and monetary policy."
+• Consensus Centroid Concept: Language From Alternative & Alternative B
+  "If we choose not to clarify our anticipation, as in alternative B without any additional language, I think we need to explain why more clearly."
+
+--- Faction Topics & Positions ---
+• Faction 10 (Roll Call Vote): Historic 3-Way Dissent
+  Position: "Bernanke: Yes, Dudley: Yes, Duke: Yes, Evans: Yes, Fisher: No, Kocherlakota: No, Plosser: No, Raskin: Yes, Tarullo: Yes, Yellen: Yes"
+• Faction 13 (Esther George / Charles Evans): Alternative A Language
+  Position: "If you’re going to take three dissents, then I think we should go to the language of alternative A and take out paragraph 4..."
+• Faction 17 (Daniel Tarullo, Janet Yellen): Monetary Policy Tools
+  Position: "I think that first sentence really does help us a little bit with that “range of policy tools.”"
+
+--- Rogue Dissent Position (Fisher) ---
+• Stance:   Persistent Dissenter (Dallas Fed President)
+  Position: "Chairman, could you read the full sentence for me, please?"
+```
+
 ---
 
 ## Mathematical Foundations
