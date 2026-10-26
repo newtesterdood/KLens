@@ -132,3 +132,52 @@ def test_sample_fda_adcom(capsys):
         assert "Agents: 17" in out
         assert "Round  5" in out
 
+
+def test_sample_delaware_merger(capsys):
+    sample_file = os.path.join(SAMPLES_DIR, "delaware_merger_deliberation.json")
+    assert os.path.exists(sample_file)
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        out_csv = os.path.join(tmpdir, "out_delaware.csv")
+        ret = main(["run", sample_file, "--output", out_csv])
+        assert ret == 0
+        assert os.path.exists(out_csv)
+
+        out = capsys.readouterr().out
+        assert "Agents: 14" in out
+        assert "Round  5" in out
+        assert "Delaware Law" in out
+
+
+def test_sample_puc_infrastructure(capsys):
+    sample_file = os.path.join(SAMPLES_DIR, "puc_infrastructure_hearing.json")
+    assert os.path.exists(sample_file)
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        out_csv = os.path.join(tmpdir, "out_puc.csv")
+        ret = main(["run", sample_file, "--output", out_csv])
+        assert ret == 0
+        assert os.path.exists(out_csv)
+
+        out = capsys.readouterr().out
+        assert "Agents: 14" in out
+        assert "Round  5" in out
+        assert "Battery Storage" in out or "Decision 22-12-056" in out
+
+
+def test_sample_city_council_policy(capsys):
+    sample_file = os.path.join(SAMPLES_DIR, "city_council_policy_meeting.json")
+    assert os.path.exists(sample_file)
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        out_csv = os.path.join(tmpdir, "out_council.csv")
+        ret = main(["run", sample_file, "--output", out_csv])
+        assert ret == 0
+        assert os.path.exists(out_csv)
+
+        out = capsys.readouterr().out
+        assert "Agents: 14" in out
+        assert "Round  5" in out
+        assert "Parking and Density" in out or "Vote Aye" in out
+
+

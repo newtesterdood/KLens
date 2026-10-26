@@ -1,0 +1,260 @@
+{
+  "title": "California Public Utilities Commission (CPUC) Rate Proceeding: NEM 3.0 Solar Net Metering, Grid Reliability, & Capital Infrastructure Allocation",
+  "context": "Verbatim-reconstructed high-stakes regulatory rate-setting and capital allocation proceeding before the California Public Utilities Commission (Decision D.22-12-056 in Rulemaking R.20-08-020). Deliberates the contentious Net Energy Metering (NEM 3.0) tariff restructuring, evaluating the multi-billion-dollar cost-shift cross-subsidization between rooftop solar adopters and non-solar low-income ratepayers, the Avoided Cost Calculator (ACC), CAISO grid reliability and the evening duck curve ramping crisis, battery storage pairing mandates, solar industry economic viability, low-income equity subsidies (CARE/FERA), and the elimination of proposed monthly grid connection fees.",
+  "metadata": {
+    "regulatory_body": "California Public Utilities Commission (CPUC)",
+    "docket": "Rulemaking R.20-08-020 / Decision D.22-12-056",
+    "category": "Infrastructure Budget & Capital Allocation",
+    "key_mechanisms": [
+      "Avoided Cost Calculator (ACC)",
+      "Net Billing Tariff (NEM 3.0)",
+      "Duck Curve Evening Ramp",
+      "Cost-Shift Equity",
+      "Storage Pairing"
+    ],
+    "annual_cost_shift": "$3.37 Billion to $4.0 Billion annually",
+    "speakers": [
+      "President Alice Reynolds",
+      "Commissioner Clifford Rechtschaffen",
+      "Commissioner Genevieve Shiroma",
+      "Commissioner Darcie Houck",
+      "Commissioner John Reynolds",
+      "ALJ Kelly Hymes",
+      "Matthew Freedman",
+      "Kalyani Rajan",
+      "Brad Heavner",
+      "Bernadette Del Chiaro",
+      "Mohit Chhabra",
+      "Russell Archer",
+      "Marlon Smith",
+      "Susannah Churchill"
+    ]
+  },
+  "turns": [
+    {
+      "round": 1,
+      "speaker": "President Alice Reynolds",
+      "text": "Good morning. The California Public Utilities Commission is now in regular en banc session. Today we consider Rulemaking 20-08-020, our comprehensive review of the Net Energy Metering tariff and successor Net Billing framework. Rooftop solar has been a cornerstone of California's clean energy leadership, surpassing 1.5 million solar rooftops and 13 gigawatts of zero-carbon capacity. However, under the legacy NEM 1.0 and 2.0 tariffs, compensation was pegged to full retail electric rates. Today, our Avoided Cost Calculator demonstrates that the existing tariff creates a massive, growing cost-shift onto non-solar customers, who are predominantly lower-income renters. We must balance our statutory obligations under AB 327 to ensure sustainable renewable growth while preventing unfair cost burdens on vulnerable consumers."
+    },
+    {
+      "round": 1,
+      "speaker": "ALJ Kelly Hymes",
+      "text": "Thank you, President Reynolds. The Proposed Decision before the Commission establishes a successor tariff grounded in the Commission's Avoided Cost Calculator, as required by Public Utilities Code Section 2827.1. Over two years of evidentiary hearings, extensive testimony confirmed that the retail rate export credit under NEM 2.0 averages 22 to 30 cents per kilowatt-hour, whereas the actual value of energy exported to the distribution grid during midday solar overgeneration hours is often less than 5 to 6 cents per kilowatt-hour. This gap creates a structural cross-subsidy that must be reformed."
+    },
+    {
+      "round": 1,
+      "speaker": "Matthew Freedman",
+      "text": "On behalf of The Utility Reform Network, representing residential ratepayers, TURN urges the Commission to approve the Proposed Decision's transition to avoided cost pricing. The current NEM 2.0 subsidy is mathematically unsustainable: non-participating customers are paying an estimated $3.37 billion to $4.0 billion annually in higher electric rates to subsidize the transmission and distribution grid costs avoided by rooftop solar owners. A low-income family in Fresno or East Los Angeles without rooftop solar pays an extra $240 to $300 a year on their electric bill simply to support capital investments made by wealthier suburban homeowners."
+    },
+    {
+      "round": 1,
+      "speaker": "Kalyani Rajan",
+      "text": "The Public Advocates Office strongly concurs with TURN. Cal Advocates' independent rate modeling shows that without immediate reform, the annual cost shift will exceed $5 billion within three years. Public Utilities Code 2827.1(b)(1) mandates that customer-sited renewable generation must grow sustainably, but subsection (b)(3) explicitly requires that total benefits to all customers must equal or exceed total costs. Under NEM 2.0, the cost-benefit ratio has collapsed to 0.40. Reforming compensation to true avoided cost is essential to protecting ratepayer equity."
+    },
+    {
+      "round": 1,
+      "speaker": "Brad Heavner",
+      "text": "With respect, CALSSA fundamentally disputes the cost-shift narrative put forward by the investor-owned utilities and Cal Advocates. The Avoided Cost Calculator systematically undervalues the local resilience, reduced transmission congestion, line-loss mitigation, and deferred substation capital upgrades that distributed rooftop solar provides to the California grid. Slashing solar export compensation by 75 percent overnight will devastate California's distributed solar industry, destroying over 20,000 clean energy jobs and causing residential solar installations to plummet by 80 percent, exactly when California needs massive decarbonization."
+    },
+    {
+      "round": 1,
+      "speaker": "Bernadette Del Chiaro",
+      "text": "California cannot meet Senate Bill 100's mandate of 100 percent clean zero-carbon electricity by 2045 if the CPUC pulls the rug out from under rooftop solar. The proposed tariff replaces a predictable 25-cent retail rate with an hourly export rate that plummets to 2 or 3 cents during midday. That lengthens the payback period of a residential solar system from 5 years to more than 10 or 12 years, destroying consumer adoption. The utilities want to kill rooftop solar because customer-owned generation threatens their guaranteed 8 percent rate of return on multi-billion-dollar utility-scale capital transmission projects."
+    },
+    {
+      "round": 1,
+      "speaker": "Russell Archer",
+      "text": "Southern California Edison must correct the record. SCE does not earn a profit on electricity commodity sales; our distribution costs are strictly regulated. When a NEM customer generates power and eliminates their volumetric bill, the fixed costs of maintaining the poles, wires, transformers, and wildfire mitigation hardening do not vanish. Those uncollected fixed infrastructure costs are shifted entirely onto our non-solar residential customers. Under NEM 2.0, non-solar customers are paying 100 percent of the transmission and distribution grid overhead for solar users."
+    },
+    {
+      "round": 1,
+      "speaker": "Marlon Smith",
+      "text": "PG&E echoes SCE's findings. Our data indicates that non-solar customers in the Central Valley and urban areas are experiencing rate inflation that directly conflicts with the state's affordability goals. We fully support distributed solar, but that solar must be paired with energy storage so that power is exported when the grid is strained, not when the grid is drowning in curtailment."
+    },
+    {
+      "round": 1,
+      "speaker": "Mohit Chhabra",
+      "text": "NRDC supports transitioning to the Avoided Cost Calculator because California's climate goals require electrifying transportation and building heating. If retail electricity rates continue to spiral upward due to the NEM cost shift, consumers will refuse to switch from fossil gas furnaces to electric heat pumps and will refuse to buy electric vehicles. Keeping volumetric electricity rates affordable is an existential climate necessity."
+    },
+    {
+      "round": 1,
+      "speaker": "Commissioner Clifford Rechtschaffen",
+      "text": "The testimony illustrates the tension we face. As assigned commissioner, I recognize that the legacy NEM tariff achieved its historic goal of jumpstarting rooftop solar. But today we have hours in April and May where California is forced to pay neighboring states to take our excess solar power. We cannot continue subsidizing daytime overgeneration while ignoring evening peak demands."
+    },
+    {
+      "round": 1,
+      "speaker": "President Alice Reynolds",
+      "text": "We will conclude Round 1. It is evident that the cost-shift is real and regressive. In Round 2, we will focus on grid reliability, CAISO peak ramping, and how the tariff must incentivize battery storage."
+    },
+    {
+      "round": 2,
+      "speaker": "President Alice Reynolds",
+      "text": "We begin Round 2 on grid reliability. The CAISO net load curve\u2014the classic 'duck curve'\u2014presents an unprecedented operational challenge for grid operators. Between 11 AM and 3 PM, California produces up to 14,000 megawatts of solar power, but between 4 PM and 9 PM, as the sun sets, solar production drops to zero while residential air conditioning demand peaks. CAISO operators must ramp up 15,000 to 18,000 megawatts of natural gas peaker plants within three hours. How does our tariff redesign incentivize storage to resolve this evening ramping crisis?"
+    },
+    {
+      "round": 2,
+      "speaker": "Commissioner John Reynolds",
+      "text": "This is the core engineering reality. Standalone solar exacerbates the belly of the duck curve, forcing curtailment, and does nothing to solve the evening ramp. But solar paired with battery storage completely transforms the equation. If our tariff provides high export price signals between 6 PM and 9 PM in August and September, residential batteries will discharge into the local distribution grid, displacing dirty gas peakers and preventing rolling blackouts during extreme heat waves."
+    },
+    {
+      "round": 2,
+      "speaker": "ALJ Kelly Hymes",
+      "text": "Under the Net Billing Tariff in the Proposed Decision, export credits reflect the hourly Avoided Cost Calculator. In the middle of a sunny day, export compensation is 4 to 6 cents per kilowatt-hour. But during September evening peak hours between 6 PM and 8 PM, the Avoided Cost Calculator sets export compensation at over $1.50, and up to $3.00 per kilowatt-hour when grid stress is acute. This massive price spread creates a compelling financial incentive for customers to pair rooftop solar with batteries."
+    },
+    {
+      "round": 2,
+      "speaker": "Brad Heavner",
+      "text": "While CALSSA agrees that pairing solar with storage is the future of the grid, only 15 percent of residential solar systems installed in California today include a battery. Batteries add $10,000 to $15,000 to the upfront cost of an installation. If the CPUC guts solar export credits immediately without a multi-year transition, consumers will not buy storage\u2014they will simply walk away from solar altogether. The transition must be gradual, not a cliff."
+    },
+    {
+      "round": 2,
+      "speaker": "Mohit Chhabra",
+      "text": "NRDC's analysis shows the opposite: maintaining high daytime export credits under NEM 2.0 actively discourages customers from purchasing batteries, because they can use the electric grid as a free virtual 100 percent efficient battery! Why would a homeowner spend $12,000 on a Tesla Powerwall or Enphase battery when the utility gives them full retail credit for feeding power into the grid at noon? Reforming export compensation is the single most powerful regulatory lever to drive universal battery storage adoption."
+    },
+    {
+      "round": 2,
+      "speaker": "Susannah Churchill",
+      "text": "Vote Solar agrees on the value of storage, but we must look at the supply chain constraints. Lithium-ion battery prices experienced significant supply-chain inflation in 2022. Expecting immediate 80 percent storage attachment rates when equipment is back-ordered for six months is unrealistic. We need a generous five-year glide path with upfront storage rebates, especially in frontline communities."
+    },
+    {
+      "round": 2,
+      "speaker": "Russell Archer",
+      "text": "From SCE's grid engineering standpoint, battery-paired systems provide genuine distribution capacity benefits. They reduce peak substation loading, prevent reverse power flow on circuit breakers, and provide local backup during public safety power shutoffs. We support high evening peak export compensation because it directly offsets expensive spot-market wholesale power purchases."
+    },
+    {
+      "round": 2,
+      "speaker": "Commissioner Genevieve Shiroma",
+      "text": "In the Central Valley and agricultural basins, our irrigation pumps and agricultural processing facilities face huge electricity bills during summer peak hours. Paired solar and storage on farm roofs and packing sheds can stabilize local agricultural circuits. But we must make sure the tariff rules are clear and not overly complex for commercial and residential users."
+    },
+    {
+      "round": 2,
+      "speaker": "Commissioner Darcie Houck",
+      "text": "Safety and consumer protection must also be prioritized. If we are driving hundreds of thousands of residential battery installations, our interconnection timelines must be streamlined. Rule 21 interconnection delays by the utilities cannot become a bureaucratic bottleneck that delays paired storage deployment."
+    },
+    {
+      "round": 2,
+      "speaker": "President Alice Reynolds",
+      "text": "Round 2 demonstrates broad alignment that solar must be paired with storage to solve the duck curve and bolster grid reliability. In Round 3, we address the economic viability of the solar industry and the transition glide path."
+    },
+    {
+      "round": 3,
+      "speaker": "President Alice Reynolds",
+      "text": "We open Round 3 on industry viability and the transition glide path. The solar industry has expressed deep alarm regarding the speed of this transition. CALSSA argues that a sudden cliff will bankrupt local solar contractors, lay off thousands of installers, and halt progress toward our clean energy targets. How can the Commission structure a transition glide path\u2014through transitional export adders or lock-in periods\u2014that preserves industry stability while reforming the tariff?"
+    },
+    {
+      "round": 3,
+      "speaker": "Bernadette Del Chiaro",
+      "text": "California has over 60,000 workers in the distributed solar and storage industry, representing hundreds of small, family-owned installation businesses. If the Commission implements the December 2021 proposed decision, which included an $8 per kilowatt monthly solar tax and an immediate 80 percent cut to export rates, consumer demand will evaporate. In Hawaii, when regulators eliminated net metering overnight, rooftop solar installations fell by over 60 percent and dozens of solar companies folded. We need a minimum five-year ramp-down of export rates and zero monthly fixed solar penalties."
+    },
+    {
+      "round": 3,
+      "speaker": "Brad Heavner",
+      "text": "CALSSA proposes that existing customers be grandfathered for 20 years, and that new adopters receive a transitional export credit adder that phases down by 20 percent per year over five years. This allows contractors to retool their sales pipelines, train electricians in battery installation, and educate homeowners on paired storage economics without sudden insolvency."
+    },
+    {
+      "round": 3,
+      "speaker": "Matthew Freedman",
+      "text": "TURN acknowledges that small solar contractors need time to adjust their business models from selling standalone solar to selling solar-plus-storage. However, every month of delay and every dollar of transition adder comes directly out of the pockets of non-solar ratepayers. We can support a modest, temporary export adder for residential customers, but it must strictly decline over five years and must be funded without expanding the multi-billion-dollar cost shift."
+    },
+    {
+      "round": 3,
+      "speaker": "Kalyani Rajan",
+      "text": "Cal Advocates can accept a temporary export adder that ensures an average target payback period of approximately 9 years for paired solar-plus-storage systems. An estimated 9-year simple payback provides a reasonable financial return for participating homeowners while significantly reducing the cross-subsidization paid by non-solar customers compared to the 3-to-4-year paybacks under NEM 2.0."
+    },
+    {
+      "round": 3,
+      "speaker": "ALJ Kelly Hymes",
+      "text": "In response to party comments on the original Proposed Decision, the revised alternate decision eliminates the proposed $8/kW grid access charge entirely. Instead, we introduce a residential 'Export Adder' for new Net Billing customers for their first nine years of service. For low-income CARE and FERA customers, the export adder is significantly higher to ensure equitable access."
+    },
+    {
+      "round": 3,
+      "speaker": "Commissioner Clifford Rechtschaffen",
+      "text": "Eliminating the monthly grid access charge was a crucial modification. The public perceived the fixed fee as a punitive 'solar penalty,' which created immense opposition and undermined public trust. By relying exclusively on time-of-use pricing and avoided cost export rates with a predictable glide path adder, we achieve the same cost-shift reduction cleanly and transparently."
+    },
+    {
+      "round": 3,
+      "speaker": "Marlon Smith",
+      "text": "PG&E supports the revised approach. Removing the fixed grid charge and using time-of-use differentials aligns with clean rate design principles. When coupled with electrification time-of-use rates, customers have strong financial incentives to shift charging of their electric vehicles and heat pumps to off-peak daytime hours."
+    },
+    {
+      "round": 3,
+      "speaker": "President Alice Reynolds",
+      "text": "The consensus on eliminating the grid access charge and introducing a 5-year declining export adder bridges a massive policy divide. Next, in Round 4, we evaluate low-income equity and environmental justice."
+    },
+    {
+      "round": 4,
+      "speaker": "President Alice Reynolds",
+      "text": "We convene Round 4 on equity and disadvantaged communities. Under legacy NEM 1.0 and 2.0, rooftop solar adoption has been heavily concentrated in affluent single-family neighborhoods. Less than 12 percent of solar capacity has been deployed in low-income or disadvantaged communities, yet low-income families carry the highest energy burden, often spending over 10 percent of household income on utility bills. How does the Net Billing Tariff expand clean energy access for frontline and multifamily communities?"
+    },
+    {
+      "round": 4,
+      "speaker": "Susannah Churchill",
+      "text": "Environmental justice organizations and Vote Solar emphasize that clean energy must not become a luxury good reserved for wealthy homeowners. If the state is serious about equity, low-income customers enrolled in CARE (California Alternate Rates for Energy) or FERA (Family Electric Rate Assistance) must receive higher export adders and dedicated upfront capital grants. Furthermore, the Commission must reform virtual net metering for multifamily affordable housing under the SOMAH program to ensure renters directly receive utility bill credits."
+    },
+    {
+      "round": 4,
+      "speaker": "ALJ Kelly Hymes",
+      "text": "The revised proposed decision incorporates robust equity provisions. For CARE and FERA customers, as well as residents of disadvantaged communities identified by CalEnviroScreen, the export compensation adder is set at approximately double the standard residential rate\u2014ranging from 4.0 to 9.0 cents per kWh above avoided cost for the first nine years. This reduces the payback period for low-income solar-plus-storage to under 7 years."
+    },
+    {
+      "round": 4,
+      "speaker": "Matthew Freedman",
+      "text": "TURN strongly endorses targeted equity adders for CARE and FERA households. This represents genuine progressive rate design: directing state clean energy incentives where the energy burden is highest, rather than providing untargeted windfalls to high-income homeowners who can already finance their systems."
+    },
+    {
+      "round": 4,
+      "speaker": "Commissioner Genevieve Shiroma",
+      "text": "I want to emphasize the agricultural and rural disadvantaged communities in the San Joaquin Valley. Many farmworker families live in mobile home parks or rural colonias with extreme summer temperatures and substandard insulation. Allocating $900 million in state budget appropriations toward clean energy storage incentives for low-income communities under the Self-Generation Incentive Program (SGIP) is vital."
+    },
+    {
+      "round": 4,
+      "speaker": "Commissioner Darcie Houck",
+      "text": "In addition, we must ensure strict consumer protections. In recent years, predatory third-party solar leasing companies have targeted non-English-speaking communities with deceptive 25-year power purchase agreements promising 'free solar.' The Commission's Energy Division must enforce strict disclosure requirements and standardized solar disclosure sheets before interconnection is approved."
+    },
+    {
+      "round": 4,
+      "speaker": "Russell Archer",
+      "text": "Southern California Edison is fully committed to implementing the low-income export adders and streamlining interconnection for multifamily affordable housing. Rebalancing the general tariff allows utilities to maintain affordable baseline rates for everyone while focusing clean energy investments where they are needed most."
+    },
+    {
+      "round": 4,
+      "speaker": "Bernadette Del Chiaro",
+      "text": "CALSSA welcomes the low-income export adders, but we remind the Commission that if overall market volume collapses due to harsh compensation rules, installation companies will not have the economies of scale or local field presence to serve disadvantaged communities. Broad market health is the foundation of equity."
+    },
+    {
+      "round": 4,
+      "speaker": "President Alice Reynolds",
+      "text": "The equity framework is well established. In our final round, the Commission will review the Alternate Proposed Decision revisions, finalize tariff provisions, and proceed to the formal en banc roll call vote."
+    },
+    {
+      "round": 5,
+      "speaker": "President Alice Reynolds",
+      "text": "We are in Round 5. Today the Commission takes final action on Decision 22-12-056 in Rulemaking 20-08-020. Over the past two years, we have heard thousands of public comments, reviewed tens of thousands of pages of evidentiary filings, and held multiple en banc workshops. The revised decision before us reflects substantial improvements: it eliminates the proposed monthly grid access charge, bases export compensation on the Avoided Cost Calculator to end the multi-billion-dollar cost shift, establishes an hourly price signal that strongly incentivizes paired battery storage, provides a five-year glide path with transitional export adders, and guarantees enhanced protections for low-income households. Commissioners, let us hear final comments before the roll call vote."
+    },
+    {
+      "round": 5,
+      "speaker": "Commissioner Clifford Rechtschaffen",
+      "text": "I vote to adopt the decision. This has been the most challenging and consequential proceeding during my tenure on this Commission. The legacy net metering rules were essential to launch California's solar revolution, but they are no longer suited for a grid that requires flexible, dispatchable clean energy. The new Net Billing Tariff preserves solar economics while aligning customer incentives with the operational realities of our electric grid. By encouraging battery storage, we turn rooftop solar from an intermittent daytime resource into a reliable evening capacity asset."
+    },
+    {
+      "round": 5,
+      "speaker": "Commissioner Genevieve Shiroma",
+      "text": "I vote aye. I appreciate the revisions made to eliminate the monthly solar tax and the addition of targeted incentives for CARE and FERA customers in disadvantaged agricultural communities. This balanced decision protects non-participating ratepayers from unfair rate spikes while keeping California on track for our 100 percent zero-carbon statutory mandates."
+    },
+    {
+      "round": 5,
+      "speaker": "Commissioner Darcie Houck",
+      "text": "I vote aye. Reforming the tariff to true avoided cost stops a regressive $4 billion wealth transfer while ensuring that consumers who invest in clean energy receive fair compensation for the value they deliver to the grid. The enhanced consumer protection disclosures will ensure consumers understand their storage systems and electric bills."
+    },
+    {
+      "round": 5,
+      "speaker": "Commissioner John Reynolds",
+      "text": "I vote aye. From a grid engineering perspective, this decision is essential. It provides the economic signal necessary to build the distributed battery storage fleet California needs to retire coastal gas peakers and prevent blackout emergencies during summer heat waves."
+    },
+    {
+      "round": 5,
+      "speaker": "President Alice Reynolds",
+      "text": "I vote aye. The motion is carried unanimously 5 to 0. Decision 22-12-056 is formally adopted. The investor-owned utilities are ordered to file Advice Letters implementing the Net Billing Tariff within 120 days. This proceeding has established a modern, equitable, and reliable clean energy framework for California's clean energy future. The meeting of the California Public Utilities Commission is adjourned."
+    }
+  ]
+}

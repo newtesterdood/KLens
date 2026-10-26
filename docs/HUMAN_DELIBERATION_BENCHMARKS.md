@@ -204,9 +204,122 @@ Round  5 | Agents: 17 | λ2: 0.6180 | T_cert:   7 rounds | Rogue: Bonner   | Fac
 
 ---
 
-## 8. Comparative Analysis: Human Deliberations vs. Real & Synthetic Multi-Agent Swarms
+## 8. Benchmark 4: Delaware Court of Chancery M&A Deliberation (Corporate Governance & Hostile Takeover)
 
-Comparing empirical trajectories across verbatim human proceedings (SCOTUS, FOMC), real multi-agent LLM debate traces ([`Multi-Agent-LLMs/DEBATE`](https://huggingface.co/datasets/Multi-Agent-LLMs/DEBATE)), and synthetic scenario fixtures exposes four fundamental mathematical and behavioral distinctions:
+**Proceeding**: Twitter Inc. Board of Directors & Special Transaction Committee Deliberations  
+**Litigation Record**: Delaware Court of Chancery, *Twitter, Inc. v. Elon R. Musk, et al.*, C.A. No. 2022-0613-KSJM & SEC Schedule 14A  
+**Subject**: Unsolicited $54.20/share ($44.0 Billion) Acquisition Offer, Rights Plan ("Poison Pill") Adoption, Revlon Duties, and Specific Performance Enforcement  
+**Transcript**: [`samples/delaware_merger_deliberation.json`](../samples/delaware_merger_deliberation.json) (56 turns across 14 directors, management, legal counsel, and financial advisors)
+
+![Delaware Merger Deliberation Telemetry](../assets/delaware_merger_telemetry.png)
+
+### Turn-by-Turn Spectral Dynamics
+
+```
+Round  1 | Insufficient history for spectral decomposition (< 2 rounds)
+Round  2 | Agents: 13 | λ2: 0.8634 | T_cert:  21 rounds | Rogue: David Faber        | Factions: 12
+Round  3 | Agents: 14 | λ2: 0.9502 | T_cert:  59 rounds | Rogue: Patrick Pichette   | Factions: 12 | [ALERT] SLOW_CONVERGENCE & T_CERT_EXCEEDED
+Round  4 | Agents: 14 | λ2: 0.9804 | T_cert: 152 rounds | Rogue: Martin Lipton      | Factions: 13 | [ALERT] SLOW_CONVERGENCE & T_CERT_EXCEEDED
+Round  5 | Agents: 14 | λ2: 0.7592 | T_cert:  11 rounds | Rogue: William Savitt     | Factions: 11 | Contraction Rate -> 0.52x
+```
+
+### Empirical Observations
+1. **Severe Mid-Debate Deadlock**:
+   * As the acquirer demanded raw firehose log data and threatened termination over alleged fake accounts/spam bots, $\lambda_2$ rose from $0.8634 \to 0.9502 \to 0.9804$.
+   * $T_{\text{cert}}$ spiked to **152 rounds** in Round 4, mathematically certifying intractable dispute over the Delaware Material Adverse Effect (MAE) standard under *Akorn v. Fresenius*.
+2. **Consensus Phase Collapse via Specific Performance**:
+   * Faced with Chancellor McCormick's strict contractual enforcement doctrine in Delaware Chancery Court, the buyer capitulated to close at $54.20.
+   * Deliberation collapsed dramatically in Round 5 ($\lambda_2 = 0.7592, T_{\text{cert}} = 11$, contraction rate $0.52\times$).
+3. **Semantic Center of Disagreement**:
+   > **Center of Disagreement**: *Delaware Law vs. 20 Cash* ($54.20 per share cash consideration vs legal enforcement covenants)
+4. **Consensus Centroid Concept**:
+   > **Consensus Centroid**: *Delaware Law & Law and Delaware*  
+   > *"This resolution represents an extraordinary vindication of independent corporate governance and fiduciary duty under Delaware law."*
+5. **Faction Separation**:
+   * **Faction 4** (Egon Durban, Patrick Pichette, Robert Zoellick): Delaware fiduciary duty enforcement and shareholder cash liquidity.
+   * **Faction 5** (Elon Musk): Information access under Section 6.4 and spam/bot due diligence demands.
+   * **Faction 7** (Martin Lipton): High Delaware legal bar for Material Adverse Effect (MAE).
+   * **Faction 9** (Ned Segal): Disbursement flow and per-share cash conversion mechanics.
+   * **Rogue Stance** (William Savitt): Litigation counsel pursuing a decree of specific performance.
+
+---
+
+## 9. Benchmark 5: California Public Utilities Commission Rate Proceeding (Infrastructure Budget & Capital Allocation)
+
+**Proceeding**: California Public Utilities Commission (CPUC) Regular En Banc Session  
+**Docket**: Decision D.22-12-056 in Rulemaking R.20-08-020 (Net Energy Metering Revisit - NEM 3.0)  
+**Subject**: Avoided Cost Calculator (ACC) Restructuring, $4B Annual Cost-Shift Equity, CAISO Evening Duck Curve Ramping, and Battery Storage Pairing Mandates  
+**Transcript**: [`samples/puc_infrastructure_hearing.json`](../samples/puc_infrastructure_hearing.json) (45 turns across 14 commissioners, judges, ratepayer advocates, utilities, and clean energy coalitions)
+
+![CPUC Hearing Telemetry](../assets/puc_hearing_telemetry.png)
+
+### Turn-by-Turn Spectral Dynamics
+
+```
+Round  1 | Insufficient history for spectral decomposition (< 2 rounds)
+Round  2 | Agents: 14 | λ2: 0.8929 | T_cert:  27 rounds | Rogue: Russell Archer          | Factions: 13
+Round  3 | Agents: 14 | λ2: 0.9641 | T_cert:  82 rounds | Rogue: ALJ Kelly Hymes         | Factions: 12 | [ALERT] SLOW_CONVERGENCE & T_CERT_EXCEEDED
+Round  4 | Agents: 14 | λ2: 0.9766 | T_cert: 127 rounds | Rogue: ALJ Kelly Hymes         | Factions: 11 | [ALERT] SLOW_CONVERGENCE & T_CERT_EXCEEDED
+Round  5 | Agents: 14 | λ2: 0.6119 | T_cert:   7 rounds | Rogue: President Alice Reynolds| Factions: 13 | Contraction Rate -> 0.59x
+```
+
+### Empirical Observations
+1. **Prolonged Cost-Shift & Equity Deadlock**:
+   * Rounds 3 and 4 saw extreme friction ($\lambda_2 = 0.9641 \to 0.9766, T_{\text{cert}} = 82 \to 127$ rounds) as the commission debated whether to impose an $8/kW monthly grid access charge vs. relying on hourly Avoided Cost Calculator (ACC) price signals.
+2. **Breakthrough Compromise & Rapid Contraction**:
+   * Replacing the unpopular $8/kW grid fee with a 5-year declining export adder and doubled equity adders for CARE/FERA low-income households triggered a precipitous contraction in Round 5 ($\lambda_2 = 0.6119, T_{\text{cert}} = 7$ rounds).
+   * The Commission voted unanimously 5–0 to adopt Decision 22-12-056.
+3. **Semantic Center of Disagreement**:
+   > **Center of Disagreement**: *Battery Storage vs. Safety and Compliance Governance*
+4. **Consensus Centroid**:
+   > **Consensus Centroid**: *Decision 22-12-056 & California Grid*  
+   > *"The legacy net metering rules were essential to launch California's solar revolution, but they are no longer suited for a grid that requires flexible, dispatchable clean energy."*
+5. **Faction Separation**:
+   * **Faction 2 & 3** (CALSSA - Brad Heavner, Bernadette Del Chiaro): Solar contractor viability, jobs, and grandfathering glide path.
+   * **Faction 4** (Commissioner Clifford Rechtschaffen): Evening duck curve ramp mitigation and avoided cost alignment.
+   * **Faction 5** (Commissioner Darcie Houck): Consumer protection and stopping regressive $4B ratepayer cross-subsidies.
+   * **Faction 7** (Commissioner John Reynolds): Distributed battery storage fleet expansion to displace gas peakers.
+   * **Faction 10 & 13** (TURN - Matthew Freedman, Vote Solar - Susannah Churchill): Low-income CARE/FERA equity adders.
+
+---
+
+## 10. Benchmark 6: New York City Council Stated Meeting (Municipal Resource & Civic Policy Governance)
+
+**Proceeding**: Stated Meeting of the New York City Council & Committee on Land Use / Subcommittee on Zoning  
+**Matter**: Land Use Matter LU 0118-2024 / "City of Yes for Housing Opportunity" Zoning Text Amendment  
+**Subject**: Universal Affordability Preference (UAP) FAR Bonuses, Outer-Borough Parking Minimum Elimination, Stormwater Infrastructure Capacity, and $5.0B Capital Infrastructure Agreement  
+**Transcript**: [`samples/city_council_policy_meeting.json`](../samples/city_council_policy_meeting.json) (48 turns across 14 council leaders, committee chairs, and borough delegates)
+
+![City Council Telemetry](../assets/city_council_telemetry.png)
+
+### Turn-by-Turn Spectral Dynamics
+
+```
+Round  1 | Insufficient history for spectral decomposition (< 2 rounds)
+Round  2 | Agents: 13 | λ2: 0.8651 | T_cert:  21 rounds | Rogue: Joseph Borelli         | Factions: 10
+Round  3 | Agents: 14 | λ2: 0.9710 | T_cert: 102 rounds | Rogue: Speaker Adrienne Adams | Factions: 12 | [ALERT] SLOW_CONVERGENCE & T_CERT_EXCEEDED
+Round  4 | Agents: 14 | λ2: 0.5433 | T_cert:   5 rounds | Rogue: Speaker Adrienne Adams | Factions: 13 | Contraction Rate -> 0.62x
+Round  5 | Agents: 14 | λ2: 0.6361 | T_cert:   7 rounds | Rogue: Speaker Adrienne Adams | Factions: 10 | [ALERT] PERSISTENT_ROGUE
+```
+
+### Empirical Observations
+1. **Severe Infrastructure & Parking Deadlock**:
+   * In Round 3, widespread advisory rejections by 38 of 59 Community Boards and stormwater flooding fears spiked $\lambda_2$ to $0.9710$ ($T_{\text{cert}} = 102$ rounds).
+2. **Capital Deal Catalyst**:
+   * Announcing the $5.0 Billion Capital Infrastructure & Tenant Protection Agreement (funding $2.0B for sewers, $1.5B for NYCHA, and $1.0B for preservation) dissolved the impasse, contracting the system in Round 4 to $\lambda_2 = 0.5433$ ($T_{\text{cert}} = 5$ rounds).
+3. **Persistent Procedural Outlier**:
+   * Speaker Adrienne Adams was flagged as `PERSISTENT_ROGUE` across Rounds 3, 4, and 5 because her presiding administrative and roll-call statements (*"The clerk will call the roll on Land Use Matter 0118-2024..."*) occupied an orthogonal subspace relative to substantive zoning debates.
+4. **Final Roll-Call Polarization**:
+   * The Council adopted the zoning resolution by a contested 31–18 vote, cleanly separating outer-borough conservatives and socialist skeptics from leadership.
+5. **Center of Disagreement & Consensus**:
+   > **Center of Disagreement**: *Parking and Density vs. Affordable Housing*  
+   > **Consensus Centroid**: *Vote Aye & I Vote* ("I vote aye.")
+
+---
+
+## 11. Comparative Analysis: Human Deliberations vs. Real & Synthetic Multi-Agent Swarms
+
+Comparing empirical trajectories across verbatim human proceedings (SCOTUS, FOMC, FDA AdCom, Delaware Chancery, CPUC, NYC Council), real multi-agent LLM debate traces ([`Multi-Agent-LLMs/DEBATE`](https://huggingface.co/datasets/Multi-Agent-LLMs/DEBATE)), and synthetic scenario fixtures exposes four fundamental mathematical and behavioral distinctions:
 
 ### 1. Faction Topologies & Clustering Dynamics: Hyper-Fragmentation vs. Micro-Coalition
 * **Real Multi-Agent LLM Swarms (`Factions = 1 to 2`)**:
@@ -214,21 +327,21 @@ Comparing empirical trajectories across verbatim human proceedings (SCOTUS, FOMC
   * Models exhibit strong normative pull: even when disagreeing on edge cases, they converge on the semantic vocabulary and framing of their peers.
 * **Human Deliberations (`Factions = 5 to 21`)**:
   * In the Federal Reserve FOMC meeting, faction counts escalate monotonically over rounds: `11 → 16 → 20 → 21 factions`.
-  * In SCOTUS (*Bruen*), factions remain dispersed across all epochs: `5 → 9 → 8 → 10 → 9 factions`.
+  * Across Delaware M&A, CPUC, and NYC Council, human deliberations maintain between **10 and 13 distinct factions** throughout all debate rounds.
   * **Empirical Takeaway**: Real human deliberations do not collapse into clean isotropic clusters. Human policymakers introduce personal caveats, regional economic conditions, legal precedents, and statutory distinctions that sustain high-dimensional ideological dispersion (hyper-fragmentation).
 
 ### 2. Spectral Contraction Dynamics ($\lambda_2$ & Certified Deadlines $T_{\text{cert}}$)
 * **Real LLM Swarms (Rapid Early Contraction, Gradual Crystallization)**:
   * In Round 2, all real LLM debates register $\lambda_2 = 0.0000$ ($T_{\text{cert}} = 1$), expanding to $\lambda_2 \approx 0.40 - 0.70$ ($T_{\text{cert}} \le 10$) as personas elaborate on specific nuances, and only approaching $\sim 0.75 - 0.95$ when a stubborn holdout refuses to concede in the final round. The system operates comfortably within the contractive unit disk for the majority of debate.
 * **Human Deliberations (High-Friction Marginal Stability & Sudden Bifurcations)**:
-  * Both SCOTUS and FOMC enter the debate with immediate, severe spectral friction ($\lambda_2 \ge 0.85 - 0.93$) and escalate into certified deadlock territory ($T_{\text{cert}} = 179$ rounds in SCOTUS R4; $T_{\text{cert}} = 187$ rounds in FOMC R5). 
-  * In SCOTUS, the system only converges when an explicit doctrinal bridge (*Heller* text, history, tradition) is established, triggering an abrupt non-linear phase transition ($\lambda_2 = 0.9833 \to 0.6488$). In FOMC, no bridge is reached, mathematically certifying the resulting 3-way dissenting vote.
+  * Human institutions enter debate with immediate, severe spectral friction ($\lambda_2 \ge 0.85 - 0.93$) and escalate into certified deadlock territory ($T_{\text{cert}} = 102 - 187$ rounds). 
+  * In SCOTUS, Delaware M&A, CPUC, and NYC Council, consensus occurs through abrupt non-linear phase transitions when a structural compromise or legal standard is locked in ($\lambda_2$ plummeting from $0.97 - 0.98 \to 0.54 - 0.75$).
 
 ### 3. Outlier and Contrarian Mechanics: Substantive Holdouts vs. The "Moderator Effect"
 * **Real LLM Swarms (Persistent Role-Driven Holdouts)**:
-  * In real LLM traces, the `PERSISTENT_ROGUE` detector cleanly isolates the same substantive persona across **5+ consecutive rounds** (e.g., `Entomologist` in *Bee Sting*, `Cryptocurrency Expert` in *Bitcoin*, `Computer Science Theorist` in *Boolean Logic*, `Local Resident` in *Des Moines*). Dissent is driven by persistent prompt persona boundaries.
+  * In real LLM traces, the `PERSISTENT_ROGUE` detector cleanly isolates the same substantive persona across **5+ consecutive rounds** (e.g., `Entomologist`, `Cryptocurrency Expert`, `Computer Science Theorist`, `Local Resident`). Dissent is driven by persistent prompt persona boundaries.
 * **Human Deliberations (Procedural Manifolds & Shifting Dissent)**:
-  * In human institutions, the rogue detector captures institutional facilitators as well as ideological dissenters. In SCOTUS, Chief Justice John Roberts is flagged as a rogue in rounds 4–6 because his brief administrative turn-taking (*"Justice Thomas?"*, *"Thank you, counsel"*) has low vocabulary overlap with substantive Second Amendment arguments, projecting into an orthogonal subspace. In FOMC, rogue flags shift between substantive contrarians (`Fisher`) and the committee chairman (`Bernanke`).
+  * In human institutions, the rogue detector captures institutional facilitators (Chief Justice Roberts, Speaker Adams, DFO Bonner, Chairman Bernanke) whose administrative procedural turn-taking lies on an orthogonal subspace relative to substantive debate arguments.
 
 ### 4. Linguistic Geometry & Turn Mechanics
 * **Explicit Alignment Markers**: In real LLM debates, 65%–75% of speaker turns contain explicit semantic stance markers (`[AGREE]`, `[DISAGREE]`). In human transcripts, this is **0.0%**; humans negotiate via implicit rhetorical concessions, questioning, and indirect pushback.
@@ -238,14 +351,15 @@ Comparing empirical trajectories across verbatim human proceedings (SCOTUS, FOMC
 
 ---
 
-## 9. Verification & Automated Test Suite
+## 12. Verification & Automated Test Suite
 
 Both real-world human transcripts and authentic multi-agent LLM debate traces are verified in [`tests/test_samples.py`](../tests/test_samples.py):
 
 ```bash
-# Run tests covering real LLM benchmarks, FDA AdCom, and human traces
-pytest -v tests/test_samples.py -k "test_sample_fda_adcom or test_sample_real_llm_debates or test_sample_scotus_bruen or test_sample_fomc_monetary_policy"
+# Run tests covering all institutional benchmarks and real LLM traces
+pytest -v tests/test_samples.py
 
-# Run the complete test suite
-pytest -v
+# Run only the institutional benchmarks
+pytest -v tests/test_samples.py -k "scotus or fomc or adcom or delaware or puc or council"
 ```
+

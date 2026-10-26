@@ -11,6 +11,9 @@ This directory contains reference datasets and discussion transcripts for testin
 | `scotus_bruen_oral_argument.json` | JSON | 12 | 6 | **US Supreme Court Oral Argument (*NYSRA v. Bruen*, 2021)**<br>370 real human dialogue turns between 9 Supreme Court Justices and 3 Advocates. Demonstrates early deadline spike ($T_{\text{cert}} = 179$ rounds), constitutional text/history faction alignment, and Chief Justice procedural isolation. |
 | `fomc_monetary_policy_aug2011.json` | JSON | 25 | 5 | **Federal Reserve FOMC Monetary Policy Meeting (Aug 9, 2011)**<br>258 real human debate turns across 25 Fed Governors and Presidents debating calendar-date forward guidance ("mid-2013"). Isolates persistent dissenter (Richard Fisher), flags sluggish consensus ($\lambda_2 = 0.9841$), and reveals 3-way dissent deadlock. |
 | `fda_aducanumab_adcom.json` | JSON | 17 | 5 | **FDA Advisory Committee Meeting (PCNS AdCom - Aducanumab, Nov 6, 2020)**<br>335 real human turns across 17 clinical voting members, biostatisticians, and agency officials evaluating conflicting Phase 3 trials (EMERGE 302 vs. ENGAGE 301). Demonstrates deadlock escalation ($T_{\text{cert}} = 148$ rounds) leading to an unprecedented 0–10–1 negative recommendation vote. |
+| `delaware_merger_deliberation.json` | JSON | 14 | 5 | **Delaware Court of Chancery M&A Deliberation (*Twitter v. Musk*, 2022)**<br>56 high-stakes turns across board directors, management, legal counsel (Wachtell Lipton), and bankers evaluating Musk's $54.20 unsolicited buyout. Tracks poison pill adoption under *Unocal*, Revlon duties, deadlock during fake accounts/MAE dispute ($T_{\text{cert}} = 152$ rounds), and rapid contraction to specific performance resolution ($\lambda_2 = 0.7592, T_{\text{cert}} = 11$). |
+| `puc_infrastructure_hearing.json` | JSON | 14 | 5 | **California Public Utilities Commission Rate Hearing (CPUC NEM 3.0 / D.22-12-056)**<br>45 real-world regulatory turns across 14 commissioners, judges, ratepayer advocates (TURN, Cal Advocates), utilities (SCE, PG&E), and solar coalitions (CALSSA, NRDC). Tracks $3.4B–$4.0B cost-shift debate, CAISO evening duck curve ramping, battery storage pairing mandates, deadlock ($T_{\text{cert}} = 127$ rounds), and unanimous 5–0 decision adoption ($\lambda_2 = 0.6119, T_{\text{cert}} = 7$). |
+| `city_council_policy_meeting.json` | JSON | 14 | 5 | **New York City Council Stated Meeting (Contested 'City of Yes' Zoning & Infrastructure Package)**<br>48 municipal legislative turns across 14 council leaders, land use chairs, and borough representatives. Deliberates Universal Affordability Preference (UAP), outer-borough parking minimum elimination, sewer/stormwater capacity, and deadlock ($T_{\text{cert}} = 102$ rounds) resolved by a landmark $5.0 Billion capital infrastructure agreement leading to a 31–18 stated roll-call vote ($\lambda_2 = 0.6361, T_{\text{cert}} = 7$). |
 | `real_llm_debate_des_moines.json` | JSON | 3 | 7 | **Real LLM Swarm Debate: Geography & Surfing (Hugging Face `Multi-Agent-LLMs/DEBATE`)**<br>35 turns across 3 expert LLM personas (*Geographer*, *Tourism Expert*, *Local Resident*). Real-world multi-round deliberation on geographical constraints with emergent consensus drift. |
 | `real_llm_debate_bitcoin.json` | JSON | 3 | 7 | **Real LLM Swarm Debate: Physicality of Digital Assets (`Multi-Agent-LLMs/DEBATE`)**<br>35 turns across 3 expert LLM personas (*Cryptocurrency Expert*, *Digital Wallet Specialist*, *Physicist*). Deliberates hardware wallet semantics vs. intangible ledger assets. |
 | `real_llm_debate_boolean_logic.json` | JSON | 3 | 7 | **Real LLM Swarm Debate: Boolean Algebra Computation (`Multi-Agent-LLMs/DEBATE`)**<br>35 turns across 3 expert LLM personas (*Computer Science Theorist*, *Computer Programmer*, *Mathematical Logician*). Formal logic debate mapping bitwise operations to universal computation. |
@@ -45,8 +48,23 @@ klens run samples/fda_aducanumab_adcom.json \
   --plot out/adcom_telemetry.png \
   --output out/metrics_adcom.csv
 
-# 4. Direct 4-Panel Visualization Plot (One-Liner)
-klens plot samples/scotus_bruen_oral_argument.json --output out/scotus_telemetry.png
+# 4. Delaware Chancery M&A Merger Deliberation (56 turns across 14 Directors & Advisors)
+klens run samples/delaware_merger_deliberation.json \
+  --plot assets/delaware_merger_telemetry.png \
+  --output out/metrics_delaware_merger.csv
+
+# 5. California PUC Infrastructure Rate Hearing (45 turns across 14 Commissioners & Advocates)
+klens run samples/puc_infrastructure_hearing.json \
+  --plot assets/puc_hearing_telemetry.png \
+  --output out/metrics_puc_hearing.csv
+
+# 6. NYC City Council Stated Meeting (48 turns across 14 Council Members & Chairs)
+klens run samples/city_council_policy_meeting.json \
+  --plot assets/city_council_telemetry.png \
+  --output out/metrics_city_council.csv
+
+# 7. Direct 4-Panel Visualization Plot (One-Liner)
+klens plot samples/delaware_merger_deliberation.json --output out/delaware_telemetry.png
 ```
 
 ### 2. Analyze Real-World Multi-Agent LLM Debate Traces (`Multi-Agent-LLMs/DEBATE`)

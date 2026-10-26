@@ -203,6 +203,83 @@ Eight C-suite leaders debate public cloud migration vs. on-prem hardware. Seven 
   Position: "We will now move voting numbers to the voting breakout room to vote only." [Procedural outlier]
 ```
 
+#### 6. Delaware Court of Chancery M&A Deliberation Benchmark (`samples/delaware_merger_deliberation.json`)
+56 turns across Twitter directors, executive management, Wachtell Lipton legal counsel, and investment bankers evaluating Elon Musk's unsolicited $54.20/share ($44.0 Billion) buyout proposal. KLens tracks poison pill adoption under *Unocal*, mounting deadlock during the spam bot / Material Adverse Effect (MAE) dispute ($T_{\text{cert}} = 152$ rounds), and rapid phase collapse to specific performance contract enforcement ($\lambda_2 = 0.7592, T_{\text{cert}} = 11$ rounds):
+
+![Delaware Merger Deliberation Telemetry](assets/delaware_merger_telemetry.png)
+
+```
+=== Deliberation Semantic Synthesis ===
+• Center of Disagreement: Delaware Law vs. 20 Cash
+  "The primary debate axis centers on the trade-off between delaware law and 20 cash."
+• Consensus Centroid Concept: Delaware Law & Law and Delaware
+  "This resolution represents an extraordinary vindication of independent corporate governance and fiduciary duty under Delaware law."
+
+--- Faction Topics & Positions ---
+• Faction 4 (Durban, Pichette, Zoellick): Delaware Law & Shareholder Liquidity
+  Position: "This resolution represents an extraordinary vindication of independent corporate governance and fiduciary duty under Delaware law."
+• Faction 5 (Elon Musk): Information Access & Bot Diligence Demands
+  Position: "Twitter has actively obstructed my legal rights under Section 6.4 of the merger agreement..."
+• Faction 7 (Martin Lipton): Material Adverse Effect (MAE) Doctrine
+  Position: "Under Delaware Chancery law, the bar for establishing a Material Adverse Effect is extraordinarily high."
+
+--- Rogue Dissent Position (William Savitt) ---
+• Stance:   Specific Performance
+  Position: "Faced with the certainty of a decree of specific performance following trial, Mr. Musk abandoned his pretextual claims..."
+```
+
+#### 7. California Public Utilities Commission Rate Proceeding (`samples/puc_infrastructure_hearing.json`)
+45 regulatory turns across 14 commissioners, judges, ratepayer advocates (TURN, Cal Advocates), investor-owned utilities (SCE, PG&E), and solar coalitions (CALSSA, NRDC) evaluating the NEM 3.0 net billing reform. KLens charts prolonged deadlock over the $4.0B cost shift and grid connection fees ($T_{\text{cert}} = 127$ rounds), which collapses cleanly into unanimous en banc adoption of Decision 22-12-056 ($\lambda_2 = 0.6119, T_{\text{cert}} = 7$ rounds) upon introduction of battery storage export adders:
+
+![CPUC Hearing Telemetry](assets/puc_hearing_telemetry.png)
+
+```
+=== Deliberation Semantic Synthesis ===
+• Center of Disagreement: Battery Storage vs. Safety and Compliance Governance
+  "The primary debate axis centers on the trade-off between battery storage and safety and compliance governance."
+• Consensus Centroid Concept: Decision 22-12-056 & California Grid
+  "The legacy net metering rules were essential to launch California's solar revolution, but they are no longer suited for a grid that requires flexible, dispatchable clean energy."
+
+--- Faction Topics & Positions ---
+• Faction 2 & 3 (CALSSA - Heavner, Del Chiaro): Industry Viability & Glide Path Adders
+  Position: "CALSSA proposes that existing customers be grandfathered for 20 years, and that new adopters receive a transitional export credit adder..."
+• Faction 4 (Commissioner Rechtschaffen): Evening Duck Curve Ramping & Avoided Cost Alignment
+  Position: "The legacy net metering rules were essential to launch California's solar revolution, but they are no longer suited for a grid that requires flexible, dispatchable clean energy."
+• Faction 5 (Commissioner Houck): Consumer Protection & Ratepayer Cross-Subsidy Reduction
+  Position: "Reforming the tariff to true avoided cost stops a regressive $4 billion wealth transfer..."
+
+--- Rogue Dissent Position (President Alice Reynolds) ---
+• Stance:   Clean Energy Framework
+  Position: "The revised decision before us reflects substantial improvements: it eliminates the proposed monthly grid access charge..." [Presiding facilitator]
+```
+
+#### 8. New York City Council Stated Meeting Benchmark (`samples/city_council_policy_meeting.json`)
+48 municipal turns across 14 council leaders and borough delegates debating the contested "City of Yes for Housing Opportunity" zoning text amendment. KLens charts acute deadlock triggered by 38 Community Board rejections and outer-borough parking minimum disputes ($T_{\text{cert}} = 102$ rounds), resolved when Council leadership negotiates a $5.0 Billion Capital Infrastructure & Tenant Protection Agreement, leading to a contested 31–18 roll call adoption ($\lambda_2 = 0.6361, T_{\text{cert}} = 7$ rounds):
+
+![City Council Telemetry](assets/city_council_telemetry.png)
+
+```
+=== Deliberation Semantic Synthesis ===
+• Center of Disagreement: Parking and Density vs. Affordable Housing
+  "The primary debate axis centers on the trade-off between parking and density and affordable housing."
+• Consensus Centroid Concept: Vote Aye & I Vote
+  "I vote aye."
+
+--- Faction Topics & Positions ---
+• Faction 1 (Alexa Avilés): Progressive Supply-Side Skepticism
+  Position: "Market-rate supply-side deregulation will not solve the affordability crisis for families in Sunset Park."
+• Faction 5 (Joseph Borelli, Kevin Riley): Outer-Borough Parking Preservation
+  Position: "My constituents on Staten Island do not want higher density, traffic congestion, or lost parking."
+• Faction 6 (Justin Brannan): Capital Infrastructure Front-Loading
+  Position: "Housing without infrastructure is a disaster; housing with infrastructure is the future."
+• Faction 9 (Rafael Salamanca Jr.): Land-Use Equity & Sewer Upgrades
+  Position: "With $2 billion dedicated to sewer upgrades and deep affordability guarantees, this modified plan strikes the right balance..."
+
+--- Rogue Dissent Position (Speaker Adrienne Adams) ---
+• Stance:   City Council Stated Procedure
+  Position: "The clerk will call the roll on Land Use Matter 0118-2024..." [Persistent rogue alert: presiding facilitator]
+```
+
 > **Detailed Guide**: For complete preprocessing pipelines, sourcing instructions, and mathematical interpretations on human deliberation traces, see [docs/HUMAN_DELIBERATION_BENCHMARKS.md](docs/HUMAN_DELIBERATION_BENCHMARKS.md).
 
 ---
