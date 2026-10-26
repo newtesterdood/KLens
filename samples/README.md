@@ -10,6 +10,7 @@ This directory contains reference datasets and discussion transcripts for testin
 | :--- | :--- | :--- | :--- | :--- |
 | `scotus_bruen_oral_argument.json` | JSON | 12 | 6 | **US Supreme Court Oral Argument (*NYSRA v. Bruen*, 2021)**<br>370 real human dialogue turns between 9 Supreme Court Justices and 3 Advocates. Demonstrates early deadline spike ($T_{\text{cert}} = 179$ rounds), constitutional text/history faction alignment, and Chief Justice procedural isolation. |
 | `fomc_monetary_policy_aug2011.json` | JSON | 25 | 5 | **Federal Reserve FOMC Monetary Policy Meeting (Aug 9, 2011)**<br>258 real human debate turns across 25 Fed Governors and Presidents debating calendar-date forward guidance ("mid-2013"). Isolates persistent dissenter (Richard Fisher), flags sluggish consensus ($\lambda_2 = 0.9841$), and reveals 3-way dissent deadlock. |
+| `fda_aducanumab_adcom.json` | JSON | 17 | 5 | **FDA Advisory Committee Meeting (PCNS AdCom - Aducanumab, Nov 6, 2020)**<br>335 real human turns across 17 clinical voting members, biostatisticians, and agency officials evaluating conflicting Phase 3 trials (EMERGE 302 vs. ENGAGE 301). Demonstrates deadlock escalation ($T_{\text{cert}} = 148$ rounds) leading to an unprecedented 0–10–1 negative recommendation vote. |
 | `real_llm_debate_des_moines.json` | JSON | 3 | 7 | **Real LLM Swarm Debate: Geography & Surfing (Hugging Face `Multi-Agent-LLMs/DEBATE`)**<br>35 turns across 3 expert LLM personas (*Geographer*, *Tourism Expert*, *Local Resident*). Real-world multi-round deliberation on geographical constraints with emergent consensus drift. |
 | `real_llm_debate_bitcoin.json` | JSON | 3 | 7 | **Real LLM Swarm Debate: Physicality of Digital Assets (`Multi-Agent-LLMs/DEBATE`)**<br>35 turns across 3 expert LLM personas (*Cryptocurrency Expert*, *Digital Wallet Specialist*, *Physicist*). Deliberates hardware wallet semantics vs. intangible ledger assets. |
 | `real_llm_debate_boolean_logic.json` | JSON | 3 | 7 | **Real LLM Swarm Debate: Boolean Algebra Computation (`Multi-Agent-LLMs/DEBATE`)**<br>35 turns across 3 expert LLM personas (*Computer Science Theorist*, *Computer Programmer*, *Mathematical Logician*). Formal logic debate mapping bitwise operations to universal computation. |
@@ -39,7 +40,12 @@ klens run samples/fomc_monetary_policy_aug2011.json \
   --output out/metrics_fomc.csv \
   --t-cert-limit 50
 
-# 3. Direct 4-Panel Visualization Plot (One-Liner)
+# 3. FDA Advisory Committee Risk Deliberation (335 turns across 17 Clinical Experts)
+klens run samples/fda_aducanumab_adcom.json \
+  --plot out/adcom_telemetry.png \
+  --output out/metrics_adcom.csv
+
+# 4. Direct 4-Panel Visualization Plot (One-Liner)
 klens plot samples/scotus_bruen_oral_argument.json --output out/scotus_telemetry.png
 ```
 

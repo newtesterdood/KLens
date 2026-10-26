@@ -1,0 +1,1677 @@
+[
+  {
+    "round": 1,
+    "speaker": "Fountain",
+    "text": "Thank you. The open public hearing portion is meeting has now concluded. We will no longer take comments from the audience. The committee will now its attention to address the task at hand, the careful consideration of the data before the committee, as well as the public comments. moment to just personally express my gratitude for all those who came forward for the public comments. I want to take a 198 I recognize sometimes those are difficult things to say in public and to recognize, and it's very much appreciated by the committee. We'll now turn our attention to the questions at hand. observers that while this meeting is open for public observation, public attendees may not participate except at the specific request of the panel. I'd like to remind public I'll open the question to discussion. Discussion point number 1, the primary evidence of effectiveness presented in support of aducanumab for the treatment of Alzheimer's disease is provided by Study 302. effectiveness provided by Study 302, viewed independently and without regard for Study 301, with particular consideration of the size of the study, design of the study, analysis of the results to assess the effects of the drugs, and consistency of results among various subgroups in the study. Discuss the evidence of So before we discuss the specific content, the question, before we discuss all this, is there any issue that needs to be raised or clarified 199 about the wording of this discussion point? I see that Drs. Alexander, Emerson, and Kryscio have their hands raised. I'm not sure if that's from before or from now. So if you have your hand raised and you're not asking about now, if you'd please put your hand down. Alright. Dr. Alexander?"
+  },
+  {
+    "round": 1,
+    "speaker": "Alexander",
+    "text": "Thank you."
+  },
+  {
+    "round": 1,
+    "speaker": "Fountain",
+    "text": "Yes. DR. ALEXANDER? Okay. Can you hear me? I wanted to ask a question of the FDA earlier, and it's relevant to this question. find the materials that the FDA has provided strikingly incongruent, and I have a very hard time understanding, after carefully reviewing, what I thought was a very well done and well articulated biostatistical review, which convincingly argued the evidence was, quote/unquote, \"At best, compelling include that there are substantial evidence of effectiveness,\" and in particular that Study 302 provides, quote/unquote, \"a robust and exceptionally persuasive study.\" I guess the bottom line is that I It just feels to me like the audio and the video on the TV are out of sync, and there are literally a dozen red threads that suggests concerns about the consistency of evidence, a dozen. suggesting support, there's another point or two that raises concerns. point with statistically significant different findings from placebo. analysis didn't have the opportunity -- For every point that you can find"
+  },
+  {
+    "round": 1,
+    "speaker": "Fountain",
+    "text": "So there's only one time Forty percent of the ITT Let me interrupt you for just a moment. think we need to change any wording in this discussion before we talk about -- 200 So the first question hand is do you"
+  },
+  {
+    "round": 1,
+    "speaker": "Alexander",
+    "text": "Well, the FDA wants to take a totality of evidence approach and seems to toggle back and forth between saying this is just about Study 302, and then selectively identifying elements of Studies 103 and 301 to support an assertion that 302 is robust, and I don't think that you can look at 3:02 in isolation. There have been some very good questions 201 about this already that highlight the inconsistency of findings across these three studies. understand the question, but I'm not convinced that this is where we should be focusing our time. So I"
+  },
+  {
+    "round": 1,
+    "speaker": "Fountain",
+    "text": "Well, I think that's under the discussion point. If we don't think there's anything to change the wording of the question, we can just turn to the discussion. that doesn't alter the wording at the moment and that's part of the discussion. So let's say that So let me just ask if Dr. Emerson has a question about the actual wording of the question or about the response to the question."
+  },
+  {
+    "round": 1,
+    "speaker": "Emerson",
+    "text": "I do have a question about the wording."
+  },
+  {
+    "round": 1,
+    "speaker": "Fountain",
+    "text": "Sure."
+  },
+  {
+    "round": 1,
+    "speaker": "Emerson",
+    "text": "They ask us to talk about 302 by itself, which I can do, but it has to take into account that this is the most exciting of results of two studies, and I need to make certain that the FDA is aware of that as they ask this question. And then part of this, I guess we could ask 202 Dr. Dunn to tell us what he thinks the p-value is from the primary analysis in 302, and this will tell me a lot about whether he's thinking that 302 independent of 301 means pretend that 301 was never done or whether it means adjust the inference to allow for the fact that this is the best of two studies. So Dr. Dunn, if you wouldn't mind telling me what you think the p-value is for the primary endpoint, that would help a lot."
+  },
+  {
+    "round": 1,
+    "speaker": "Fountain",
+    "text": "And how would you change the wording of the question based on that? wording of the question says \"viewed independently,\" so you might assume the question is assume 301 was never done. that."
+  },
+  {
+    "round": 1,
+    "speaker": "Emerson",
+    "text": "Because the That's how I would read I would not. I would not. can do valid inference on what we call extreme value statistics, the idea of give us what the sampling distribution is when it's based on this, yet only use the 302 data."
+  },
+  {
+    "round": 1,
+    "speaker": "Fountain",
+    "text": "So that's the nature of the I 203 question, and I think maybe we could save that for the discussion about whether or not that's --"
+  },
+  {
+    "round": 1,
+    "speaker": "Emerson",
+    "text": "No. This is important. This is a very important question because if we are to pretend that 301 never existed, well, we can talk about the scientific rigor and departures from that, that such would be. could say that we adjusted for that statistic by saying that the p-value is not 0.012 but it's closer to 0.024, still ignoring some multiple comparison issues but at least adjusting for the major aspect, in which case I can answer this question based on that. But for instance, you But I would hate for a --"
+  },
+  {
+    "round": 1,
+    "speaker": "Fountain",
+    "text": "Okay. So you --"
+  },
+  {
+    "round": 1,
+    "speaker": "Emerson",
+    "text": "-- [indiscernible]. (Crosstalk.)"
+  },
+  {
+    "round": 1,
+    "speaker": "Fountain",
+    "text": "Right. So you'd advocate to review that you'd like to remove the term \"viewed independently and without regard for Study 301\" or to know that it should remain intact because you'll answer differently."
+  },
+  {
+    "round": 1,
+    "speaker": "Emerson",
+    "text": "Well again, we can talk about 204 the sampling of 302, what the true sampling distribution was for 302, or we could talk about 302 with 301, taking both results. saying 302 is the best of two possible studies. That's one sampling distribution. saying we're going to look at 302, just the 302, and recognize that 301 carries the exact same weight and eventually would be taken care of in a meta-analysis. One result is Another is My interpretation is the FDA wants us to imagine that we can look at 302, just those results, but we need to recognize that that is the best of two studies conducted concurrently. again, if Dr. Dunn will tell me what his persuasive evidence means -- I heard \"persuasive evidence\" far more often than I heard what any results were, just conclusion. persuasive evidence is in terms of the p-value that he was looking at on that primary endpoint -- I realize there's totality of evidence, but I just want to know was he taking into account that that was a p-value that was approximately 0.024 or was And But if he'll tell me what his 205 he taking into account the erroneous conclusion that that was a p-value of 0.024."
+  },
+  {
+    "round": 1,
+    "speaker": "Fountain",
+    "text": "Okay. So is that question subsumed under Dr. Duda? hand raised. or do you have an independent issue on the wording of the question?"
+  },
+  {
+    "round": 1,
+    "speaker": "Duda",
+    "text": "DR. FOUNTAIN: Dr. Duda also had his Does that subsume your issue as well I have an independent question. Maybe you can ask that and then we'll see if we can put them together."
+  },
+  {
+    "round": 1,
+    "speaker": "Duda",
+    "text": "Sure. With regard to the statement for the treatment of Alzheimer's disease, I'd just like some clarification if they're asking us if this is a disease-modifying treatment, or a symptomatic treatment, or both, which way that they would like us to consider that statement."
+  },
+  {
+    "round": 1,
+    "speaker": "Fountain",
+    "text": "Okay. So you'd like a qualifier before treatment of Alzheimer's disease, the treatment of the symptoms of Alzheimer's disease, or treatment of the pathophysiology of Alzheimer's disease, or treatment of the progression of Alzheimer's disease? Is that the 206 kind of thing you're asking about?"
+  },
+  {
+    "round": 1,
+    "speaker": "Duda",
+    "text": "Yes, that would be helpful."
+  },
+  {
+    "round": 1,
+    "speaker": "Fountain",
+    "text": "Okay. I imagine the answer is going to be -- I guess we can word that anyway we want it, in a way, and then propose that. maybe we could turn our attention to Dr. Dunn and ask for comments on those two things. So Would you like a qualifier before Alzheimer's disease and do you want us to really view it independently without regard for Study 301?"
+  },
+  {
+    "round": 1,
+    "speaker": "Gold",
+    "text": "I'm sorry. Before we wordsmith the question, can we go through the rest of the folks that have issues with the wording?"
+  },
+  {
+    "round": 1,
+    "speaker": "Fountain",
+    "text": "see the hand raised."
+  },
+  {
+    "round": 1,
+    "speaker": "Gold",
+    "text": "Yes. I'm sorry. I didn't Dr. Gold? Yes. I have a particular issue with the viewed independently and without regard for 301 since those studies are identical in design, identical in inclusion/exclusion criteria, and identical presumably in biomarker analysis. I have real serious issues with how you can divorce the two studies from each other. So"
+  },
+  {
+    "round": 1,
+    "speaker": "Fountain",
+    "text": "Okay. 207 The question, you would like to us -- I'm having trouble what it is we're going to ask --"
+  },
+  {
+    "round": 1,
+    "speaker": "Gold",
+    "text": "You can do it independently -- (Crosstalk.)"
+  },
+  {
+    "round": 1,
+    "speaker": "Fountain",
+    "text": "Do you want us to remove the phrase \"view independently without regard for Study 301,\" but I think that's the nature of the question. I'm having trouble how to --"
+  },
+  {
+    "round": 1,
+    "speaker": "Gold",
+    "text": "Correct."
+  },
+  {
+    "round": 1,
+    "speaker": "Fountain",
+    "text": "DR. GOLD:"
+  },
+  {
+    "round": 1,
+    "speaker": "Fountain",
+    "text": "Dr. Kryscio?"
+  },
+  {
+    "round": 1,
+    "speaker": "Kryscio",
+    "text": "I'm going to reserve my -- understand that. Thank you. questions for a little bit later on when we get to 103."
+  },
+  {
+    "round": 1,
+    "speaker": "Fountain",
+    "text": "Okay. And about the clarity of the question from Dr. Onyike?"
+  },
+  {
+    "round": 1,
+    "speaker": "Onyike",
+    "text": "Thank you. Yes. I think I echo what Dr. Gold just asked. read this question as speaking specifically to data and not at all speaking to the testimonies we just And beyond that, I had. 208 I just want clarification."
+  },
+  {
+    "round": 1,
+    "speaker": "Fountain",
+    "text": "I think that's correct. Yes. The question's to discuss the evidence, so that means the evidence we know about, of the effectiveness, as we know effectiveness, to be provided by Study 302 -- that's the study called 302 -- viewed independently without regard for Study 301 -- that's the other study -- with particular consideration of the size of the study and these other issues. question clear and can we do that? The question is, is the So I guess the issue has been raised about is it possible to view independently without regard to Study 301? I think that the original issue was to make clear that you might not want to do that, but I think this is a question for the FDA and then a discussion and question, and voting I think is where we can declare what we think. words, if we have a specific point of clarity we need from Dr. Dunn, we can ask him, but I'm not quite sure what it is we're asking. Is that the nature of the question? In other clarity?"
+  },
+  {
+    "round": 1,
+    "speaker": "Emerson",
+    "text": "If I can clarify again, it's possible that if you tell me you are analyzing the best of two studies, I cannot know anything about the other study except for the fact that it wasn't the best, and I can talk about what the results are. endpoint is something 0.024 or higher. 209 Does someone have a specific point of And in that case, the p-value of the primary On the other hand, you could say pretend that Study 301 never existed. Imagine a world in which 302 was there. question to ask given the history, but the idea of just wanting to stress that we can view independently the results of 302, recognizing that it's the best of two studies without ever knowing what the results of 301 was, without knowing -- Now, I think that's a silly (Crosstalk.)"
+  },
+  {
+    "round": 1,
+    "speaker": "Fountain",
+    "text": "the nature of the question. the question is pretend like 301 -- in your wording, pretend like 301 didn't exist and just ask I think that's pretty clearly I think the nature of 210 about 302, because in the subsequent questions we're getting clarity on that, and then a consideration is how does that change your mind."
+  },
+  {
+    "round": 1,
+    "speaker": "Emerson",
+    "text": "But again, I don't think it is the same. I'm going to choose two numbers and only tell you what the highest number I chose was. has a different sampling distribution than if I just choose one number and tell you what it is. again, I just want it clear, because I have a problem with this entire question unless it's recognized that the p-value that was being reported throughout this thing of 0.012 is not a true p-value. be possible in a prespecified matter to tell the FDA I'm going to do two studies and I'm only going to give you the results of the best one. compute p-values, we compute confidence intervals, and we can do all sorts of things there. of us really do that."
+  },
+  {
+    "round": 1,
+    "speaker": "Fountain",
+    "text": "That So But if you wanted us to do this, it would We can Not many So I think your position is clear. I think we have to answer the question we're asked, and then we can discuss in our voting 211 how we voted and how that influenced our vote. Because if we just eliminate the question, I don't think that will be helpful. the questions and discussion are to get at those kinds of points to make clear what we think. think we just have to clearly understand what they're asking whether you agree or like it or not because then we have the opportunity in the voting to decide what we think of that."
+  },
+  {
+    "round": 1,
+    "speaker": "Emerson",
+    "text": "I think the reason for So I Well, I would then like to just register that I have not been super impressed with how the briefing book and presentations have gone from the FDA for this study. a certain extent, the clock has been run out and we haven't been able to ask questions because mainly the FDA just gave us conclusions and not results. I feel that, to So now we have trouble discussing this because it's all being supplanted by saying look over here and answer this irrelevant question, and we aren't really going to give you the opportunity to say how this study should be interpreted if we want to ignore the numbers from 301, but we may never, ever, ever, ever ignore the fact that 301 was done."
+  },
+  {
+    "round": 1,
+    "speaker": "Alexander",
+    "text": "212 This is Caleb Alexander, and I agree with that assessment, and I very much would like to get into some details here about the totality of evidence and about the conclusions that the FDA seems to be reaching, and about, as I said, the incongruous materials that have been provided, and dozens of questions that we really haven't had a chance to ask the FDA about. In particular, I'd like to query the FDA about any number of concerns that their own statistical reviewer have identified, and that I have not yet heard either an adequate response from the sponsor, but more importantly from the FDA regarding their own interpretation of those reviews."
+  },
+  {
+    "round": 1,
+    "speaker": "Fountain",
+    "text": "Okay. We can discuss that here and then vote because I don't think we're going to be able to get to the voting unless we do. So I think we should have some open discussion on this question, among others, and I think we've 213 heard clearly so far that there is an idea that 302 can't be viewed without thinking 301. So now let's move to Dr. Thambisetty, if you still have a question. (No response.)"
+  },
+  {
+    "round": 1,
+    "speaker": "Fountain",
+    "text": "Your phone is on mute if you're asking a Comment? question, Dr. Thambisetty. in the upper-left corner."
+  },
+  {
+    "round": 1,
+    "speaker": "Thambisetty",
+    "text": "Can you hear me now?"
+  },
+  {
+    "round": 1,
+    "speaker": "Fountain",
+    "text": "DR. THAMBISETTY: You have to unmute it Thank you, Dr. Fountain. I'm sorry about that. Yes. So I completely understand the points that Dr. Emerson and Dr. Alexander have made, and in fact I shared a similar concern. I take some measure of comfort from discussion number 7 and its accompanying both because I think that sort of gets to the point that we are trying to resolve here, because in the text for discussion 7, we are clearly allowed to discuss the impact of the results of Study 301 on the consideration of the results of Study 302. But (Automated interruption.)"
+  },
+  {
+    "round": 1,
+    "speaker": "Smirnakis",
+    "text": "Biogen. This is Karen Smirnakis with I'm back on."
+  },
+  {
+    "round": 1,
+    "speaker": "Fountain",
+    "text": "214 I think everyone was disconnected, so we're going to get back on to resume your comments."
+  },
+  {
+    "round": 1,
+    "speaker": "Bonner",
+    "text": "DFO. Yes. This is LaToya Bonner, Do you hear me?"
+  },
+  {
+    "round": 1,
+    "speaker": "Fountain",
+    "text": "Yes, we hear you."
+  },
+  {
+    "round": 1,
+    "speaker": "Smirnakis",
+    "text": "Okay. I can just make sure all of our --"
+  },
+  {
+    "round": 1,
+    "speaker": "Bonner",
+    "text": "DR. SMIRNAKIS: Yes, we're all back on here."
+  },
+  {
+    "round": 1,
+    "speaker": "Fountain",
+    "text": "It looks like all of the Yes, if you can, please. committee members are back on as well. Dr. Thambisetty was about to speak. ended up giving your comments I think."
+  },
+  {
+    "round": 1,
+    "speaker": "Thambisetty",
+    "text": "Great. May I continue, Dr. Fountain?"
+  },
+  {
+    "round": 1,
+    "speaker": "Fountain",
+    "text": "DR. THAMBISETTY: You Yes. I share the satisfaction and the concern about the wording of this question, 215 but I take some measure of comfort from the text for discussion point number 7, which to me looks that it gives us ample opportunity to discuss the impact of Study 301 on the results of Study 302. I know that. So as I have said, I hope I'm not speaking out of turn, but I think there is going to be ample opportunity for us to discuss 301 and 302 together."
+  },
+  {
+    "round": 1,
+    "speaker": "Fountain",
+    "text": "Yes, that's right. So I guess maybe that's another way to view it. I understood, so I'll take the prerogative to speak now. hand up. could put your hand down if you would. And I think there's no one else with their But if you're done, Dr. Thambisetty, you"
+  },
+  {
+    "round": 1,
+    "speaker": "Thambisetty",
+    "text": "DR. FOUNTAIN: Yes. I think the nature of this question is it would say -- I read this question to be, if you look at Study 302, is it a positive study? because it's designed well, analysis looks appropriate, consistency in the results, et cetera, if you view it in isolation. And in my view, yes, it's a positive study If there was a single 216 study as was intended prospectively designed, that makes it positive, unless you have concerns about stopping early and so forth, or something about the way it's analyzed. So I think the nature of this question is just look at 302; is it a positive study? That isn't what it says exactly but I think it's discussed, how I interpreted that, because then it gets down to the other issues as Dr. Thambisetty was saying. way to consider this question so we can get on to the other issues that you've brought up that are very relevant. So maybe we could look at that as a I think Dr. Alexander is next. (No response.)"
+  },
+  {
+    "round": 1,
+    "speaker": "Fountain",
+    "text": "Dr. Alexander, can you turn"
+  },
+  {
+    "round": 1,
+    "speaker": "Alexander",
+    "text": "I'm sorry. your -Thank you. Can you hear me now?"
+  },
+  {
+    "round": 1,
+    "speaker": "Fountain",
+    "text": "Yes."
+  },
+  {
+    "round": 1,
+    "speaker": "Alexander",
+    "text": "Thank you. So I will speak only to 302 and resist the 217 inclination to do otherwise. Study 302 there are some reasons for question. is that there's no correlation between plaque reduction and week 78 outcomes. good example where it feels a little bit like people want to have it both ways. there's an argument that molecular mechanisms provide a strong support of body of evidence to back up 302 as a robust, exceptionally persuasive study, but there's also a disclaimer that no formal claim of biomarker is being made, and no ability to explain why there's no correlation between plaque reduction and outcomes. I think even with One I think this is a In other words, A second source of concern about 302 is that the major stratum driving the findings, up to a third of patients had a mid-study dose increase and more unblinding or potential unblinding. is that the placebo response before and after Amendment 4 are completely separate among at least some subgroups, suggesting that these dose increases are entangled with placebo worsening. A third A fifth is that, as was pointed out by the 218 FDA's own reviewer, the failure of the low-dose arm in 302 means that technically the secondary endpoints for the high-dose arm are not interpretable, and even if they are, they're moderately correlated. is that, once again as pointed out by the FDA's own reviewer, there's no consistent effect across subgroups in 302, yet one would hope to see this with a strong efficacy signal. concerns about Study 302, even ignoring the fact that other studies have been performed. Then the last that I'd say"
+  },
+  {
+    "round": 1,
+    "speaker": "Fountain",
+    "text": "Okay. So these are five I think those all makes sense that are pointed out by the reviewer. From my perspective, there's a rough correlation with several things. decrease with treatment and it does separate in the groups. of negative [indiscernible] information. We saw amyloid plaque does So in the big picture there's just a lot (Crosstalk.)"
+  },
+  {
+    "round": 1,
+    "speaker": "Fountain",
+    "text": "DR. GOLD: Yes. in the discussion. I'm sorry. Next is Dr. Gold. I'm assuming we're already I think part of my concerns 219 about 302, if I talk about it in isolation, is what happened pre- and post-amendment and the actual numbers of subjects. comes into it because it's a question of who was being enrolled and what happened. And again, I'm sorry; 301 I will stipulate to these studies were well designed, and I think there's no question with the design of the study. is on the execution of the study. material that Biogen actually presented at the CTAD meeting a year ago, where they actually showed that when they made the amendments, these amendments did not get implemented overnight, it took a long time, and in fact there was a lot of heterogeneity in how the amendments got implemented. Part of the question I have Some of the I just would like to get more clarity on exactly how the amendment really impacted 302 because if you think about it, the amendment only impacted ApoE4 subjects at the highest dose, but there's evidence from looking at the ITT analysis and for the post-Amendment 4 population that was in effect on the low dose in the 302 study, which 220 makes absolutely no sense to me. And again, it's material that that Biogen presented at CTAD. So if you start to see changes in the low dose on the primary outcome measure from the ITT population versus the post-Amendment 4, you have to wonder whether everything in the high dose is noise. little bit more. at 302 in isolation, how the actual amendment affected it. So I really would like to understand a And again, if we're going to look The other part, if I may, we kind of danced around it. The study was declared futile. Subjects were brought to close-out visit. a huge amount of missing information which, again, has been referred to by both the sponsor, the FDA, and the statistical reviewer, but I've heard no discussion about whether the pattern of missingness actually has any bearing here. There's So it would be helpful to understand whether the analyses and the effect -- really, do we actually believe that these data are missing at random? Because that seems to be the assumption 221 that was made in the analyses, where the FDA reviewer was clearly saying, hey, there are red flags here that these data are missing not at random. those questions since we're already into the discussion of the study itself. So I'd like to get some clarity on some of"
+  },
+  {
+    "round": 1,
+    "speaker": "Fountain",
+    "text": "Those are questions you've raised about whether or not the missing data is non-random."
+  },
+  {
+    "round": 1,
+    "speaker": "Alexander",
+    "text": "Correct."
+  },
+  {
+    "round": 1,
+    "speaker": "Fountain",
+    "text": "The sponsor did provide I think three different analyses looking at the non-random data that didn't --"
+  },
+  {
+    "round": 1,
+    "speaker": "Alexander",
+    "text": "No. I'm sorry. They provided the random sensitivity analyses, but there's no diagnostic for missing not at random. And I really would like to hear from the FDA statistical reviewer on whether studies that are terminated for futility can really be expected to have missing data at random, which is how these data were analyzed."
+  },
+  {
+    "round": 1,
+    "speaker": "Fountain",
+    "text": "Okay. Next, Dr. Duda?"
+  },
+  {
+    "round": 1,
+    "speaker": "Duda",
+    "text": "222 I guess I'm going back to what I was saying before. question, Dr. Fountain, was it a positive study? But that's not what we're being asked, and I think we need to make that distinction. asked if it supports the effectiveness of aducanumab for the treatment of Alzheimer's disease. criteria is not the same as answering that question, I think, for some of the reasons that have already been raised by others, and I'll stop there. The way you couched the We're being Whether or not it met its primary outcome"
+  },
+  {
+    "round": 1,
+    "speaker": "Fountain",
+    "text": "I'd agree with that, too. As for evidence of effectiveness, I'm just saying it's a positive study at face value and take that as evidence of effectiveness. Next is Dr. Kesselheim."
+  },
+  {
+    "round": 1,
+    "speaker": "Kesselheim",
+    "text": "Hi. Some of the points that I was going to raise have been raised by others, but I just wanted to also make the point that analysis of this question is challenging for 223 me because we wouldn't be analyzing Study 302 in isolation unless 301 existed because 302 is half, or even at best two-thirds of a study. stopped for futility. by itself, it would have never been stopped for futility. final results were in. half or two-thirds of a study as your evidence of effectiveness for a drug. It was And if it would have existed It would have been continued until the"
+  },
+  {
+    "round": 1,
+    "speaker": "Fountain",
+    "text": "DR. KESSELHEIM:"
+  },
+  {
+    "round": 1,
+    "speaker": "Fountain",
+    "text": "So it's strange to rely on You mean about 302 or 301? 302. Sorry. What do you think about just this value of a positive statistical result with a smaller angst [indiscernible] has a bigger effectiveness than anticipated?"
+  },
+  {
+    "round": 1,
+    "speaker": "Kesselheim",
+    "text": "I think that's another issue to discuss just in terms of the way that the results are framed. framed in the context of percentage changes from placebo. order of change in 0.4 on an 18-point CDR-SB scale. So I think that's also a relevant issue to think Much of these results are The actual real effect size is on the 224 about."
+  },
+  {
+    "round": 1,
+    "speaker": "Fountain",
+    "text": "Okay. Actually, I think we're back to Dr. Emerson, who I went around the horn before getting back to."
+  },
+  {
+    "round": 1,
+    "speaker": "Emerson",
+    "text": "So I'm going after this question, again, just to say imagine that their primary endpoint had been saying we're going to take the best of two studies, in which case it all comes down to do we accept the p-value of 0.024 instead of what might be usual for a pivotal study of 0.01 or less? things that would go into this are how all the data hangs together, what the unmet need is, and so on. There's not any set rule. The Just to make clear, I do have a medical degree, but I am a biostatistician. But more importantly in this, I have family members who had very severe Alzheimer's, and I've watched my mother-in-law degenerate from a very vibrant person to somebody who is just a complete invalid over a space of 18 years. and that does influence whether I would take the 0.023 -- or 0.24, and this is best probably a So I understand what there is, 225 minimum p-value that's there. I'm not going to get into the other things, other multiple comparisons. internal consistency? What are the other things that make me believe that we might count this as a pivotal study? dose-response relationship. postulates and it's in the right direction. course, there's only so many things that three dose groups can present that's not there. But what is the Some of the things are the That's one of Koch's Of I will also concede the hypothesis that's very intriguing, that the oligomers are a more important target, but that's something that also has to be proven. the relevance of the former failures based on monoclonal antibodies to monomers, but it's very intriguing, something to be proven. that showed forethought prespecification, so that's why I attach a little bit of weight there. So I can't immediately discount It's something The internal consistency of the secondary endpoints, we saw for about two seconds a slide about the principal components analysis that I was 226 just trying to figure out, and they quickly say \"slide down\" and it goes away. points that they were trying to make are partially valid, which says if you look at all of the different components of the four major measures, the different components don't necessarily have overlap. But some of the However, as shown in the FDA statistical approach, there is high degree of correlation. If I could have asked more questions, I would have asked how that correlation might have differed across treatment groups because that can also be an indication of how the treatment is acting on things and whether there's common pathways. end of the day, principal components analysis was not what was being analyzed as we look at the secondary endpoint, so the overall correlation is the only thing we have. But at the I would have loved to see also a mediator analysis on whether the changes in plaque explain much of the differences in the cognitive endpoints, which is of course the burden of proof. The burden 227 of proof is we targeted the oligomers of the amyloid hoping that that would have an impact clinically, and our question is does that bear up; if it's a strong enough effect? more about the clinical aspects than I do about the -- I must say I care"
+  },
+  {
+    "round": 1,
+    "speaker": "Fountain",
+    "text": "Right."
+  },
+  {
+    "round": 1,
+    "speaker": "Emerson",
+    "text": "-- pathology. But these are the things that sort of have me down saying it's not quite enough to say that this is a pivotal study."
+  },
+  {
+    "round": 1,
+    "speaker": "Fountain",
+    "text": "I think that's an excellent summary of our discussion on this particular first question, and that is, to be crude about it, none of us like it, but if you force it to disregard 301, it appears that 302 could be positive and that there is evidence of effectiveness. subcomponent analyses, while they seem to support it aren't necessarily overwhelming, is what I think I understand the general discussion to be, with thoughts among all the different details and subcategories we talked about. But this 228 I'd just take my prerogative of one final comment that there is a dose response, it appears, in 302 for amyloid reduction based on the information we were given. with your last point that there are some trends towards that. So I'm just agreeing We do have limited time available, and we do want to address the questions we're asked, so let's turn to the vote in the time that we have."
+  },
+  {
+    "round": 1,
+    "speaker": "Perlmutter",
+    "text": "You know, I haven't been called on, and my hand's been up."
+  },
+  {
+    "round": 1,
+    "speaker": "Fountain",
+    "text": "DR. PERLMUTTER:"
+  },
+  {
+    "round": 1,
+    "speaker": "Fountain",
+    "text": "DR. PERLMUTTER: Oh, I'm sorry. Who is that? Joel Perlmutter. Okay. Dr. Perlmutter? I just want to make a couple of points. First of all, I do think that having this discussion point is being foist upon us and is artificial. I'm concerned about describing the benefits as multiple endpoints when I do believe we saw data that they are correlated; multiple endpoints are correlated. The specific points about 302, I think we see a lack of correlation 229 between the A-beta change and the clinical endpoint CDR-SB. I think that's a concern. I think the retrospective application of the definition of rapid progressors makes a concern for me and the differential unbinding in people getting the high dose. Even if we don't see statistical difference on the unbinding, when you add these things up, they can together cumulatively be an issue, and we saw that with just small groups of rapidly progressors removed in other places. I think these all raise questions. So this analysis is very sensitive to small changes in the numbers in which people are being included and excluded, so I'm very concerned about this."
+  },
+  {
+    "round": 1,
+    "speaker": "Fountain",
+    "text": "Okay. I think it's important that we don't think anything is foist upon us. purpose of this discussion is to have the discussion we're having that raised the concerns in the relevant areas and not -- and you can disagree or agree. specific -- And now we're about to vote on a very The"
+  },
+  {
+    "round": 1,
+    "speaker": "Thambisetty",
+    "text": "230 Dr. Fountain, may I -- Dr. Fountain, I have not had a chance to weigh in on this question either, so I'm just wondering --"
+  },
+  {
+    "round": 1,
+    "speaker": "Fountain",
+    "text": "Let's make this our last comment. Dr. Thambisetty?"
+  },
+  {
+    "round": 1,
+    "speaker": "Thambisetty",
+    "text": "DR. FOUNTAIN: Yes. Okay. So you can have a brief comment and then we'll move on to the vote, because in the vote we get to discuss more about our own opinion about it."
+  },
+  {
+    "round": 1,
+    "speaker": "Thambisetty",
+    "text": "Okay. I have significant concerns about characterizing Study 302 as being either robustly positive as described in the briefing materials or as characterizing it as a home run, which is what I thought I heard earlier in the morning. elaborate on why I'm concerned during the course of this meeting, I'd like to do that. So if I'm given an opportunity to Are you suggesting that I expand upon why I'm concerned right now or after we vote?"
+  },
+  {
+    "round": 1,
+    "speaker": "Fountain",
+    "text": "231 If you have additional concerns we haven't discussed, then you can say them right now."
+  },
+  {
+    "round": 1,
+    "speaker": "Thambisetty",
+    "text": "Thanks. My main concerns are with regards to the potential effect of unblinding of patients and caregivers. I think that's a huge concern with the study. Thirty-five percent of patients exposed to the drug developed ARIA, so it's inconceivable that patients and caregivers who are given a diagnosis of ARIA and who are then subjected to very intense serial MRI surveillance, which happens every month until the abnormalities are resolved, are going to be unblinded to the treatment. What makes this especially concerning is that the primary endpoint, which is the CDR sum of box scores, is entirely dependent upon subjective information that is provided to the rater by patients and their caregivers, and the same goes for the secondary endpoints like the NPI or the ADCS-MCI scale. sensitive to biases due to expectations on the part These scales are very, very 232 of patients and caregivers when they realize that they're on the treatment arm which is very likely to have occurred when you're being called in to come in for additional MRI scans because you have a drug-related adverse event. I really think the fact that these potentially unbiased patients and caregivers are then providing subjective information about behavior and function that determine their scores on the primary endpoint, as well as key secondary endpoints. think has been adequately addressed. There's a big concern that I don't The fact that the raters were blinded is really immaterial to this particular question because the information that the rater uses comes entirely from patients and caregivers for some of these scales. I think that is one concern."
+  },
+  {
+    "round": 1,
+    "speaker": "Fountain",
+    "text": "So that's a concern about unblinding."
+  },
+  {
+    "round": 1,
+    "speaker": "Thambisetty",
+    "text": "DR. FOUNTAIN: Correct. Do you have any other specific concerns you might talk about before the 233 vote?"
+  },
+  {
+    "round": 1,
+    "speaker": "Thambisetty",
+    "text": "I have one additional point about minimal clinically important difference which I think is relevant in terms of the magnitude of the effects that are being reported. the concept of minimally clinically important difference is very relevant to dementia clinical trials. are reported as relative differences in terms of percentage points in comparison to placebo make this slightly difficult to interpret because the strongest result is a relative difference of negative 0.39 points from placebo in the CDR sum of box scores. I think The fact that several of these outcomes This is also present as a relative difference of 22 percent from placebo. But what do these changes mean in terms of their functional significance? real-world benefit? This is what is captured by the concept of minimal clinically important difference, and that's defined as a smallest difference in score and the domain of Do they represent tangible Are they clinically important? 234 interest, which patients perceive as beneficial and which would mandate in absence of any troublesome side effects and cause a change in patient's management. There is empirically derived evidence for what constitutes minimal clinically important differences in dementia clinical trials. one paper that was just published by Andrews et al. in Alzheimer's and Dementia, which suggests that the MCID for patients with MCI, there's a change in CDR sum of box scores or MMSE of one point and for patients with mild Alzheimer's disease of two points. changes are extremely small."
+  },
+  {
+    "round": 1,
+    "speaker": "Fountain",
+    "text": "There's And if you use that as a yardstick, these Yes. So you think that it's not necessary clinically meaningful because it's such a small --"
+  },
+  {
+    "round": 1,
+    "speaker": "Thambisetty",
+    "text": "DR. FOUNTAIN: That is correct. I think we have the opportunity now to ask the FDA a question about the correlation of amyloid with clinical change in Study 302. I'm not sure who's -- Dr. Dunn, 235 Dr. Krudys, or someone else is going to address that."
+  },
+  {
+    "round": 1,
+    "speaker": "Krudys",
+    "text": "Kevin Krudys here about the correlation. include the placebo and the low-dose data. what you saw in the stats documents was the correlation for just at the high dose. see a correlation if you include the entirety of the data, and you did see a correlation in Study 103 across the doses there. to point that out. So there is a correlation if you I think So you do So I just want Second, I think in terms of correlation, you have to realize that the changes in the biomarkers are changing over time and it's just a snapshot of what we see at week 78. between the change in the biomarker and the change in the scale like CDR-SB, so that's not taken into account. with the model that can describe the time course in terms of the change in the reduction of brain amyloid versus CDR-SB, and they did find a relationship. There could be a delay I know the sponsor has done some work 236 So those are few things I think the committee should keep in mind in terms of thinking about the correlation. that it's not like change in beta-amyloid are being used as a surrogate here. the drug is doing, and there is some correlation between the changes and changes of clinical outcomes. And second, I'll just say It's a biomarker of what"
+  },
+  {
+    "round": 1,
+    "speaker": "Fountain",
+    "text": "Okay. Thank you. So now we can move to the vote, and remember at the vote we also have an opportunity to explain our vote as well. going to discuss these things anymore, but the questions provide sort of a roadmap, as I think Dr. Thambisetty was saying, to narrow down some of these points. So it's not as though we're not We can move on to the next question, which is a voting question, and Dr. LaToya Bonner will provide the instructions for the voting."
+  },
+  {
+    "round": 1,
+    "speaker": "Bonner",
+    "text": "For the record, LaToya Bonner, questions 2, 4, 6, and 8 are voting questions. Voting members will use the Adobe Connect platform 237 to submit their vote for this meeting. After the chairperson has read the voting question into the record and all questions and discussions regarding the wording of the vote question are complete, the chairperson will announce that voting will begin. If you are a voting member, you will be moved to a breakout room. A new display will appear where you can submit your vote. There will be no discussion in the breakout room. You should select the radio button. circular button in the window that corresponds with your vote, yes, no, or uncertain. leave the \"no vote\" choice selected. That is the round You should not Please note that you do not need to submit or send your vote. the radio button that corresponds to your vote. You will have the opportunity to change your vote until the vote is announced as closed. voting members have selected their vote, I will announce that the vote is closed. Once all Next, the vote results will display on the Again, you need only to select screen. I will read the vote results from the 238 screen into the record. chairperson will go down the roster and each voting member will state their name and their vote into the record. voted as you did if you choose. should also address any subparts of the voting question if any. Thereafter, the You can also state the reason why you Are there any questions about the voting process before we begin? (No response.)"
+  },
+  {
+    "round": 1,
+    "speaker": "Bonner",
+    "text": "meeting over to the chair. However, you Okay."
+  },
+  {
+    "round": 1,
+    "speaker": "Fountain",
+    "text": "Okay. I will now turn the Question number 2, does Study 302, viewed independently and without regard for Study 301, provide strong evidence that supports the effectiveness of aducanumab for the treatment of Alzheimer's disease? Any clarification needed for the nature of this question? (No response.)"
+  },
+  {
+    "round": 2,
+    "speaker": "Fountain",
+    "text": "Okay. So if there are no further concerns about the wording of the question, 239 we'll now begin the voting on question 2."
+  },
+  {
+    "round": 2,
+    "speaker": "Bonner",
+    "text": "We will now move voting members to the voting breakout room to vote. (Voting.)"
+  },
+  {
+    "round": 2,
+    "speaker": "Bonner",
+    "text": "Voting has closed and is now complete. Once the vote results display, I will read the vote results into the record. The vote results are displayed. I will read the vote with totals into the record. question 2, 1 yes, 8 nos, 2 abstentions."
+  },
+  {
+    "round": 2,
+    "speaker": "Fountain",
+    "text": "Thank you. For We will now go down the list and have everyone who voted state their name and vote into the record. provide justification of your vote if you wish. We'll start with Dr. Kesselheim."
+  },
+  {
+    "round": 2,
+    "speaker": "Kesselheim",
+    "text": "You may also This is Aaron Kesselheim. I voted no. I think a lot of the reasons I voted no were discussed in the discussion period, so I'm not going to be able to go through all of them in detail. full study, there is a suggestion of an effect but there are enough red flags in terms of the changes But I think the fact that this was not a 240 to the protocol, the concerns about unblinding, and the observation of the effect in the 78-week analysis. able to contribute to that analysis, to me doesn't add up to a strong evidence."
+  },
+  {
+    "round": 2,
+    "speaker": "Fountain",
+    "text": "Without a full cohort of patients being Next is me, Nathan Fountain. I voted yes because I think in isolation, without regard to 301, 302 was a positive study. its primary endpoint, even on a smaller end than anticipated. issues with it, but the trends I think are all in the right direction. alone, 302 I think is positive and provides evidence, and I think relatively strong evidence by itself. It met I think there are lots of small So I think on its face value Next is Dr. Duda."
+  },
+  {
+    "round": 2,
+    "speaker": "Duda",
+    "text": "I voted uncertain, which I guess I would argue whether or not that would mean I'm abstaining. I'm abstaining from committing either way I guess. But I agree, I think it was a positive study. though it was truncated early. It met its primary outcome even I, however, still 241 have concerns that prohibit me from saying that there's strong evidence."
+  },
+  {
+    "round": 2,
+    "speaker": "Fountain",
+    "text": "Dr. Perlmutter?"
+  },
+  {
+    "round": 2,
+    "speaker": "Perlmutter",
+    "text": "Yes. This is Joel Perlmutter, and I voted no. A large part has to do with the rationale. treatment is a huge urgent unmet need, but I also think that if we approve something where the data is not strong, that we have a risk of delaying good treatment and effective treatment for more than a couple of years, for many years. huge danger in approving something that turns out not to be effective. much greater. components that we discussed raised questions that makes this not a strong study in my opinion. you. I think this Alzheimer's I think that danger is much, The other, all the individual"
+  },
+  {
+    "round": 2,
+    "speaker": "Fountain",
+    "text": "Okay."
+  },
+  {
+    "round": 2,
+    "speaker": "Bonner",
+    "text": "Excuse me."
+  },
+  {
+    "round": 2,
+    "speaker": "Fountain",
+    "text": "Yes?"
+  },
+  {
+    "round": 2,
+    "speaker": "Bonner",
+    "text": "I think there's a Hello? This is LaToya, DFO. restate the voting results for the record. Thank I want to So I will restate the voting results: 2 uncertains. Thank you. 242 1 yes; 8 nos; and I wanted to make that correction. You can proceed."
+  },
+  {
+    "round": 2,
+    "speaker": "Fountain",
+    "text": "Thank you. Next, Dr. Hoffmann?"
+  },
+  {
+    "round": 2,
+    "speaker": "Hoffmann",
+    "text": "Yes. I voted uncertain, not only because of everybody's comments, but I don't really think the question was a reasonable request of us because I don't see how you can ask us to forget about something, that a study didn't happen to make a decision on another study. seem fair, and I really can't view 302 in isolation knowing about the existence of 301."
+  },
+  {
+    "round": 2,
+    "speaker": "Fountain",
+    "text": "Dr. Kryscio?"
+  },
+  {
+    "round": 2,
+    "speaker": "Kryscio",
+    "text": "It doesn't Okay. Yes. Richard Kryscio. voted no for reasons specified earlier."
+  },
+  {
+    "round": 2,
+    "speaker": "Fountain",
+    "text": "Dr. Thambisetty?"
+  },
+  {
+    "round": 2,
+    "speaker": "Thambisetty",
+    "text": "I Thank you. Thank you. I voted no mainly for the reasons I specified earlier about dosing worsening participants of the placebo arm, unblinding, and the lack of appreciable minimal clinically important difference."
+  },
+  {
+    "round": 2,
+    "speaker": "Bonner",
+    "text": "Dr. Alexander?"
+  },
+  {
+    "round": 2,
+    "speaker": "Alexander",
+    "text": "243 Thank you. Thank you. I voted no, and I would also just second I believe it was Dr. Perlmutter's comments. application to get right because of the overwhelming imperative for new treatments and the precedent that's set, and what the application's review conveys to the scientific and clinical communities about the evidentiary thresholds for approval in this disease space. I think this is such an important There were I think six or seven reasons I voted no. The statistically significant effect was limited to the high dose, I believe, not the low dose. have the opportunity to complete week 78. was no correlation with the biomarkers among the high-risk group if I understood recent comments, which is where the purported effect was demonstrated. Forty percent of the ITT analysis didn't There Only statistically significant 244 effects were at the final endpoint, not at the earlier endpoints or earlier time points I should say. The major stratum driving the findings up to a third had a mid-study dose increase with more potential unblinding. p-value is positive if revisited, but I'm going to defer to Dr. Emerson on that one. Then the last thing is the very modest effect. I also think that the comments about minimally important clinical difference were persuasive and informing my vote."
+  },
+  {
+    "round": 2,
+    "speaker": "Fountain",
+    "text": "Dr. Onyike?"
+  },
+  {
+    "round": 2,
+    "speaker": "Onyike",
+    "text": "I'm not even sure if the Thank you. Chiadi Onyike. I voted no for all the reasons that we heard in the discussion, particularly comments made by Drs. Alexander, Kesselheim, and Thambisetty. appreciate what Dr. Perlmutter had to say about opportunity. In addition, I The one thing I would add is that in my view, treatment effect is not just about achieving a p-value. It's very much about the meaningfulness 245 of the effect size, and I think Dr. Thambisetty spoke very eloquently about that. to what he said is that the effect sizes as I see them do not appear to lie outside of what you might observe in the test-retest variability that you might observe in ordinary clinical practice. you."
+  },
+  {
+    "round": 2,
+    "speaker": "Fountain",
+    "text": "Next is Dr. Emerson."
+  },
+  {
+    "round": 2,
+    "speaker": "Emerson",
+    "text": "What I would add Thank Thank you. This is Scott Emerson. I voted no. As I said before, I don't regard that this could be regarded as a pivotal study. very much appreciate the comments made by Dr. Thambisetty, Dr. Alexander, and Dr. Onyike about the clinical importance. time I've heard an FDA person say that statistical significance automatically was clinical importance. I will say that if it were true, I did have I do This is the first a tendency to extrapolate wildly at, say, a 25 percent decrease in progression, if you will and might translate into a 33 percent increase in the time to, although we never saw a responder analysis 246 or anything like that to help us differentiate those things. meant that I couldn't say as much. So that also was something that just"
+  },
+  {
+    "round": 2,
+    "speaker": "Fountain",
+    "text": "Dr. Jones?"
+  },
+  {
+    "round": 2,
+    "speaker": "Jones",
+    "text": "Okay. Yes. Thank you. This is Dr. Dawndra Jones, and I voted no, and many of the reasons have already been discussed. this study did show some positive outcomes, but I can't really say that it was that strong study for all of the things we've already discussed. you. I do believe, though, that"
+  },
+  {
+    "round": 2,
+    "speaker": "Fountain",
+    "text": "Alright. We can now move on to question 3, a Thank Thank you. discussion question. effectiveness presented in support of aducanumab for the treatment of Alzheimer's disease is provided by Study 302. supportive evidence of aducanumab's effectiveness. Discuss the evidence of effectiveness provided by Study 103. The primary evidence of Study 103 is presented as I'd like to suggest that we accept the 247 wording of this and we just discuss the issue, unless someone has a specific way they'd like to get clarity on it. Dr. Alexander, do you have a question about the wording or just a comment about it?"
+  },
+  {
+    "round": 3,
+    "speaker": "Alexander",
+    "text": "Alexander. wording. Sorry. Just a comment; I'm fine with the"
+  },
+  {
+    "round": 3,
+    "speaker": "Fountain",
+    "text": "Okay. and discuss the question. the wording. This is Caleb"
+  },
+  {
+    "round": 3,
+    "speaker": "Alexander",
+    "text": "So let's just go ahead I think we can agree on Right. Well, I just have a few brief comments here about Study 103, but I do think that it's one of these settings, as has been pointed, where it felt to me like the briefing materials really selectively identified lines of argument which would be supportive of 302, and then just sort of set aside a similar greater number of lines of argument that detract from 302. So I understand that 103 was not designed to allow for prespecified efficacy analyses. was interested that the FDA's own biostatistical I also 248 reviewer noted that the efficacy analyses performed loose statistical significance after excluding individuals who were initiating concomitant medications for treatment of Alzheimer's disease. The effect also in 103 -- [inaudible - audio gap]."
+  },
+  {
+    "round": 3,
+    "speaker": "Fountain",
+    "text": "I'm afraid we lost you there."
+  },
+  {
+    "round": 3,
+    "speaker": "Alexander",
+    "text": "-- and that of 302. I'm not sure if that's exactly right, but apparently the effect was tremendously larger. 302, the effect was larger -- [inaudible]. And contrary to"
+  },
+  {
+    "round": 3,
+    "speaker": "Fountain",
+    "text": "I think we lost you again."
+  },
+  {
+    "round": 3,
+    "speaker": "Alexander",
+    "text": "I'm sorry."
+  },
+  {
+    "round": 3,
+    "speaker": "Fountain",
+    "text": "Now we can."
+  },
+  {
+    "round": 3,
+    "speaker": "Alexander",
+    "text": "Okay. Can you hear me? So I was just concluding by saying that all of those points, the fact that it was not designed to allow for prespecified efficacy analyses; that statistical significance was lost after excluding those taking concomitant Alzheimer's meds; that the effect was 20 times larger than 302; and that also contrary to 302, the effect was larger in non-carriers than 249 carriers, all of those gave me pause. Thank you."
+  },
+  {
+    "round": 3,
+    "speaker": "Fountain",
+    "text": "So there are two issues, one with the general concept of the difference between the statistical assessment here and in 302, and some of the concluding remarks from the agency. was specific to 103. Thank you. The second So maybe we could turn our attention for a moment to the FDA. I know this is the time for us to discuss it, but it's come up so many times, maybe we could ask the FDA, Dr. Dunn, or whoever he thinks is most appropriate, to comment on the difference between the statistical analysis and the overall conclusions about 103 as well as 302. while they're considering that, next up will be Dr. Gold after the FDA's comment."
+  },
+  {
+    "round": 3,
+    "speaker": "Gold",
+    "text": "DR. FOUNTAIN:"
+  },
+  {
+    "round": 3,
+    "speaker": "Dunn",
+    "text": "So I'll wait for the FDA then. Yes, if they're available. Dr. Fountain, was that a statistical question? question. Then"
+  },
+  {
+    "round": 3,
+    "speaker": "Fountain",
+    "text": "I couldn't quite follow the Not exactly. So the question 250 is the statistical analysis done on 302, and in some degree on 103, brought up a lot of concerns about methods of analysis and so forth. wonder if you would like to comment on, or further comment on, the use of 302, for instance, without regard to 301. And I"
+  },
+  {
+    "round": 3,
+    "speaker": "Alexander",
+    "text": "Dr. Fountain, I'd be happy to try to sharpen my question. Do you mean 103? This is dr. Alexander."
+  },
+  {
+    "round": 3,
+    "speaker": "Fountain",
+    "text": "Sure. That'd be good."
+  },
+  {
+    "round": 3,
+    "speaker": "Alexander",
+    "text": "Okay. I'd be interested, Dr. Dunn, or someone from the FDA, why do you believe that the effect was up to 20 times larger in 103 than 302? contrary to 302, the effect was larger in non-carriers than carriers in 103? And why do you believe that"
+  },
+  {
+    "round": 3,
+    "speaker": "Dunn",
+    "text": "Dr. Krudys, are you available?"
+  },
+  {
+    "round": 3,
+    "speaker": "Krudys",
+    "text": "Sure. I could take the second, the carriers versus non-carriers. The sample size for the treatment arms were about 30 to 40, so cutting into samples, subgroups, is going to be a pretty small sample size. So I'm not sure they 251 could get much from a subgroup analysis of a trial as small as Study 103 was, so I'm not sure going to the subgroups. The first part of the question was what? I'm sorry."
+  },
+  {
+    "round": 3,
+    "speaker": "Alexander",
+    "text": "Why do you believe that the effect was up to 20 times larger in 103 than 302?"
+  },
+  {
+    "round": 3,
+    "speaker": "Krudys",
+    "text": "So there are some differences between the studies. The population is different. Study 103 was just in the U.S., and in Study 103 there's no titration to the 10 milligram per kilogram. consistent dosing of 10. that can contribute to the difference between the treatment effect is Studies 103 and 302. They got it from the start and got So those are all things"
+  },
+  {
+    "round": 3,
+    "speaker": "Alexander",
+    "text": "Thank you."
+  },
+  {
+    "round": 3,
+    "speaker": "Fountain",
+    "text": "Okay. Next is Dr. Gold, and I don't think we have Thank you. to comment on every question, so maybe if it's something that you already agree with, you can just state your agreement."
+  },
+  {
+    "round": 3,
+    "speaker": "Gold",
+    "text": "No, I'll stipulate to the wording 252 of the question; it's not a problem. I'd just like to understand when the FDA talks about supportive evidence of effectiveness, is the FDA thinking that the effects on the CDR sum of boxes and mini-mental state in 103 are supportive despite the fact that it was not designed or powered for that? In the same question that had been raised before that, there were other outcome measures in 103, presumably some of them more sensitive to changes in cognition that showed no effect. like to understand how the FDA sees effectiveness in 103 when you have a kind of mixed sort of data."
+  },
+  {
+    "round": 3,
+    "speaker": "Fountain",
+    "text": "I'd Your question is, or your issue is, what constitutes supportive evidence of effectiveness?"
+  },
+  {
+    "round": 3,
+    "speaker": "Gold",
+    "text": "Correct, particularly when the 103 study was not designed for efficacy, and B, when there are signals from other outcome measures that showed putatively more sensitive outcome measures but showed no effect."
+  },
+  {
+    "round": 3,
+    "speaker": "Fountain",
+    "text": "Would you just like to make that as a statement for FDA to consider or would 253 you like to ask that as a direct question? (Laughter.)"
+  },
+  {
+    "round": 3,
+    "speaker": "Gold",
+    "text": "DR. FOUNTAIN: I'd like to ask a question. Okay. We'll ask Dr. Krudys or who Dr. Dunn thinks is best suited, what constitutes supportive evidence of effectiveness?"
+  },
+  {
+    "round": 3,
+    "speaker": "Dunn",
+    "text": "Sure. I can take a crack at that. I think the main issue here was to try to -- and it seems to be causing a lot of consternation, and that's unfortunate. here was actually to have attempted to provide clarity in the questions to reflect your ability to comment on the data in the way that it's presented in the briefing book. So that was the intent. The issue It wasn't intended to provide an artificial exclusion of any of the data, but in the context of the arguments that are made in the briefing book, to take it layer by layer. the committee, and I think we are, and we were listening hard. insight, kind of building up layer by layer in And we were hoping to get some insight from We were hoping to get some 254 terms of how these things go. So the intent was to mirror the arguments in the briefing book that allowed 302 to be considered alone, for instance, for the artificial purposes of the first question, not as a way to ignore 301 but as a reflection of the arguments that were made in the briefing book about understanding the behavior of 301 in a way that was sufficient to facilitate the independent consideration of 302. It was meant to kind of put the focus on if that were true. focus on to what degree do you feel -- if one were reassured about what happened in 301, to what degree do you feel there's strength in 302? think indirectly to some degree you all have commented on some of that. It was designed to try to get the And I Similarly with regard to the 103 question, Dr. Gold, it's all in that context. the first part says primary evidence is in 302. think it was well recognized throughout the document that 103 is a study of its character. kind of mentioned that and certainly talked about So that's why I We 255 that. In the setting -- again, for the purposes of discussion, and that's why these are discussion questions -- of if effectiveness in 302 exists, and that's an if, then how does one think about 103? Does that allow one to consider it as supportive data in some fashion? scale or some elasticity between that and how you may or may not view the strength of 302. And that's kind of a sliding So we were trying to get a little bit -- and that's why these are discussions. to be an open dialogue about how you view any evidence. Is it strong, is it weak, is it in between? What's the character? comments about trying to subgroup out some of those folks, and those are small subgroups and it's tough to sort that out sometimes. We wanted them We've heard some So the reason that those particular outcomes take on relevance potentially is if the argument about 302 that's made becomes relevant to the consideration of 103, because those are the outcomes that the study share. So it's just 256 designed to try to address those layers, peel them back a little bit individually before, as one of the committee members noticed, getting down to the bottom, and there's more integrated approach. that was the intent. relationships as cleanly as we could."
+  },
+  {
+    "round": 3,
+    "speaker": "Gold",
+    "text": "DR. FOUNTAIN: So It was to just look at these Thank you, Dr. Dunn. I guess one of the important differences is before we talked about strong evidence. evidence. We're just saying here any supportive I think Dr. Kesselheim is next."
+  },
+  {
+    "round": 3,
+    "speaker": "Kesselheim",
+    "text": "Thank you. It's Dr. Aaron Kesselheim. I share the concern raised by Dr. Gold. is challenging to ask us to identify supportive evidence for a trial in 302 that's already of questionable strength in a trial like 103 that was not designed to provide supportive evidence but was designed for evaluation of other things of which the efficacy measurements were a supplementary or secondary component of that analysis. I also wanted to raise the point that it 257 As a result, I think that's why you're getting in 103 efficacy results that seem very discordant from the efficacy results that you see in 302, in addition to the fact that the efficacy results are observed over the course of a 54-week study, whereas in figure 5 of the FDA documents, there doesn't appear to be any effect of the high-dose group at 50 weeks of analysis. So there is discordance not only in the level of the effect size, but in the timing of the effect and of the dosing as was mentioned. that stuff makes it very hard to try to bolster something that already needs real bolstering. And all Then also by the way, to skip over 301 -- because, again, the way that you try to bolster a study like 302 is by looking at another well-designed similar study, but that other study which is 301, which, again, we're not supposed to be talking about in this context of this question, is a negative study. reasons, Study 103 provides minimal support."
+  },
+  {
+    "round": 3,
+    "speaker": "Dunn",
+    "text": "So for me, I think for those Thanks, Dr. Kesselheim. Can I 258 ask you to comment on the points that were made about the relationship between the 0- to 54-week dosing in 103 and the 26- to 78-week dosing in 302, 301 and 302? that, please? Can you tell me your thoughts about"
+  },
+  {
+    "round": 3,
+    "speaker": "Kesselheim",
+    "text": "I guess what I was specifically saying is that it looks like that the effect was observed here in 103 after 54 weeks of treatment, whereas it doesn't appear that in 302 there was any effect at all observed in the high-dose group."
+  },
+  {
+    "round": 3,
+    "speaker": "Dunn",
+    "text": "Yes, sir. I was wondering if you could actually speak to the points that we made in the briefing package about that issue."
+  },
+  {
+    "round": 3,
+    "speaker": "Kesselheim",
+    "text": "Yeah-yeah. Again, I think that that's just more -- the fact that these are -- and I appreciate that you brought that up, but I'm just talking about the fact that I think that that's just more lack of alignment between the two studies that makes it hard to provide direct support for it in my mind."
+  },
+  {
+    "round": 3,
+    "speaker": "Dunn",
+    "text": "Okay. I'm sorry. Let me be a 259 little more direct. There were some points made in the briefing book about the fact that the equivalent time period to compare in 301 and 302 to 103 is the 26- to 78-week window. titration period involved in Studies 301 and 302, and the briefing package made a point to say that the relevant time period of comparison between 0 and 54 in 103 is 26 to 78 in 301 and 302 because of the absence of titration in the 10-milligram group in 103. noted that or had any thoughts about that. I was just wondering if you had"
+  },
+  {
+    "round": 3,
+    "speaker": "Kesselheim",
+    "text": "There's a I did. I appreciate that. The titrating patients still received that additional therapy and it was still part of the of the trajectory of their care, and I appreciate that you pointed that out. the differing organizations of the two trials."
+  },
+  {
+    "round": 3,
+    "speaker": "Dunn",
+    "text": "now. But again, it just speaks to Okay. I understand your point Thank you."
+  },
+  {
+    "round": 3,
+    "speaker": "Kesselheim",
+    "text": "Thank you."
+  },
+  {
+    "round": 3,
+    "speaker": "Fountain",
+    "text": "We'll move to Dr. Kryscio, if you still have Okay. 260 a comment."
+  },
+  {
+    "round": 3,
+    "speaker": "Kryscio",
+    "text": "Yes. I was just saying that I think that 103 informed the design of 302 from the point of view of determining a desired effect size when they basically determined their N to attain the power they were looking for. study was truncated; that is 302 and 301 were both truncated, so therefore they had a bit of a problem. that was seen in 302 was much smaller, I'm sure, than what was derived from when they designed a study using the data from 103. Obviously, the And as it turned out, the effect size So therefore what happens is a very simple explanation. 301 got to be positive, yes -- or 302 got to be positive, but 301 did not. simple statistical power issue. smaller effect size than what they had planned on using the data in 103. It's just a They're getting a"
+  },
+  {
+    "round": 3,
+    "speaker": "Dunn",
+    "text": "Dr. Kryscio, thank you for that. I think I might like to ask the applicant to comment on that. I don't have precise numbers at my fingertips, but I believe the applicant has 261 informed us that, actually, they powered their study for an effect size very similar to what they observed. am, I apologize. comment on that, please? I might be wrong about that, and if I But could we have the applicant"
+  },
+  {
+    "round": 3,
+    "speaker": "Haeberlein",
+    "text": "Yes, that's correct. powered the study for a 25 percent change from placebo at week 78, so very close to the 22 percent."
+  },
+  {
+    "round": 3,
+    "speaker": "Fountain",
+    "text": "Okay."
+  },
+  {
+    "round": 3,
+    "speaker": "Kryscio",
+    "text": "Yes. Thank you. It's Kryscio again. Yes, but you only got to run two-thirds of the study, so that clearly affects the power."
+  },
+  {
+    "round": 3,
+    "speaker": "Haeberlein",
+    "text": "I'm sorry. question to me? statistically significant outcome. We Was that The 22 percent did have a"
+  },
+  {
+    "round": 3,
+    "speaker": "Kryscio",
+    "text": "Yes, but you two underpowered studies, one in which is positive and one in which just didn't work out."
+  },
+  {
+    "round": 3,
+    "speaker": "Haeberlein",
+    "text": "In the study that was positive, the less data obviously makes it more difficult to achieve that statistical significance, 262 but nonetheless you did still have statistical significance. as you've seen in the briefing book, we've understood what differentially impacted that study. In the study that was not positive,"
+  },
+  {
+    "round": 3,
+    "speaker": "Fountain",
+    "text": "I think I'd agree with you, Dr. Kryscio. suggesting is if you enrolled enough patients, then they would have had enough power to find a difference potentially. To make a comment, what you're Is that right?"
+  },
+  {
+    "round": 3,
+    "speaker": "Kryscio",
+    "text": "That's what I'm bringing up,"
+  },
+  {
+    "round": 3,
+    "speaker": "Fountain",
+    "text": "I think that's the way I yes. would view it. So let's move on here to Dr. Emerson. Maybe I could make a comment or question first. I'm having a lot of trouble with the details because in the big picture, for instance 302 being positive and being statistically significant, it's a small difference and there's a lot of other details. its final analysis, there's statistical significance that's seemingly meaningful at the But fundamentally if you look at 103 in 263 10-milligram per kilogram dose, and it's across subgroups, and same for 302. So I'm having trouble understanding why 302 should be so thoroughly rejected if it's positive. I understand why 301 would be rejected, but I'm having trouble understanding 302, and it seems to be 103, because it looks in the same direction as 302 and would support 302. there's no question 301 is negative. even an issue. question 302 is positive and that 103 found a difference at the 10-milligram per kilogram dose, which would support it. So I understand why That's not But it seems to me there's no So I'm having a lot of trouble understanding why. think commented on this, could help me understand that. Maybe Dr. Emerson who's coming up next, and I"
+  },
+  {
+    "round": 3,
+    "speaker": "Emerson",
+    "text": "Yes. This is exactly the point that I wanted to make. 103 was a preliminary screening trial. 301 and 302 would have never been done. studies are always positive in some way, and what's Had it been completely negative, Phase 2 264 nice about 103 in this particular case is I viewed the modifications to the eligibility criteria and what else they were doing as relatively slight. There are other times where you're chasing after subgroups and you're just saying it's there, but every phase 2 study is so impossibly biased in its treatment effect that you should never be surprised when you get less result in the confirmatory study. Because of that, I gained some solace from 103. The thing that bothered me the most is, again, due to pressures of time -- and, again, this is a direct complaint -- and so much time spent telling me things were excessively understood and very persuasive and not enough time looking at the data, I never got to really delve into what the problems were with the randomization schemes and direct comparisons, and particularly direct comparisons by randomization comparison superimposed on the 302 results before I'd believe it was very supportive. So there is something to be gained. told me you had 302 with no phase 2 study, I'd say, If you 265 \"Great. Give me two more confirmatory studies,\" but in no sense would I regard that 103 is going to be the place of another confirmatory study. doesn't make me relax criteria for what would regard 302 as pivotal. underpowered study decreases the positive predictive value of a positive result. people go, \"Well, yeah, it was a small study but the effect was huge.\" effect wrong. That And just note that an Lots of Well, they've got cause and In order for a small study to be statistically significant, it has to have a huge effect. doesn't mean it's correct. we're not taking all results, we're only taking it when it's positive, it's a very, very biased result. It has to or it won't happen, but that And by the time you say So the positive predictive value, we don't just want to worry about the type 1 error which says make certain we don't approve distilled water and the sponsor wants to say if we have an effective drug, it really works. That's the power. 266 But we are concerned with the Bayesian positive predictive value, and in an underpowered study, and one in which you let the type 1 error creep up, it's very low. This is the reason why confirmatory studies, depending upon the diseased area and depending upon how much we know about it, anywhere between 20 percent and 70 percent of phase 3 studies confirm the phase 2 results, and it has to do with that positive predictive value."
+  },
+  {
+    "round": 3,
+    "speaker": "Fountain",
+    "text": "Okay. That's very clear. Thank you. I didn't mean to cut you off. I just want to say you answered the question that I had, and it was clear. please make it. But if you have another point,"
+  },
+  {
+    "round": 3,
+    "speaker": "Emerson",
+    "text": "That was it."
+  },
+  {
+    "round": 3,
+    "speaker": "Fountain",
+    "text": "Okay. Let's see. Great. In terms of the discussion of the question, I think Dr. Perlmutter is next if you still have a question or comment."
+  },
+  {
+    "round": 3,
+    "speaker": "Perlmutter",
+    "text": "I do. I just want to point out that I would say 103 does not support 302, and 267 that is the high dose. it was 0.04, but then after you exclude those who had concomitant AD meds, it was 0.095. no direct support there."
+  },
+  {
+    "round": 3,
+    "speaker": "Fountain",
+    "text": "103 initially looked like Let's see. So there's Dr. Emerson, you still have your hand up, and Dr. Perlmutter should put it down unless you have a question. Dr. Thambisetty, I see you have your hand up as well."
+  },
+  {
+    "round": 3,
+    "speaker": "Thambisetty",
+    "text": "DR. FOUNTAIN: Then Thank you, Dr. Fountain. Do you have a comment to make?"
+  },
+  {
+    "round": 3,
+    "speaker": "Thambisetty",
+    "text": "Yes, please. There were a couple of things that set Study 103 apart. Unlike Studies 301 and 302, the applicant actually has made data and results from Study 103 available for independent peer review, and these findings were published in 2016 in Nature. directly from the Nature paper about the appropriateness of using these data to make decisions about clinical efficacy, so let me quote I think it's really important to quote 268 directly from the Nature paper. Quote, \"The trial was not powered for exploratory clinical endpoints. Thus, the clinical cognitive results should be interpreted with caution. data with no imputation for missing values. Nominal p-values were presented with no adjustments for multiple comparisons,\" end quote. Primary analyses were based on observed So I think it's worth remembering, yet again, that this was a safety and tolerability study. endpoints that were analyzed. CDR sum of box scores and MMSE that we are now considering, there were three other tests, the Neuropsychiatric Test Battery; the Free and Cued Selective Reminding Test; and the Cognitive Drug Research Computerized Test Battery, which we are not discussing in any detail, and they're completely I think ignored in the briefing documents that we have. There were five purely exploratory clinical In addition to the The other quick point that I'd like to make is there also does not appear to be a strong 269 dose-response effect in Study 103. one example. document, using an ANCOVA model, the magnitude of change in MMSE scores in 3 milligram versus placebo comparison is 1.7 MMSE points, and this is at a raw unadjusted p-value of 0.07. 3-fold higher than in the 6-milligram per kilogram comparison with placebo, which is with the raw unadjusted p-value of 0.61. I can give you In tables 25 and 26 of the briefing This is more than Moreover, these results seem to be attenuated in the MMRM model, so not only do we have an issue with using purely exploratory clinical endpoints, we also have an issue with a small study that seems to show really unstable effects that are not very robust to adjustment with covariates. Thank you."
+  },
+  {
+    "round": 3,
+    "speaker": "Fountain",
+    "text": "Okay. I guess that's reflected in the FDA slide presentation we saw today on slide 33, which listed the outcomes by dose, which look like a dose response. you're saying is, first, that only the final 10-milligram per kilogram dose was statistically But what 270 significant at 0.04, and for the CDR sum of boxes and for the MMSE, at 0.03. that's corrected beyond the ANCOVA model that was used here, that p numbers become even worse and not significant. response for clinical outcomes in 103. But you're saying if So you wouldn't think there is dose Is that a summary?"
+  },
+  {
+    "round": 3,
+    "speaker": "Thambisetty",
+    "text": "Yes, and also the 3-milligram per kilogram dose seems to have a warping effect on MMSE compared to the 6-milligram per kilogram dose, which again goes against a dose-response effect. kilogram dose -- So the 3-milligram per"
+  },
+  {
+    "round": 3,
+    "speaker": "Fountain",
+    "text": "Small -- (Crosstalk.)"
+  },
+  {
+    "round": 3,
+    "speaker": "Fountain",
+    "text": "So maybe we should move to vote 4. like we've addressed this, and everyone's questions have been answered, and we seem to have a lot of consensus discussion on this. number 4. evidence of the effectiveness of aducanumab for the Right. Okay. It looks So let's move to Does Study 103 provide supportive treatment of Alzheimer's disease? uncertain."
+  },
+  {
+    "round": 3,
+    "speaker": "Alexander",
+    "text": "271 Yes, no, or So can I ask a question about the language here? This is Caleb Alexander."
+  },
+  {
+    "round": 3,
+    "speaker": "Fountain",
+    "text": "Sure."
+  },
+  {
+    "round": 3,
+    "speaker": "Alexander",
+    "text": "This is Caleb Alexander. I have a little bit of concern about the language. I guess I'm wondering is there also a question after this that is worded, \"Does Study 103 provide supportive evidence of the ineffectiveness of aducanumab for the treatment of Alzheimer's disease?\" In other words, it seems to me this is a great emblematic example of a lot of the briefing materials that were provided that, it seemed to me, selectively used lines of evidence from 103 and 301 to support the findings of 302 at the expense of calling out any number of lines of evidence that call into question the findings of 302."
+  },
+  {
+    "round": 3,
+    "speaker": "Fountain",
+    "text": "Thank you. I think we're asked the question here. I think we'll have to ask Dr. Dunn to elaborate on that, but I understood Dr. Dunn to 272 say that in their briefing materials, they presented this discussion and they wanted us to address it. evidence for the effectiveness of aducanumab could come from 103, and they're asking us if we think that's true or not or uncertain. be no if it was ineffective."
+  },
+  {
+    "round": 3,
+    "speaker": "Alexander",
+    "text": "So one of the supportive lines of And I guess it'd Well, let me just say -- this is Caleb Alexander again -- having spent a lot of time doing survey work, I would suggest a question that asks whether we believe the evidence supports effectiveness, ineffectiveness, or both would be a more balanced way to approach this. rewritten at this point, but I'm just registering my concern about the wording of the question. Thank you. I'm not suggesting that the question be"
+  },
+  {
+    "round": 3,
+    "speaker": "Dunn",
+    "text": "Dr. Alexander, can I just ask you -- I appreciate what you're saying. the intent here was to get a sense by allowing as many options as possible on the questions and was just to recognize that the application presents 302 I think 273 as primary evidence and presents 103 as supportive evidence. Under the rubric that 302 represents interpretable evidence of effectiveness, then I'd like to think we did a pretty good job talking about the limitations of Study 103. about some of them here in this discussion, that it's a small, early-phase trial, and all the things we discussed. tease out that with those limitations of that study, does it contextually provide any support whatsoever to 302. We've talked And I think the intent was to try to That does obviously build upon how you may think about 302. question contingent on any particular interpretation. anything, then of course 103 may not support anything. question. That's why we didn't make the If you don't think 302 is worth It's supposed to be a contextualized When you say does it provide evidence of ineffectiveness, what does that look like to you? What would that look like to you conceptually?"
+  },
+  {
+    "round": 3,
+    "speaker": "Alexander",
+    "text": "Hi. 274 This is Caleb Alexander. We just had a lengthy discussion about the various reasons for concern in using 103 to support 302, and frankly I think a lot of those will come out in the explanations of our answers to this question. an unnecessary speed bump here. So again, I don't mean to provide"
+  },
+  {
+    "round": 3,
+    "speaker": "Dunn",
+    "text": "No, no --"
+  },
+  {
+    "round": 3,
+    "speaker": "Alexander",
+    "text": "I'm just calling out the fact that this question is, in my mind, open to, again, eliciting selective information, and I just want to be sure that the sponsor and that you, the FDA, get as much value as you can from the advisory committee that's taking place."
+  },
+  {
+    "round": 3,
+    "speaker": "Dunn",
+    "text": "I understand completely. for is that you have the answer available to you. Yes, absolutely, Dr. Alexander. I think what we're hoping Let me just ask one clarifying question, which really should help me. Are you using evidence of ineffectiveness synonymously with a lack of evidence of effectiveness, like a complete absence of that? Is that what you mean by that?"
+  },
+  {
+    "round": 3,
+    "speaker": "Alexander",
+    "text": "No. No. 275 I view evidence of ineffectiveness as different from evidence of a lack of effectiveness."
+  },
+  {
+    "round": 3,
+    "speaker": "Dunn",
+    "text": "DR. FOUNTAIN: Thank you. Thank you. I guess that's maybe where we should have started this whole discussion is with the rubric. trying to figure out if 302 is positive or not, and then if it's positive, goes down these other avenues, because if it's negative, you don't go very far. So I think that the rubric starts with If we take this question in isolation, does Study 103 provide supportive evidence of the effectiveness of aducanumab for the treatment of Alzheimer's disease, it's in the rubric that you're considering there is some evidence somewhere of effectiveness for aducanumab, I suppose. think you're right. to the voter, the discussion we've already had, really. But I It's most important in answers If there are no more comments -- Dr. Thambisetty, do you have another 276 comment about this or is your hand still raised from last time maybe?"
+  },
+  {
+    "round": 3,
+    "speaker": "Thambisetty",
+    "text": "have any other comments. I'm sorry. No, I don't"
+  },
+  {
+    "round": 3,
+    "speaker": "Fountain",
+    "text": "Okay. So if we don't have any other comments or questions, we can move to begin voting on question 4."
+  },
+  {
+    "round": 4,
+    "speaker": "Bonner",
+    "text": "We will now move voting members to the voting breakout room for vote only. will be no discussion in the voting breakout room. (Voting.)"
+  },
+  {
+    "round": 4,
+    "speaker": "Bonner",
+    "text": "For the record, the vote results are displayed, zero yes, 7 nos, 4 uncertains. over to the chair. There I will now turn the meeting back"
+  },
+  {
+    "round": 4,
+    "speaker": "Fountain",
+    "text": "Thank you. We'll now go down the list and have everyone who voted state their name and vote into the record. provide justification of your vote if you wish, and we'll start with Dr. Kesselheim."
+  },
+  {
+    "round": 4,
+    "speaker": "Kesselheim",
+    "text": "You may also Thank you. This is I voted no. 277 Dr. Kesselheim. Following Dr. Fountain's rubric, since I don't think that 302 provides solid evidence of the effectiveness of the drug, it's challenging for me to also think that Study 103 provides supportive evidence. I think that if there was a very solid trial that was supporting the evidence of the drug, that a phase 1-2 like this could provide supportive evidence. don't think that this is able to do that, in part because of some of the methodological differences that Dr. Dunn and I were talking about and that he helpfully pointed out. because the study wasn't designed to gather evidence of effectiveness as its primary goal, that's why I voted no. But since there isn't that, in my mind I"
+  },
+  {
+    "round": 4,
+    "speaker": "Fountain",
+    "text": "DR. ONYIKE: But in general, just Okay. Dr. Onyike? This is Chiadi Onyike. I voted no. I'll let the record speak for me, but in particular I would highlight what Dr. Thambisetty and Dr. Emerson said."
+  },
+  {
+    "round": 4,
+    "speaker": "Fountain",
+    "text": "Thank you. Dr. Duda?"
+  },
+  {
+    "round": 4,
+    "speaker": "Duda",
+    "text": "This is Dr. John Duda. 278 I also voted no for the same reasons, the limitations of the phase 2 aspect, the design differences, and the other statistical considerations that were brought up."
+  },
+  {
+    "round": 4,
+    "speaker": "Fountain",
+    "text": "Dr. Alexander?"
+  },
+  {
+    "round": 4,
+    "speaker": "Alexander",
+    "text": "Thank you. I said I was uncertain. The reasons why I would have concerns about using 103 to support 302, including that 103 wasn't designed to allow for prespecified efficacy analyses, the efficacy lost statistical significance after excluding those with concomitant Alzheimer's medicines. understood correctly, than that of Study 302. know that there were small sample sizes, but contrary to 302, the effect was larger in non-carriers than carriers. The effect was 20 times larger, if I I Then the last two points that have been pointed out, one, some highly sensitive measures did not reach statistical significance. finally, as was recently mentioned I think by Then 279 Dr. Thambisetty, there was a lack of a strong dose-response relationship."
+  },
+  {
+    "round": 4,
+    "speaker": "Fountain",
+    "text": "Dr. Hoffmann?"
+  },
+  {
+    "round": 4,
+    "speaker": "Hoffmann",
+    "text": "Thank you. I voted uncertain because of some of the same reasons everybody else has. It asked is it supportive of a given study and yet we don't know what study to use. 302 in isolation. study. efficacy scales versus six as in the other larger studies. uncertain. We can't really view This was a phase 2 exploratory It was much smaller. It only used two And for all of those reasons, I voted Thank you."
+  },
+  {
+    "round": 4,
+    "speaker": "Fountain",
+    "text": "Dr. Kryscio?"
+  },
+  {
+    "round": 4,
+    "speaker": "Kryscio",
+    "text": "Thank you. It's Richard Kryscio. no for reasons already stated."
+  },
+  {
+    "round": 4,
+    "speaker": "Fountain",
+    "text": "DR. THAMBISETTY: I voted Dr. Thambisetty? Yes. I voted no because Study 103 remains a phase 1B safety and tolerability study and should only be interpreted as such. It was not powered to assess clinical endpoints. Thank you."
+  },
+  {
+    "round": 4,
+    "speaker": "Fountain",
+    "text": "Dr. Perlmutter?"
+  },
+  {
+    "round": 4,
+    "speaker": "Perlmutter",
+    "text": "280 Thank you. This is Joel Perlmutter, and I voted no for the reasons already stated."
+  },
+  {
+    "round": 4,
+    "speaker": "Fountain",
+    "text": "Thank you. Next is me, Nathan Fountain. I voted uncertain because I do think there's some evidence of effectiveness. the trend of a dose response in the PET SUV measurements and in the two limited measures used. But on the other hand, it's not powered or intended for this purpose, so for all the other reasons stated, I said uncertain. There's what I would view to be Dr. Emerson?"
+  },
+  {
+    "round": 4,
+    "speaker": "Emerson",
+    "text": "This is Scott Emerson. I voted no. On Study 103, the positivity or any evidence it has is a prerequisite for the other clinical trials but just for added emphasis. way would I be accepting regarding this as an adequate and well-controlled trial to make it two there. We need confirmatory studies. In no So again, 281 302 as a pivotal study or 302 and 301 as two confirmatory studies are there, but 103 cannot take the place of another confirmatory study."
+  },
+  {
+    "round": 4,
+    "speaker": "Fountain",
+    "text": "DR. JONES: Dr. Jones? Yes. This is Dr. Dawndra Jones, and I voted uncertain. I agreed with you, Dr. Fountain. effectiveness, but based off of the study design, truly unable to really decide, to make a decision if there's truly that strong effectiveness that we're looking for in this study. I saw some positive look in"
+  },
+  {
+    "round": 4,
+    "speaker": "Fountain",
+    "text": "Thank you. We'll now move to point 5, which is a discussion question. evidence in support of effects on the pathological hallmarks of Alzheimer's disease, including effects on amyloid beta, tau, and downstream markers of neurodegeneration, using multiple assessment modalities. The application presents Discuss the impact of these results. In my mind that's a little bit of a two-part question. First is what you think of all those markers and how they were assessed, and second, 282 what is the significance of those markers? might interpret it differently. interpret that question. You That's how I would First, let's open it up for other interpretations or questions on the wording. Dr. Hoffmann, you may have your hand up from last time."
+  },
+  {
+    "round": 4,
+    "speaker": "Hoffmann",
+    "text": "Not really on the wording, but on the concept. demonstrable effect on amyloid, hopefully, the exact species, which we don't know which is the toxic species yet and could be one concern. I think aducanumab did show a Also, in a smaller number, people were shown to reduce tau as a downstream indicator, but in several studies that I've reviewed, in fact recently in JAMA Neurology, in June there was an extensive study out of the University of Kentucky Alzheimer's disease department that showed over 69 percent of the patients who died of dementia. In their autopsies it showed multiple proteinopathies, including beta-amyloid and tau, but also alpha-synuclein and another DNA-related drug. 283 I think it's called TDP-43. I think one of the problems we have with all these neurodegenerative agents is we'll target one or two of the epitopes that we're looking at to modulate the neuron loss, but we don't really know all of the proteinopathies that are taking place until the person dies. believe a big portion of those discordant results could have been mixed pathologies that we're totally unaware of in the patient groups between 301 and 302, so I think we should take that into consideration. good effect on amyloid beta and tau, but what about all these other misfolded proteins that could be present that we won't know and we can't identify now at least until autopsy?"
+  },
+  {
+    "round": 4,
+    "speaker": "Fountain",
+    "text": "Dr. Thambisetty?"
+  },
+  {
+    "round": 4,
+    "speaker": "Thambisetty",
+    "text": "I think from the results published from 103 as well as with 301 and 302, there's clear evidence from brain amyloid PET imaging that aducanumab dose So even in this study, I We just don't know. It may have a Okay. Thanks, Dr. Fountain. 284 dependently clears amyloid plaque from the brain. I think that's pretty compelling. to generate precisely the neuroimaging biomarker that you would expect by virtue of target engagement. that in my mind. The drug appears I don't think there's any doubt about But in the larger context of the discussion today, particularly with relevance to the impact of aducanumab and slowing some of disease progression, the question is whether lowering of brain amyloid burden as evidenced by PET imaging results in a clinical benefit. questions, but I think one follows the other very logically. I think those are very distinct With regard to this question, I think the data are far less compelling. slide 20 of the FDA statistical reviewer's presentation, where you examine the relationship between change in global brain amyloid burden at week 78 in individuals exposed to high-dose aducanumab and change in the CDR sum of box scores. There really appears to be no relationship either I would point to 285 in Study 302 or 301, and this appears to be the case even when the analysis is restricted to only individuals exposed to the 10-mg per kilogram dose. I think there are some larger implications of these findings which we are not tasked with discussing today. relevant to these observations is whether lowering brain amyloid burden is in fact the correct target in Alzheimer's disease, but like I said, I think that's beyond the remit of the discussion today. Thank you. One of the larger questions"
+  },
+  {
+    "round": 4,
+    "speaker": "Fountain",
+    "text": "Okay. So it looks like we're going to be relatively short on time, so in this question in particular we might be able to group our answers. Let's see if we can try to consolidate them a bit. I think next up is Dr. Duda."
+  },
+  {
+    "round": 4,
+    "speaker": "Duda",
+    "text": "I in that vein agreed that I think the evidence is fairly compelling that there's an effect on AB in the brain. us are having difficulty with the lack of an association between the CDR-SB and the PET imaging. A number of 286 I think it would be very helpful if the statistician and the other members of the FDA team had come together and tried to understand the discrepancy between the two analyses. was just a ceiling effect or a power problem, why was one analysis suggesting a correlation and another not? I feel about the impact of that finding. If it really I think that directly impacts on how"
+  },
+  {
+    "round": 4,
+    "speaker": "Fountain",
+    "text": "Dr. Gold?"
+  },
+  {
+    "round": 4,
+    "speaker": "Gold",
+    "text": "Hi. Okay. That's understandable. I just wanted to say that at least one of the things that we got excited about when we saw the 103 study when it first came out was there was unequivocal evidence of target engagement, so this was remarkably positive data. It was clear that there's a dose proportional response. In some of that we see both. I'm looking at the clinical reviewer's graphs in the briefing document. replicated in the study, albeit in subgroups. Where I'm having more issues in terms of the actual downstream biomarkers is the effect actually on tau That's been 287 because that's really what we believe drives the neurodegeneration. So the effect on tau are not quite as clear, partially because it's tiny sample sizes. And I understand that subjects in studies may not like to have lumbar punctures, so that limits the amount of data that we can collect. The part that I'm struggling with also is when we actually look at the effect on tau using PET, that although there's an effect in reducing tau, the vast majority of the data on tau effect comes from the 301 study. come out of the 301 study and presumably that's where you're seeing downstream effects on tau. it appears that there's an effect on the downstream biomarker, but if you believe it, it's just disconnected from a clinical effect. So 31 out of 37 subjects"
+  },
+  {
+    "round": 4,
+    "speaker": "Fountain",
+    "text": "Okay. been mentioned before as well. So Yes, I think that's Let's take one more comment and then vote, because in the vote also we have an opportunity to state it. And I think Dr. Kesselheim is next."
+  },
+  {
+    "round": 4,
+    "speaker": "Kesselheim",
+    "text": "288 This is Dr. Kesselheim. I don't want to take too long. applaud, in a sense, Biogen and the FDA here for not simply resting on the effect of this drug on the biomarkers because the effect of the biomarker does seem pretty significant, but then actually going on and doing the tests necessary to evaluate the clinical effects of the drug and leading to the discussion that we're having today. I just wanted to Other than that, I think that what Dr. Thambisetty and Dr. Gold said about those biomarkers is right. we are going to rely on biomarkers, that they are well validated with their clinical endpoints. We need to make sure that if"
+  },
+  {
+    "round": 4,
+    "speaker": "Fountain",
+    "text": "Yes, I'd agree with that as well, for my two cents. I think we could probably move to the voting now, and that will also give everyone an opportunity to comment on this."
+  },
+  {
+    "round": 4,
+    "speaker": "Perlmutter",
+    "text": "make a comment? I'd like to comment. This is Joel Perlmutter."
+  },
+  {
+    "round": 4,
+    "speaker": "Fountain",
+    "text": "Who is that? I'm sorry. Can I"
+  },
+  {
+    "round": 4,
+    "speaker": "Perlmutter",
+    "text": "DR. FOUNTAIN: Joel Perlmutter. Okay. If you have a brief comment, that'd be great."
+  },
+  {
+    "round": 4,
+    "speaker": "Perlmutter",
+    "text": "expert on PET imaging."
+  },
+  {
+    "round": 4,
+    "speaker": "Fountain",
+    "text": "DR. PERLMUTTER: 289 Yes. I'm kind of a world Right. So I'd think it would be relevant. I think, first of all, the comments about the relationship of target engagement I think is totally appropriate, but the disconnect or the lack of correlation with the clinical benefit is a real problem. The second thing, that tau imaging was done on a non-randomized group and we have also a huge issue of off-target binding with the tau imaging agent. any specific information in this particular case. I think the idea of going after these is terrific and trying to find target is great, but whether that's the right target or not, that's a bigger issue that came up earlier, and I agree that's a So I don't think that really provides us major problem. Thank you."
+  },
+  {
+    "round": 4,
+    "speaker": "Fountain",
+    "text": "Let's move to the voting, and of course you'll have an opportunity during the voting to discuss this as well."
+  },
+  {
+    "round": 4,
+    "speaker": "Bonner",
+    "text": "Okay. Dr. Fountain, can we summarize the discussion for question 5 please before we proceed forward? 290"
+  },
+  {
+    "round": 4,
+    "speaker": "Fountain",
+    "text": "Yes. So the discussion is that it seems as though there's evaluation of several of the biomarkers listed here, and while there's some evidence that they trend in the right direction, because they don't co-trend entirely, or sometimes at all, with the clinical outcome, there's some concern about their value in supporting it. is that it supports some of the pathological hallmarks of Alzheimer's disease, but there's a lot of individual considerations for each of the biomarkers with variable opinions about the degree of confidence. Okay. But I think the overall impression So now we can move to the voting 291 question, which parallels the discussion question. Has the applicant presented strong evidence of a pharmacodynamic effect on Alzheimer's disease pathology? on the wording before moving to the vote?"
+  },
+  {
+    "round": 4,
+    "speaker": "Thambisetty",
+    "text": "Yes, no, or uncertain. Any discussion I have one comment on the wording."
+  },
+  {
+    "round": 4,
+    "speaker": "Fountain",
+    "text": "Just before you begin, if we could have everyone raise your hand if you have a comment on the wording; otherwise, you could maybe look and make sure your hand is unraised. Was that Dr. Thambisetty?"
+  },
+  {
+    "round": 4,
+    "speaker": "Thambisetty",
+    "text": "Yes, Dr. Fountain, if I may?"
+  },
+  {
+    "round": 4,
+    "speaker": "Fountain",
+    "text": "Yes."
+  },
+  {
+    "round": 4,
+    "speaker": "Thambisetty",
+    "text": "I want to clarify whether or not this question includes effects of the biomarkers related to brain pathology as well as reading out clinical effectiveness because those are two completely different questions. be sure I understand that the question is capturing one or the other, or both in this. I want to"
+  },
+  {
+    "round": 4,
+    "speaker": "Fountain",
+    "text": "292 I think understand the question, and I think we can ask the FDA if we're undecided, but I think we get to decide that. I think the question crosses anything you think might be pharmacodynamic mostly related to what I would call biomarkers that we talked about in the discussion."
+  },
+  {
+    "round": 4,
+    "speaker": "Thambisetty",
+    "text": "And If I think that there's good biomarker evidence for brain pathology but not good biomarker evidence for clinical efficacy, how would I vote on this question?"
+  },
+  {
+    "round": 4,
+    "speaker": "Fountain",
+    "text": "You'll have to decide for yourself if that constitutes strong evidence of a pharmacodynamic effect on Alzheimer's disease pathophysiology."
+  },
+  {
+    "round": 4,
+    "speaker": "Thambisetty",
+    "text": "Got you. So you think the term \"pathophysiology\" would also include treatment effects and therapeutic efficacy?"
+  },
+  {
+    "round": 4,
+    "speaker": "Dunn",
+    "text": "Dr. Fountain, you may intentionally be not wanting me to clarify --"
+  },
+  {
+    "round": 4,
+    "speaker": "Fountain",
+    "text": "DR. DUNN: No -- -- in order to -- (Crosstalk.)"
+  },
+  {
+    "round": 4,
+    "speaker": "Fountain",
+    "text": "293 -- that would be great if you'd clarify."
+  },
+  {
+    "round": 4,
+    "speaker": "Dunn",
+    "text": "Okay. It's always interesting to work on questions hard and then see how people read them. represent the biomarker-based assessment of the pathology of Alzheimer's. about amyloid and tau, and there was also obviously some downstream effects, not specifically. that's what we're talking about here, mainly amyloid. But it's not a clinical meaningful question. It's about what effect has been demonstrated using the biomarkers that we have on the pathophysiological findings."
+  },
+  {
+    "round": 4,
+    "speaker": "Thambisetty",
+    "text": "This question was absolutely intended to Really, we're talking Got you. So no relation whatsoever to clinical effectiveness and the biomarker profile."
+  },
+  {
+    "round": 4,
+    "speaker": "Dunn",
+    "text": "Yes. But I'm wondering maybe if the word \"strong\" is what's got you thinking that."
+  },
+  {
+    "round": 4,
+    "speaker": "Thambisetty",
+    "text": "Exactly."
+  },
+  {
+    "round": 4,
+    "speaker": "Dunn",
+    "text": "That's really meant to Yes. Exactly. 294 speak to the evidence on the marker itself. can probably pretty easily envision a marker that has -- in the abstract, a random drug might have some of what you might think of as weak evidence on a marker, and this is really meant to get at the type of thing that Dr. Gold was commenting on before, and I think you were as well."
+  },
+  {
+    "round": 4,
+    "speaker": "Thambisetty",
+    "text": "So you Great, because we know that PET imaging of amyloid does in fact measure amyloid, but that's not the question that we're being asked."
+  },
+  {
+    "round": 4,
+    "speaker": "Dunn",
+    "text": "Yes. We're --"
+  },
+  {
+    "round": 4,
+    "speaker": "Alexander",
+    "text": "I'm sorry. This is Caleb Alexander. Dr. Dunn, is another way of asking this simply asking has the applicant presented strong evidence that the product modifies biomarker parameters of Alzheimer's disease, such as amyloid plaques, and tangles, and tau, and stuff like that?"
+  },
+  {
+    "round": 4,
+    "speaker": "Dunn",
+    "text": "I think for the purposes that you're asking it, Dr. Alexander, that's probably okay, yes. That's not how I would word, but yes, I 295 think that's -DR. ALEXANDER: I know that was a bit verbose or not so eloquent, but the bottom line is you're getting at whether we believe that the product does or does not -- is there strong evidence that the product has an effect on these pathophysiologic measures of Alzheimer's disease."
+  },
+  {
+    "round": 4,
+    "speaker": "Dunn",
+    "text": "DR. FOUNTAIN: That's right. Dr. Kryscio, I see you put your hand down. I don't know if you still have a question."
+  },
+  {
+    "round": 4,
+    "speaker": "Kryscio",
+    "text": "comments on my vote."
+  },
+  {
+    "round": 4,
+    "speaker": "Fountain",
+    "text": "So that clarifies it I think as much as we can. Okay. No. I'll cover it in the Okay. So I think we can move to the vote then."
+  },
+  {
+    "round": 4,
+    "speaker": "Bonner",
+    "text": "For the record, LaToya Bonner. We will now move voting members to the voting breakout room to vote only. discussions in the breakout room. (Voting.)"
+  },
+  {
+    "round": 4,
+    "speaker": "Bonner",
+    "text": "There will be no LaToya Bonner. For the record, 296 results displayed for vote question 6, 7 yeses; 6 uncertains; zero nos. I will now turn the meeting over to the chair."
+  },
+  {
+    "round": 5,
+    "speaker": "Fountain",
+    "text": "Thank you. We will now go down the list and have everyone who voted state their name and vote into the record. provide justification of your vote if you wish, and we'll start with Dr. Kesselheim."
+  },
+  {
+    "round": 5,
+    "speaker": "Kesselheim",
+    "text": "Thanks. You may also This is Dr. Kesselheim. I'm not sure why I keep going first. But I voted uncertain because while it is very clear that the drug provides substantial impact on the biomarkers that it measured, because the effect of the changes in those biomarkers on the clinical impact of the drug is unclear, that left me uncertain as to whether or not it had an impact on Alzheimer's disease pathophysiology. Maybe it's the two A's in my first name."
+  },
+  {
+    "round": 5,
+    "speaker": "Fountain",
+    "text": "DR. Onyike?"
+  },
+  {
+    "round": 5,
+    "speaker": "Onyike",
+    "text": "Thank you. Thank you. Yes. This is Chiadi Onyike. I 297 voted yes. is a treatment designed to basically [indiscernible] out amyloid pathology, so I view the question as did it actually do that. clear evidence that it did that in a dose-related fashion. I viewed the question narrowly. This There's There is some ambiguity, as Dr. Gold and perhaps others discussed, regarding downstream effects on tau, but fundamentally this compound is not designed, at least in the pharmacodynamic sense, to alter tau pathology -- to engage with tau pathology. engage with amyloid pathology, and it did that. Thank you. It's specifically designed to directly"
+  },
+  {
+    "round": 5,
+    "speaker": "Fountain",
+    "text": "Dr. Duda?"
+  },
+  {
+    "round": 5,
+    "speaker": "Duda",
+    "text": "Thank you. This is John Duda. I voted yes because I do believe there's strong evidence of a pharmacodynamic effect on Alzheimer disease pathology, specifically amyloid pathology, and in my mind that justified a yes."
+  },
+  {
+    "round": 5,
+    "speaker": "Fountain",
+    "text": "Thanks. Thank you. Dr. Hoffmann?"
+  },
+  {
+    "round": 5,
+    "speaker": "Hoffmann",
+    "text": "Yes. 298 I voted yes, but primarily because it was mentioned that we were just talking about amyloid beta and tau. I'd like to point out that I think there are a number of other proteins that are misfolded that could be involved in Alzheimer's that we really don't understand yet. why you didn't see super excellent results with this drug because if it was targeting all the toxic species, I think we would have seen much better efficacy results. But again I think that's the reason Thank you."
+  },
+  {
+    "round": 5,
+    "speaker": "Fountain",
+    "text": "Dr. Jones?"
+  },
+  {
+    "round": 5,
+    "speaker": "Jones",
+    "text": "Thank you. Yes. This is Dawndra Jones. voted yes because I believed it clearly demonstrated positive impact on the biomarkers, especially concerning the amyloid pathology. you."
+  },
+  {
+    "round": 5,
+    "speaker": "Fountain",
+    "text": "DR. PERLMUTTER: I agree with everybody actually. I Thank Dr. Perlmutter? Well, I said uncertain, and I think there's 299 no question it demonstrates engagement with the A-beta amyloid. The question in my mind is whether that's the correct biomarker to use for the relevant clinical effect. I think the tau is very uncertain."
+  },
+  {
+    "round": 5,
+    "speaker": "Fountain",
+    "text": "Dr. Alexander?"
+  },
+  {
+    "round": 5,
+    "speaker": "Alexander",
+    "text": "Thank you. I voted uncertain. I just want to say as an aside, because it's the last time that I may speak, both to thank sponsors and the FDA for the enormous amount of work that you put into making today possible. note that the briefing packet was unique in that it was co-produced, and I do think there's some merit in having separate packets produced by both parties, or at a minimum having the FDA provide the briefing materials and having the sponsor add their commentary to the FDA's review rather than vice versa, given the FDA's role as regulator here. I also want to just Regarding this question at hand, I think it is, as was noted, important to note that the absence of correlation between the reduction in 300 amyloid and clinical efficacy, at least among the high-dose group, I do think there's very good evidence that the product reduces amyloid. was noted, the impact on tau was more difficult to understand the meaning of that because it was among what I understand to be a selected or non-random subset. But as Thank you."
+  },
+  {
+    "round": 5,
+    "speaker": "Fountain",
+    "text": "Thank you. Dr. Emerson?"
+  },
+  {
+    "round": 5,
+    "speaker": "Emerson",
+    "text": "narrowly as did Dr. Onyike. Alzheimer's include signs of amyloid deposits. think this has affected that. affected symptoms or clinical sequelae that matter more is unclear, but in the sense that something has changed, I said yes. I tended to answer this"
+  },
+  {
+    "round": 5,
+    "speaker": "Fountain",
+    "text": "Dr. Thambisetty?"
+  },
+  {
+    "round": 5,
+    "speaker": "Thambisetty",
+    "text": "The pathophysiology of I Whether it has Thank you. I voted uncertain because while I think the biomarker profile in terms of amyloid is very elegant and compelling, it becomes a little bit murky in terms of tau, so I think the 301 sample size is rather small. heterogeneity in baseline power levels that we know from previous studies, and tau PET, again, is a fairly novel imaging modality that hasn't been fully validated in very large cohorts. those reasons, I voted uncertain."
+  },
+  {
+    "round": 5,
+    "speaker": "Fountain",
+    "text": "There's considerable So for I'm next, Nathan Fountain. I voted uncertain because I think there is evidence. I'm not sure how strong it is, though, but I do think there's evidence. Next is Dr. Kryscio."
+  },
+  {
+    "round": 5,
+    "speaker": "Kryscio",
+    "text": "Yes. I voted uncertain because I guess I'm at a neuropathology center, and it's not a hundred percent clear what's measured by PET; it's actually what is measured at autopsy. course I agree that the evidence for tau is very low here. Of I'd also like to add, because it was discussed before, the other proteinopathies, which is TDP-43 and alpha-synuclein. they're really issues in this particular case. They certainly could contribute to the reasons why I don't know if 302 people get a clinical diagnosis of dementia, but that usually occurs when you're over 80, and the people in this study were in their 70s. so sure that plays a big role in this particular case."
+  },
+  {
+    "round": 5,
+    "speaker": "Fountain",
+    "text": "Alright. So I'm not Thank you. We'll now move on to number 7, which is a discussion question. Study 301 was a negative study. exploratory analyses were conducted in order to achieve maximum understanding of the partially discordant results of Studies 301 and Study 30, and to determine if this understanding precludes independent consideration of Study 302. Post hoc Additional contribution to the understanding of aducanumab's pharmacological activity and clinical effects is provided by the results of Study 103. that were conducted and the results of Study 103, discuss the impact of the results of Study 301 on the consideration of the results of Study 302. In light of the exploratory analyses If I might start the discussion by saying 303 we've pretty thoroughly said that -- maybe not all of us, but there's a group. was that Study 301 being negative makes it difficult to interpret Study 302 for all the statistical reasons considered before. you'll raise your hands, we can have discussion on this question now. Dr. Emerson?"
+  },
+  {
+    "round": 5,
+    "speaker": "Emerson",
+    "text": "Our discussion before Thank you. But if I'll just make three points in addition to what's there. The linear dose response, which much was made of that being one of Koch's postulates and things you want to do, none of this removed the fact that we did not have a linear dose response in 301 with no explanation of why it was there. I'll note that I was very disturbed by some of the FDA's interpretation of 301 by starting out with the assumption that the treatment works, and now trying to assay why do we get no results in 301. doesn't work and are these compatible with it. I spoke to this earlier about if you assume the Usually we start off saying the treatment And 304 treatment doesn't work, then it's not that rare to have some strong results on one of the trials and just completely nothing results. happened to me many times in my life when I've monitored trials of the same. And that's Then lastly, I was very, very, very disturbed by some of the analyses that were considered. what they were doing and try to make clear. will just state that some 20 years ago I was involved as an expert witness in a scientific misconduct trial of, as it turns out, an Alzheimer's disease researcher who was removing beta that she didn't like and just seeing what happens, and that's just never acceptable to do. I was glad to hear Dr. Dunn soften But I So for the most part, the sensitivity analyses were sometimes just completely unnecessary. statistics we already had. you give me a study with a thousand subjects, I view that as a thousand subjects and I'm missing data on 7 billion others. They were just reproducing the I'd like to say that if And if you impute the 305 data on the 7 billion others, well, that's what we already do with statistics, and that's what it answers. Then some of the other times, the missing data -- I believe it was Dr. Alexander who said earlier. analyses were not very comprehensive to the possibility of missing not at random, so I was bothered with that. But somebody said that the missing data So I'll just leave it at that."
+  },
+  {
+    "round": 5,
+    "speaker": "Fountain",
+    "text": "Okay. Next is Dr. Gold."
+  },
+  {
+    "round": 5,
+    "speaker": "Gold",
+    "text": "Thank you. Just a quick comment. I think I previously mentioned what I was struggling with is the notion that it was almost passively accepted that 302 represented truth and that 301 did not, and it's a lot of effort trying to discredit or to minimize the 301 data, so outlier analysis and rapid progressors. But all those things are generally taken into account in the sample size estimates for the study, so I just didn't understand why there seemed to be this kind of unilateral effort to discredit 306 one study. the opposite position to say 301 represents truth and what in 302 could have accounted for a false positive signal, just to kind of have either the falsifiable or counterfactual debate. that's part of the issue in terms of how 301 influences 302. It would have been interesting to take So I think The other part is, if you think about -- and I'm going back to some of the data that was presented earlier. actual number of subjects that are impacted by that amendment in terms of dose escalation in the high-dose ApoE4 is miniscule. really small number of subjects, and it's difficult for me to understand how big of an effect those subjects had in 302 to make the results as numerically positive as they are. Again, post-Amendment 4, the It's a really, So I think it goes back to that first question. For me, it's difficult to divorce an understanding of 302 without thinking -- and it's kind of a Bayesian thing, prior information and prior knowledge. So I think it colored my 307 understanding or at least my level of comfort in the efforts to try to dismantle 301 and the lack of efficacy there. Again, this is a hugely important decision. Many of us came into industry because we dealt with Alzheimer's disease patients either personally or professionally. state that there is no lack of empathy and understanding of the misery and pain that the disease causes, but I think this is a hugely important decision that has and can have repercussions across clinical research enterprises and industry in terms of how do we interpret these kind of studies and what is the standard of evidence. So I just want to unequivocally So for me -- and I'll stop after this -- I think it's important to be respectful of the fact that 301 was well designed, well conducted, and well executed. somehow defective in any way, shape, or form, and it's hard to ignore that. There's no evidence that it was"
+  },
+  {
+    "round": 5,
+    "speaker": "Fountain",
+    "text": "Thank you. Thank you. Dr. Alexander?"
+  },
+  {
+    "round": 5,
+    "speaker": "Alexander",
+    "text": "down. Thank you. 308 I took my hand Thank you very much."
+  },
+  {
+    "round": 5,
+    "speaker": "Fountain",
+    "text": "DR. DUDA: Okay. Dr. Duda? Thank you. This is John Duda. kind of agree with the prior speakers. to say though, I think that it is noteworthy, the collaboration that developed between the FDA and the sponsor. a tough position. were made that ended up probably not being beneficial to them. lot of resources into this compound, as has the field as a whole, and trying to find a way out of this unfortunate situation I think was laudable. think more collaboration between the sponsors and the FDA is something that I'd like to see in future. I I just want I think obviously the sponsor was in There were some decisions that They had obviously put in a However, I think that perhaps in the future -- I don't think you would have gotten -- maybe you would have gotten people disagreeing with you that 301 was negative, but I 309 instead of taking the approach of trying to explain that away, I guess a better approach might have been just to say, \"Okay. positive?\" we might not be where we are today. Can we agree that 302 is If you had just gone down that route, But I think, all in all, the main -- I think several of us have said it already. Dr. Massie's criticisms just were never addressed in the clinical overview, and there seemed to be a disconnect between different aspects of the FDA reporting that are very difficult for us to draw conclusions from. makes it much more difficult to get where the FDA maybe thought we would go today. So in light of that, I think it"
+  },
+  {
+    "round": 5,
+    "speaker": "Fountain",
+    "text": "from Dr. Thambisetty. Okay. Thank you. And the last comment"
+  },
+  {
+    "round": 5,
+    "speaker": "Thambisetty",
+    "text": "Thank you, Dr. Fountain. I think both 301 and 302 were well-designed phase 3 clinical trials and they provided discordant results. exploratory analyses presented provide justification for discounting or overriding 301 and I don't think the post hoc 310 considering 302 independently."
+  },
+  {
+    "round": 5,
+    "speaker": "Fountain",
+    "text": "Let's move to issue 8, which is a vote, Okay. Thank you. Thank you. question 8."
+  },
+  {
+    "round": 5,
+    "speaker": "Dunn",
+    "text": "Can I just ask some of the folks who were commenting about how they feel about what we thought was clear on page 226? many pages we can write of the history of this. It's a short sentence, but I'm just kind of curious."
+  },
+  {
+    "round": 5,
+    "speaker": "Alexander",
+    "text": "Caleb Alexander. it? easily. There's only so Can you project it? This is Would it be possible to project I don't know that I can find the materials"
+  },
+  {
+    "round": 5,
+    "speaker": "Dunn",
+    "text": "Well, I could just read it. \"Upon initial review, the one positive study, Study 302, and the one negative study, 301, were given equal weight and consideration.\" suspect if you ask the applicant to weigh in, I think they will relate to you probably the degree to which 301 was given credence for a very long time, and it was quite clear that either study And I 311 could represent in the abstract truth. So I'm just curious about the comments because we wouldn't want to have conveyed that, and I'm wondering if that was missed or if it wasn't understood in the way that we intended it. kind of what I'm getting at. asking the applicant actually to weigh in on that aspect because I don't think there was any sense of the people that were working on this that it was entered into with a belief in 302 a priori and a desire to throw 301 away. pains to make sure that wasn't the case. That's And I wouldn't mind I remember taking great Maybe I can ask the applicant to weigh in on that and also if people could just clarify if we didn't communicate well our stance there."
+  },
+  {
+    "round": 5,
+    "speaker": "Haeberlein",
+    "text": "Yes, thank you. That was absolutely the case through our investigations, that we treated both studies equally, and the resulting output of those investigations are indeed that Study 302 is robust and that Study 301 is a negative study. weight to truth, but that those outcomes are So that's not lending different 312 different. to understand why Study 301 was a negative study. The nature of our investigations were"
+  },
+  {
+    "round": 5,
+    "speaker": "Alexander",
+    "text": "Dr. Dunn, if you review the briefing materials -- I'm trying to pull up selective pieces of them and -- and this is Caleb Alexander -- I can't do so quickly. framing of the briefing materials were very much -- at least I interpreted them as very much emphasizing an interest in identifying whether or not 301 could still provide sufficient evidence for 302 as a stand-alone pivotal study. But the And the conclusion that was stated by the FDA used the words that the applicant has provided, \"substantial evidence of effectiveness,\" and referred to 302 as a robust and exceptionally persuasive study. today, as well as what's been communicated through the vote, is that -- I don't want to presumably speak on behalf of the entire committee, but certainly I do not feel that the evidence has been presented to support that view from the FDA. And I believe what you've heard So throughout the briefing materials in 313 many, many places, the emphasis is not on using 302 to understand why 301 was negative and raising the question that perhaps 302 is really a negative study, too. which is using 301 to support 302. It's all framed in one direction,"
+  },
+  {
+    "round": 5,
+    "speaker": "Perlmutter",
+    "text": "Thank you. This is Joel Perlmutter. Just to make a comment about impression of how the data was presented to us is to just go to the first discussion point. seemed very biased in the sense that, okay, now consider 302 and ignore everything in 301. just seems that we were being pushed in one direction or there was a bias in that one direction. the presentations. The first discussion point That So that really sums up how I perceived"
+  },
+  {
+    "round": 5,
+    "speaker": "Emerson",
+    "text": "This is Scott Emerson. If you thought that I was being critical, you're absolutely correct. that I felt was bad was you start off in saying, \"if it's effective,\" then it follows that that's reflective of the two effects and there are patients in Study 301 who, based on certain On page 226, one of the lines 314 characteristics, should show response. Okay. The flip side is -- and I, again, didn't have time earlier, but I was going to ask for the analysis in which you added into Study 302 the patients who weren't represented that were rapid progressors perhaps owing to the drug itself, and you never did that analysis. at all symmetric and you certainly were not starting off with saying could these results be explained by a null effect in which case you'd say, yeah; nothing was going on in 301 -- that's the truth -- and in 302, why did we get aberrant results? So you were not So the truth is probably somewhere in between about the way to do it, but there was just no question that all of this was just terrifically one-sided. fact that the FDA presentation today was so heavily weighted to just giving the same conclusions that the sponsor did, and that there was not presentation by the statistician who'd done a careful analysis and made many points that I was And again, I'm highly critical of the 315 very glad to see that the committee read."
+  },
+  {
+    "round": 5,
+    "speaker": "Fountain",
+    "text": "I guess those points were clear. was that they were considered individual, and one's positive and one's negative, and if it's positive, move forward. I guess in the briefing document the point Dr. Dunn, do you want us to vote on question number 8?"
+  },
+  {
+    "round": 5,
+    "speaker": "Dunn",
+    "text": "No, that's fine. I'm sorry. didn't mean to interrupt too much there. wanted to make sure that we were communicating clearly as we need to. I I just Thank you."
+  },
+  {
+    "round": 5,
+    "speaker": "Thambisetty",
+    "text": "Dr. Fountain, may I make a very quick point?"
+  },
+  {
+    "round": 5,
+    "speaker": "Fountain",
+    "text": "Sure, briefly."
+  },
+  {
+    "round": 5,
+    "speaker": "Thambisetty",
+    "text": "Very good. I just wanted to note that the discordant ways in which we have perceived this question I think is also very aptly summarized in the discordance between the FDA's clinical reviewer and the FDA's statistical reviewer. Massie, if you have two, and you take the best and I think to paraphrase Dr. Tristian 316 pretend like it's the only one, your estimate is likely biased. captured in the way the FDA's clinical review and statistical review differ as well. But I think that discordance is"
+  },
+  {
+    "round": 5,
+    "speaker": "Fountain",
+    "text": "Thank you. To summarize our discussion for this, all along we've said there's been no presumption 301 was positive; it's clearly negative. difficult to consider positive in light of 301 and that 103 had some evidence of pharmacodynamic effect as we generally said, but that's not necessarily supportive. that the difference between the statistical analysis in Appendix 2 and the clinical reviewers is difficult for us to address. The general idea is that 302 is As a parenthetical point, So maybe we could move to point 8, the vote. In light of the understanding provided by the exploratory analysis of Studies 301 and Study 302, along with the results of Study 103 and evidence of a pharmacodynamic effect in Alzheimer's disease pathophysiology, is it reasonable to consider Study 302 has primary evidence of effectiveness of 317 aducanumab for the treatment of Alzheimer's disease? Yes, no, or uncertain. We can discuss the nature of the question, although I would say our last discussion was pretty thorough. Dr. Emerson, your hand is up. Do you have a question about the wording of this one or is that something else? (No response.)"
+  },
+  {
+    "round": 5,
+    "speaker": "Fountain",
+    "text": "So now I think we can move to the vote."
+  },
+  {
+    "round": 5,
+    "speaker": "Bonner",
+    "text": "Okay. Thank you. We will now move voting numbers to the voting breakout room to vote only. will be no discussions in the voting breakout room. For the record, LaToya Bonner. (Voting.)"
+  },
+  {
+    "round": 5,
+    "speaker": "Bonner",
+    "text": "LaToya Bonner. There For the record, the vote is now closed. We are tallying the results. will read the vote results into the record. Once the vote results are displayed, I (Pause.)"
+  },
+  {
+    "round": 5,
+    "speaker": "Bonner",
+    "text": "LaToya Bonner, DFO. For vote 318 question 8, we have zero yeses, 10 nos, and 1 uncertain."
+  },
+  {
+    "round": 5,
+    "speaker": "Fountain",
+    "text": "Thank you. We will now go down the list and have everyone who voted state their name and vote into the record. provide justification of your vote if you wish to. We'll start again with Dr. Kesselheim."
+  },
+  {
+    "round": 5,
+    "speaker": "Kesselheim",
+    "text": "Hi. You may also Thank you. Aaron Kesselheim. also wanted to echo what others have said, to thank the FDA, and the sponsor, and Dr. Massie in particular, for their thorough reviews of the material and very helpful presentations. I voted no. This is First of all, I I voted no for reasons that were discussed in the prior conversation that I also discussed earlier in these remarks today, so I'm not sure I'm going to go over all of it again. out in his comments at the beginning of the day that the evidence presented today provides suggestive evidence of positive effectiveness that the drug may be clinically active or that it's possible that the results are persuasive. Dr. Dunn pointed 319 I think all of those things are true. don't think that the evidence in Study 302 provides substantial evidence of efficacy of effectiveness of this drug and the way that 301 was sliced and diced to support that further justifies that. to the extent that this question is asking about the substantial evidence of efficacy standard, I don't think that meets the standard."
+  },
+  {
+    "round": 5,
+    "speaker": "Fountain",
+    "text": "I'm next, Nathan Fountain. I So Thank you. I voted uncertain because I do believe that 302 is positive and that 103 provides some additional evidence and there's some evidence in the markers. course 301 was clearly negative, and it's hard to say 302 could provide primary evidence, but it can't provide all the evidence or substantial evidence in my mind because of 301 and all the issues we discussed. Dr. Duda?"
+  },
+  {
+    "round": 5,
+    "speaker": "Duda",
+    "text": "This is John Duda. But of I voted no I think for all the reasons we've discussed and still the remaining questions I have regarding 320 Dr. Massie's analysis that I think is still not completely addressed. Thank you."
+  },
+  {
+    "round": 5,
+    "speaker": "Fountain",
+    "text": "Thank you. Dr. Hoffmann?"
+  },
+  {
+    "round": 5,
+    "speaker": "Hoffmann",
+    "text": "Richard Hoffmann. I voted no also for many of the reasons that were noted. I really don't think looking at Study 301 you can transform that into a positive study using a post hoc analysis, so I agree with the other committee members. also would like to thank the FDA and the sponsor for all their efforts. Thank you all very much, and I"
+  },
+  {
+    "round": 5,
+    "speaker": "Fountain",
+    "text": "Dr. Kryscio?"
+  },
+  {
+    "round": 5,
+    "speaker": "Kryscio",
+    "text": "Thank you. Yes. It's Richard Kryscio. voted no for the reasons already specified, and I would like to as well join the chorus of thanking both the Biogen company as well as the FDA for great presentations and easy to read."
+  },
+  {
+    "round": 5,
+    "speaker": "Fountain",
+    "text": "Dr. Perlmutter?"
+  },
+  {
+    "round": 5,
+    "speaker": "Perlmutter",
+    "text": "Thank you. Yes. This is Joel I 321 Perlmutter, and I voted no for all the reasons we discussed. sponsor for moving forward and implementing biomarker imaging to demonstrate target engagement. I think the problem is, over the years since they began it, it's not clear if that's in fact the right target. But I specifically want to thank the Thank you."
+  },
+  {
+    "round": 5,
+    "speaker": "Fountain",
+    "text": "Dr. Alexander?"
+  },
+  {
+    "round": 5,
+    "speaker": "Alexander",
+    "text": "Thank you. This is Caleb Alexander. I voted no for all the reasons that I've previously specified, and thank you again to everyone involved in making today possible."
+  },
+  {
+    "round": 5,
+    "speaker": "Fountain",
+    "text": "Dr. Emerson?"
+  },
+  {
+    "round": 5,
+    "speaker": "Emerson",
+    "text": "Thank you. I voted no and the reason has been stated. I'm going to answer a question that wasn't asked but often is. What additional study would I want to see? I personally think that a randomized withdrawal of just the planned dose, and I'm uncertain of how long to treat them before you do the withdrawal. 322 But certainly one of the speakers in the public hearing remarked that they felt that they could tell quickly that they were not having the effect. Of course, I never know how true that is, but if that's true, a randomized withdrawal design would not be as big a burden as would be some of the others and recognizing that in support, it should be done. pans out. I personally hope that this treatment"
+  },
+  {
+    "round": 5,
+    "speaker": "Fountain",
+    "text": "Thank you. Dr. Thambisetty?"
+  },
+  {
+    "round": 5,
+    "speaker": "Thambisetty",
+    "text": "I voted no as well for all of the reasons discussed throughout the day, and I'd also like to take the opportunity to thank both the applicant and the FDA for the privilege of reviewing this hugely important work. a special note of thanks to Dr. Tristian Massie for a really thorough statistical analysis that was very, very useful. I'd also add Thank you."
+  },
+  {
+    "round": 5,
+    "speaker": "Fountain",
+    "text": "Dr. Onyike?"
+  },
+  {
+    "round": 5,
+    "speaker": "Onyike",
+    "text": "Thank you. Yes. This is Chiadi Onyike. I 323 voted no. I think the record speaks adequately to the reasons why. record my thanks to the sponsor. substantive, multi-effort. easy to put together. commitment, and as we all know, this is a very big unmet need. I would like to also place on This is a These things are not It takes a lot of As well, I'd say my thanks to the people who participated in this study, as well as to the families and advocates who've testified today; and to the FDA, and in particular to Dr. Tristian Massie for his work; and to you, Dr. Fountain, for shepherding us through the meeting today. you."
+  },
+  {
+    "round": 5,
+    "speaker": "Fountain",
+    "text": "Dr. Jones?"
+  },
+  {
+    "round": 5,
+    "speaker": "Jones",
+    "text": "Thank Thank you. Yes. This is Dawndra Jones, and I voted no. I think it's really hard to ignore some of the things that we have identified through Study 301 as well as many of the things we have talked about today. FDA and the applicant because this work is But I, too, want to thank the 324 critical, and it's critical and much needed for those patients and families that do suffer from Alzheimer's disease. will continue in this work so that we can definitely help the individuals that suffer from Alzheimer's. So I am very hopeful that you Thank you."
+  },
+  {
+    "round": 5,
+    "speaker": "Fountain",
+    "text": "Thank you. It looks like we have a consensus of opinion here about this question and mostly about all the questions. last comments from the FDA? But before we adjourn, are there any"
+  },
+  {
+    "round": 5,
+    "speaker": "Dunn",
+    "text": "No. Thank you for your time, very much apprec"
+  }
+]

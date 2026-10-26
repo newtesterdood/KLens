@@ -117,3 +117,18 @@ def test_sample_real_llm_debates(capsys):
             assert "Round  7" in out
             assert expected_match in out
 
+
+def test_sample_fda_adcom(capsys):
+    sample_file = os.path.join(SAMPLES_DIR, "fda_aducanumab_adcom.json")
+    assert os.path.exists(sample_file)
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        out_csv = os.path.join(tmpdir, "out_adcom.csv")
+        ret = main(["run", sample_file, "--output", out_csv])
+        assert ret == 0
+        assert os.path.exists(out_csv)
+
+        out = capsys.readouterr().out
+        assert "Agents: 17" in out
+        assert "Round  5" in out
+

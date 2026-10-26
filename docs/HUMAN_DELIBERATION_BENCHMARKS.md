@@ -172,7 +172,39 @@ Round  5 | Agents: 25 | λ2: 0.9841 | T_cert: 187 rounds | Rogue: Fisher   | [AL
 
 ---
 
-## 7. Comparative Analysis: Human Deliberations vs. Real & Synthetic Multi-Agent Swarms
+## 7. Benchmark 3: FDA Advisory Committee Meeting (Clinical Risk & Efficacy Evaluation)
+
+**Meeting**: Peripheral and Central Nervous System Drugs Advisory Committee (PCNS), November 6, 2020  
+**Subject**: Biologics License Application (BLA) 761178 for **Aducanumab** (Biogen Inc.) for Alzheimer's Disease  
+**Transcript**: [`samples/fda_aducanumab_adcom.json`](../samples/fda_aducanumab_adcom.json) (335 turns across 17 clinical voting members, statisticians, and FDA officials)
+
+![FDA AdCom Telemetry](../assets/fda_adcom_telemetry.png)
+
+### Turn-by-Turn Spectral Dynamics
+
+```
+Round  1 | Insufficient history for spectral decomposition (< 2 rounds)
+Round  2 | Agents: 15 | λ2: 0.8493 | T_cert:  19 rounds | Rogue: Bonner   | Factions: 13
+Round  3 | Agents: 17 | λ2: 0.9414 | T_cert:  50 rounds | Rogue: Kryscio  | Factions: 12
+Round  4 | Agents: 17 | λ2: 0.9799 | T_cert: 148 rounds | Rogue: Kryscio  | Factions: 15 | [ALERT] SLOW_CONVERGENCE & T_CERT_EXCEEDED
+Round  5 | Agents: 17 | λ2: 0.6180 | T_cert:   7 rounds | Rogue: Bonner   | Factions:  9 | Contraction Rate -> 0.61x
+```
+
+### Empirical Observations
+1. **Severe Mid-Debate Deadlock**:
+   * As the advisory panel debated whether the single positive Phase 3 study (EMERGE 302) could be considered independently without regard to the conflicting negative Phase 3 study (ENGAGE 301), $\lambda_2$ rose steadily from $0.8493 \to 0.9414 \to 0.9799$.
+   * $T_{\text{cert}}$ spiked to **148 rounds**, certifying irreconcilable disagreement between FDA review leadership and external biostatisticians.
+2. **Historic Vote Capture**:
+   * When asked the primary voting question (Question 8: *"In light of the conflicting results, does Study 302 provide primary evidence of effectiveness?"*), the committee voted **0 Yes, 10 No, 1 Uncertain**.
+   * In Round 5, SVD position extraction isolated the exact doctrinal divide between the clinical skeptics and the biomarker proponents:
+     * **Faction 1** (Alexander, Kesselheim, Thambisetty): *"don't think that the evidence in Study 302 provides substantial evidence of efficacy of effectiveness of this drug and the way that 301 was sliced and diced to support that further justifies that."*
+     * **Faction 2** (Duda, Jones, Onyike): *"I voted yes because I do believe there's strong evidence of a pharmacodynamic effect on Alzheimer disease pathology, specifically amyloid pathology..."*
+3. **Institutional Procedural Facilitator**:
+   * Acting Designated Federal Officer **Dr. LaToya Bonner** was flagged as rogue in Rounds 2 and 5 due to procedural roll-call voting instructions (*"We will now move voting members to the voting breakout room to vote only"*), confirming the "moderator effect" on institutional administrative speech.
+
+---
+
+## 8. Comparative Analysis: Human Deliberations vs. Real & Synthetic Multi-Agent Swarms
 
 Comparing empirical trajectories across verbatim human proceedings (SCOTUS, FOMC), real multi-agent LLM debate traces ([`Multi-Agent-LLMs/DEBATE`](https://huggingface.co/datasets/Multi-Agent-LLMs/DEBATE)), and synthetic scenario fixtures exposes four fundamental mathematical and behavioral distinctions:
 
@@ -206,13 +238,13 @@ Comparing empirical trajectories across verbatim human proceedings (SCOTUS, FOMC
 
 ---
 
-## 8. Verification & Automated Test Suite
+## 9. Verification & Automated Test Suite
 
 Both real-world human transcripts and authentic multi-agent LLM debate traces are verified in [`tests/test_samples.py`](../tests/test_samples.py):
 
 ```bash
-# Run tests covering real LLM benchmarks and human traces
-pytest -v tests/test_samples.py -k "test_sample_real_llm_debates or test_sample_scotus_bruen or test_sample_fomc_monetary_policy"
+# Run tests covering real LLM benchmarks, FDA AdCom, and human traces
+pytest -v tests/test_samples.py -k "test_sample_fda_adcom or test_sample_real_llm_debates or test_sample_scotus_bruen or test_sample_fomc_monetary_policy"
 
 # Run the complete test suite
 pytest -v

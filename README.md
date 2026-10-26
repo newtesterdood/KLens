@@ -178,6 +178,31 @@ Eight C-suite leaders debate public cloud migration vs. on-prem hardware. Seven 
   Position: "Chairman, could you read the full sentence for me, please?"
 ```
 
+#### 5. FDA Advisory Committee Risk Deliberation Benchmark (`samples/fda_aducanumab_adcom.json`)
+335 turns across 17 clinical voting members, biostatisticians, and agency leadership evaluating conflicting Phase 3 trials for Aducanumab. KLens charts escalating deadlocked tension ($\lambda_2 = 0.9799, T_{\text{cert}} = 148$ rounds) culminating in an unprecedented 0–10–1 negative recommendation vote:
+
+![FDA AdCom Telemetry](assets/fda_adcom_telemetry.png)
+
+```
+=== Deliberation Semantic Synthesis ===
+• Center of Disagreement: I Voted vs. I Just
+  "The primary debate axis centers on the trade-off between i voted and i just."
+• Consensus Centroid Concept: Thank You & I Think
+  "But again I think that's the reason Thank you."
+
+--- Faction Topics & Positions ---
+• Faction 1 (Alexander, Kesselheim, Thambisetty): Efficacy Rejection
+  Position: "don't think that the evidence in Study 302 provides substantial evidence of efficacy of effectiveness of this drug and the way that 301 was sliced and diced to support that further justifies that."
+• Faction 2 (Duda, Jones, Onyike): Pharmacodynamic Effect Support
+  Position: "I voted yes because I do believe there's strong evidence of a pharmacodynamic effect on Alzheimer disease pathology, specifically amyloid pathology..."
+• Faction 5 (Samantha Budd Haeberlein / Biogen): Sponsor Defense
+  Position: "That was absolutely the case through our investigations, that we treated both studies equally, and the resulting output of those investigations are indeed that Study 302 is robust and that Study 301 is a negative study."
+
+--- Rogue Dissent Position (Bonner) ---
+• Stance:   Vote Results (Designated Federal Officer)
+  Position: "We will now move voting numbers to the voting breakout room to vote only." [Procedural outlier]
+```
+
 > **Detailed Guide**: For complete preprocessing pipelines, sourcing instructions, and mathematical interpretations on human deliberation traces, see [docs/HUMAN_DELIBERATION_BENCHMARKS.md](docs/HUMAN_DELIBERATION_BENCHMARKS.md).
 
 ---
