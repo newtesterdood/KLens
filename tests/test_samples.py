@@ -94,3 +94,26 @@ def test_sample_fomc_monetary_policy(capsys):
         assert "Round  5" in out
         assert "Monetary Policy" in out
 
+
+def test_sample_real_llm_debates(capsys):
+    real_samples = [
+        ("real_llm_debate_des_moines.json", "Des Moines"),
+        ("real_llm_debate_bitcoin.json", "Cryptocurrency Expert"),
+        ("real_llm_debate_boolean_logic.json", "Computer Science Theorist"),
+        ("real_llm_debate_bee_sting.json", "Entomologist"),
+    ]
+    for filename, expected_match in real_samples:
+        sample_file = os.path.join(SAMPLES_DIR, filename)
+        assert os.path.exists(sample_file)
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            out_csv = os.path.join(tmpdir, f"out_{filename}.csv")
+            ret = main(["run", sample_file, "--output", out_csv])
+            assert ret == 0
+            assert os.path.exists(out_csv)
+
+            out = capsys.readouterr().out
+            assert "Agents: 3" in out
+            assert "Round  7" in out
+            assert expected_match in out
+

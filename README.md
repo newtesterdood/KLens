@@ -182,37 +182,34 @@ Eight C-suite leaders debate public cloud migration vs. on-prem hardware. Seven 
 
 ---
 
-## Empirical Findings: Human vs. Multi-Agent Deliberation Dynamics
+### Empirical Findings: Human vs. Multi-Agent Deliberation Dynamics
 
-By applying Koopman operator spectral analysis and SVD disagreement decomposition across both synthetic multi-agent systems and verbatim human public proceedings, KLens reveals five fundamental differences in how artificial agents and human collectives deliberate:
+By applying Koopman operator spectral analysis and SVD disagreement decomposition across verbatim human proceedings, real-world multi-agent LLM debates ([`Multi-Agent-LLMs/DEBATE`](https://huggingface.co/datasets/Multi-Agent-LLMs/DEBATE)), and synthetic scenario fixtures, KLens exposes four fundamental mathematical and behavioral distinctions:
 
-| Deliberation Dimension | Synthetic Multi-Agent Systems | Real-World Human Deliberations |
-| :--- | :--- | :--- |
-| **Contraction Geometry** | **Smooth & Monotonic**<br>$\lambda_2 \approx 0.60 - 0.75$. Attention averaging across turns causes continuous exponential contraction toward centroid. | **Piecewise-Smooth with Sharp Bifurcations**<br>Metastable friction ($\lambda_2 \approx 0.98, T_{\text{cert}} \gg 100$) punctuated by sudden phase collapse ($\lambda_2 \to 0.65$) upon introducing a bridge doctrine. |
-| **Deadlock Dynamics** | **Prompt-Dependent**<br>Deadlock requires hard-prompted adversarial rules; cooperative agents default to rapid consensus. | **Emergent Marginal Stability**<br>Natural ideological entrenchment drives $\lambda_2 \to 1.0$, producing mathematical certificates of non-convergence ($T_{\text{cert}} = 187$). |
-| **Semantic Subspaces** | **Homogeneous Task Manifold**<br>All agents participate directly in the substantive debate manifold. | **Orthogonal Procedural Subspaces**<br>Moderator turns (*"Justice Thomas?"*, *"Counsel?"*) lie on an orthogonal subspace, triggering outlier flags unless isolated. |
-| **Contrarian Dissent** | **Static Axiom Repetition**<br>Rogue agents reiterate invariant rules (*"Zero AI under any condition"*). | **Active Syntactic Resistance**<br>Human dissenters contest clause semantics, drafting syntax, and conditional wording to forestall consensus closure. |
-| **Faction Topologies** | **Isotropic Clusters**<br>Clusters form clean spherical partitions around core semantic prompts. | **Hierarchical & Overlapping Blocs**<br>Coalitions split across distinct doctrinal axes (e.g., historical precedent vs. core constitutional right). |
+| Deliberation Dimension | Real Multi-Agent LLM Swarms | Real-World Human Deliberations | Synthetic Fixtures |
+| :--- | :--- | :--- | :--- |
+| **Faction Topologies** | **Micro-Coalition (1–2 Factions)**<br>Collapses into 1 consensus bloc with isolated dissenter; high normative conformity. | **Hyper-Fragmentation (5–21 Factions)**<br>Escalates monotonically (e.g. FOMC 11 → 21 factions); persistent ideological dispersion. | **Isotropic / Single-Node**<br>Scripted single-member clusters until synchronous 1-round collapse. |
+| **Spectral Dynamics** | **Rapid Contraction & Late Crystallization**<br>Starts contractive ($\lambda_2 = 0.00 \to 0.50, T_{\text{cert}} \le 10$), slowly rising only if a holdout persists. | **Metastable Deadlock & Bifurcations**<br>Immediate severe friction ($\lambda_2 \ge 0.85 - 0.98, T_{\text{cert}} > 100$) until sharp doctrinal collapse. | **Step-Function Collapse**<br>Holds near 0.97 until single-round collapse to consensus template or scripted deadlock. |
+| **Outlier Mechanics** | **Persistent Substantive Holdouts**<br>Cleanly flags the same contrarian persona across 5+ rounds based on argument content. | **The "Moderator Effect"**<br>Flags institutional facilitators (Roberts, Bernanke) due to procedural brevity having low topic overlap. | **Scripted Rule Repetition**<br>Flags explicitly prompted contrarian agents repeating fixed assertions. |
+| **Linguistic Geometry** | **Expository & Explicit Alignment**<br>65%–75% explicit tags (`[AGREE]`/`[DISAGREE]`); cohesive length (CV 0.50–0.87); 0%–17% questions; 0% sparsity. | **Heavy-Tailed & Inquisitive**<br>0% explicit tags; heavy-tailed turns (CV 1.65–2.21); 30%–40% questions; 30%–42% empty round slots. | **Uniform & Round-Robin**<br>Strict 10–12 word sentences (CV < 0.30); 0% questions; 1 turn per agent per round; Gini = 0.00. |
 
 ### Detailed Observations
 
-#### 1. Spectral Decay Rate: Continuous Contraction vs. Doctrinal Phase Shifts
-* **Multi-Agent AI**: In our clinical triage and safety benchmarks, agent disagreement norms $\|\Delta(t)\|$ follow a classical smooth exponential decay curve $\|\Delta(t)\| \le C |\lambda_2|^t$. The subdominant eigenvalue stays well within the contractive disk ($|\lambda_2| \le 0.75$), with certified deadlines $T_{\text{cert}} \le 15$ rounds.
-* **Human Trace (SCOTUS *Bruen*)**: Human argument does not contract smoothly. In Rounds 2–4, during exchanges over New York's proper-cause licensing and urban crime rates, disagreement remained frozen at near-marginal stability ($\lambda_2 = 0.9833, T_{\text{cert}} = 179$ rounds). But in Round 5, when advocates and Justices pivoted to a common constitutional doctrine (the *Heller* text, history, and tradition test), the belief manifold underwent an instantaneous **bifurcation / phase transition**: $\lambda_2$ dropped to $0.6488$ and $T_{\text{cert}}$ collapsed to $7$ rounds.
+#### 1. Faction Topologies & Clustering Dynamics: Hyper-Fragmentation vs. Micro-Coalition
+* Real LLM swarms display a strong normative pull toward shared vocabulary and framing, collapsing into 1 or 2 factions within 2–3 rounds.
+* Human institutions maintain high-dimensional ideological dispersion: in FOMC 2011, faction counts escalate from 11 to 21 across 5 rounds as members introduce local caveats and statutory conditions.
 
-#### 2. The Certificate of Deadlock: Predictive Failure vs. Mathematical Proof of Non-Convergence
-* A common misconception in deliberation analytics is that an exploding deadline ($T_{\text{cert}} = 187$ rounds for a 5-round meeting) represents an algorithmic forecasting failure.
-* **Dynamical Reality (FOMC August 2011)**: As the Federal Reserve debated calendar-date forward guidance ("mid-2013"), resistance intensified. The Koopman operator measured a steady rise in the spectral radius from $\lambda_2 = 0.8585 \to 0.9841$, pushing the contraction exponent $-\ln|\lambda_2| \to 0.016$. 
-* The engine issued `SLOW_CONVERGENCE` and `T_CERT_EXCEEDED` alerts, certifying that the Committee was trapped in a metastable deadlock. This was verified empirically when the meeting ended in an unprecedented **3-way dissenting vote** (Presidents Fisher, Kocherlakota, and Plosser voting No). High $T_{\text{cert}}$ is the mathematical certificate that a group will terminate in deadlock rather than convergence.
+#### 2. Spectral Contraction: Early Contraction vs. Marginal Deadlock
+* In real LLM traces (`samples/real_llm_debate_*.json`), the system starts highly contractive ($\lambda_2 = 0.0000, T_{\text{cert}} = 1$ in Round 2) before gently drifting to $\sim 0.70 - 0.95$ as positions solidify.
+* In human debates, deliberations operate near marginal stability from Round 2 onwards ($\lambda_2 \ge 0.85 - 0.98, T_{\text{cert}} = 55 - 187$).
 
-#### 3. The "Moderator Effect" (Orthogonal Procedural Subspaces)
-* In SCOTUS, Chief Justice John Roberts was flagged as a persistent outlier (`PERSISTENT_ROGUE`).
-* **Root Cause Analysis**: The Chief Justice's turns (*"Justice Thomas?"*, *"Thank you, counsel"*, *"The case is submitted"*) were not substantively contrarian; they were **procedural**. When lifted into Random Fourier Feature space, administrative turn-taking forms an orthogonal subspace that does not project onto the substantive legal dispute.
-* **Takeaway**: When analyzing institutional human deliberations, procedural facilitators must be isolated or projected out as exogenous control inputs rather than endogenous debate participants.
+#### 3. Outlier Mechanics: Substantive Holdouts vs. The "Moderator Effect"
+* In real LLM traces, the `PERSISTENT_ROGUE` detector cleanly isolates the genuine holdout (e.g., `Entomologist`, `Cryptocurrency Expert`, `Computer Science Theorist`, `Local Resident`) across 5+ consecutive rounds.
+* In human proceedings, procedural turn-taking (*"Justice Thomas?"*, *"Thank you, counsel"*) produces short, low-TF-IDF vectors that distance moderators (Chief Justice Roberts, Chairman Bernanke) from substantive centroids, creating the "moderator effect".
 
-#### 4. Unsupervised Detection of Real Human Contrarians
-* In the FOMC meeting, KLens's rogue metric ($\|z_i(t) - \bar{z}(t)\| > \mu + 1.5\sigma$) continuously flagged Dallas Fed President **Richard Fisher** across Rounds 3, 4, and 5 without any supervision or human labeling.
-* Historically, Fisher was the primary ideological contrarian against quantitative easing and calendar commitments. The Koopman operator's centered disagreement geometry accurately isolated the true human dissenter directly from verbatim speech manifolds.
+#### 4. Linguistic Geometry & Stance Markers
+* Real LLMs rely heavily on overt stance declarations (`[AGREE]`/`[DISAGREE]` in 65%–75% of turns) and consistent paragraph-length arguments (CV = 0.50–0.87).
+* Humans communicate through rhetorical implication, heavy questioning (30%–40%), extreme turn-length disparity (CV = 1.65–2.21), and selective entry (30%–42% empty speaker slots per round).
 
 ---
 

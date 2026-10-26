@@ -172,39 +172,47 @@ Round  5 | Agents: 25 | λ2: 0.9841 | T_cert: 187 rounds | Rogue: Fisher   | [AL
 
 ---
 
-## 7. Comparative Analysis: Human vs. Multi-Agent AI Deliberations
+## 7. Comparative Analysis: Human Deliberations vs. Real & Synthetic Multi-Agent Swarms
 
-Comparing empirical trajectories across synthetic multi-agent LLM systems and real human proceedings reveals five foundational differences:
+Comparing empirical trajectories across verbatim human proceedings (SCOTUS, FOMC), real multi-agent LLM debate traces ([`Multi-Agent-LLMs/DEBATE`](https://huggingface.co/datasets/Multi-Agent-LLMs/DEBATE)), and synthetic scenario fixtures exposes four fundamental mathematical and behavioral distinctions:
 
-### 1. Contraction Geometry: Smooth Exponential Decay vs. Discrete Doctrinal Bifurcations
-* **Synthetic LLM Swarms**: Transformer self-attention across conversation rounds acts as an averaging operator, producing smooth, continuous exponential decay ($\lambda_2 \in [0.60, 0.75], T_{\text{cert}} \le 15$).
-* **Human Collectives**: Human deliberations remain in prolonged metastable, high-friction states ($\lambda_2 \approx 0.98, T_{\text{cert}} \gg 100$) until an acceptable doctrinal bridge is discovered, triggering an immediate **non-linear phase transition / bifurcation** (e.g., SCOTUS collapsing from $\lambda_2 = 0.9833 \to 0.6488$).
+### 1. Faction Topologies & Clustering Dynamics: Hyper-Fragmentation vs. Micro-Coalition
+* **Real Multi-Agent LLM Swarms (`Factions = 1 to 2`)**:
+  * In all real LLM traces across 7 rounds, the system rapidly collapses into **1 dominant consensus bloc** (with the rogue holdout isolated outside), or at most **2 factions** (e.g. *Bitcoin* hardware wallet debates). 
+  * Models exhibit strong normative pull: even when disagreeing on edge cases, they converge on the semantic vocabulary and framing of their peers.
+* **Human Deliberations (`Factions = 5 to 21`)**:
+  * In the Federal Reserve FOMC meeting, faction counts escalate monotonically over rounds: `11 → 16 → 20 → 21 factions`.
+  * In SCOTUS (*Bruen*), factions remain dispersed across all epochs: `5 → 9 → 8 → 10 → 9 factions`.
+  * **Empirical Takeaway**: Real human deliberations do not collapse into clean isotropic clusters. Human policymakers introduce personal caveats, regional economic conditions, legal precedents, and statutory distinctions that sustain high-dimensional ideological dispersion (hyper-fragmentation).
 
-### 2. Deadlock Dynamics: Synthetic Prompt Constraints vs. Emergent Marginal Stability
-* In multi-agent AI pipelines, deadlock is artificial—it requires explicitly prompted contrarian directives or unyielding system constraints.
-* In human governance, deadlock is an **emergent attracter** driven by ideological polarization and stakeholder accountability. In the FOMC meeting, $\lambda_2$ rose steadily from $0.8585 \to 0.9841$, mathematically certifying non-convergence ($T_{\text{cert}} = 187$ rounds) that presaged an actual split vote.
+### 2. Spectral Contraction Dynamics ($\lambda_2$ & Certified Deadlines $T_{\text{cert}}$)
+* **Real LLM Swarms (Rapid Early Contraction, Gradual Crystallization)**:
+  * In Round 2, all real LLM debates register $\lambda_2 = 0.0000$ ($T_{\text{cert}} = 1$), expanding to $\lambda_2 \approx 0.40 - 0.70$ ($T_{\text{cert}} \le 10$) as personas elaborate on specific nuances, and only approaching $\sim 0.75 - 0.95$ when a stubborn holdout refuses to concede in the final round. The system operates comfortably within the contractive unit disk for the majority of debate.
+* **Human Deliberations (High-Friction Marginal Stability & Sudden Bifurcations)**:
+  * Both SCOTUS and FOMC enter the debate with immediate, severe spectral friction ($\lambda_2 \ge 0.85 - 0.93$) and escalate into certified deadlock territory ($T_{\text{cert}} = 179$ rounds in SCOTUS R4; $T_{\text{cert}} = 187$ rounds in FOMC R5). 
+  * In SCOTUS, the system only converges when an explicit doctrinal bridge (*Heller* text, history, tradition) is established, triggering an abrupt non-linear phase transition ($\lambda_2 = 0.9833 \to 0.6488$). In FOMC, no bridge is reached, mathematically certifying the resulting 3-way dissenting vote.
 
-### 3. Subspace Geometry: The "Moderator Effect" (Orthogonal Procedural Manifolds)
-* Synthetic agents operate symmetrically within the task manifold.
-* Human institutions rely on institutional facilitators (Chief Justices, committee chairs). Turns consisting of administrative turn-taking (*"Justice Thomas?"*, *"Thank you, counsel"*) form an **orthogonal procedural subspace**. Standard distance metrics project these as statistical outliers unless procedural turns are modeled as exogenous control inputs.
+### 3. Outlier and Contrarian Mechanics: Substantive Holdouts vs. The "Moderator Effect"
+* **Real LLM Swarms (Persistent Role-Driven Holdouts)**:
+  * In real LLM traces, the `PERSISTENT_ROGUE` detector cleanly isolates the same substantive persona across **5+ consecutive rounds** (e.g., `Entomologist` in *Bee Sting*, `Cryptocurrency Expert` in *Bitcoin*, `Computer Science Theorist` in *Boolean Logic*, `Local Resident` in *Des Moines*). Dissent is driven by persistent prompt persona boundaries.
+* **Human Deliberations (Procedural Manifolds & Shifting Dissent)**:
+  * In human institutions, the rogue detector captures institutional facilitators as well as ideological dissenters. In SCOTUS, Chief Justice John Roberts is flagged as a rogue in rounds 4–6 because his brief administrative turn-taking (*"Justice Thomas?"*, *"Thank you, counsel"*) has low vocabulary overlap with substantive Second Amendment arguments, projecting into an orthogonal subspace. In FOMC, rogue flags shift between substantive contrarians (`Fisher`) and the committee chairman (`Bernanke`).
 
-### 4. Contrarian Mechanics: Static Invariants vs. Active Syntactic Probing
-* Synthetic contrarians typically reiterate static axioms (*"AI must not touch clinical decisions"*).
-* Human dissenters mount active syntactic and structural challenges to draft compromise language (e.g., Dallas Fed President Fisher repeatedly challenging statement syntax: *"Chairman, could you read the full sentence for me, please?"*).
-
-### 5. Faction Topologies
-* Synthetic factions form clean, isotropic clusters around designated prompt personas.
-* Human factions form complex, overlapping coalitions that align on certain legal/economic instruments while diverging on operational mandates.
+### 4. Linguistic Geometry & Turn Mechanics
+* **Explicit Alignment Markers**: In real LLM debates, 65%–75% of speaker turns contain explicit semantic stance markers (`[AGREE]`, `[DISAGREE]`). In human transcripts, this is **0.0%**; humans negotiate via implicit rhetorical concessions, questioning, and indirect pushback.
+* **Turn Length Variance**: Human turns exhibit heavy-tailed dispersion (CV = 1.65–2.21, ranging from 2-word procedural utterances to 350+ word economic monologues). Real LLM turns are well-bounded, cohesive expository paragraphs (CV = 0.50–0.87, mean ~54–98 words).
+* **Inquiry vs. Assertion**: Humans spend 30%–40% of turns posing probing questions (`?`), whereas LLM agents primarily exchange assertive declarative arguments (0%–17% questions).
+* **Speaker-Round Sparsity**: Real human proceedings feature 30%–42% empty speaker-round slots as participants selectively choose when to speak. LLM swarm architectures enforce 100% round-by-round participation.
 
 ---
 
 ## 8. Verification & Automated Test Suite
 
-Both real-world datasets are integrated into the automated test suite in [`tests/test_samples.py`](../tests/test_samples.py):
+Both real-world human transcripts and authentic multi-agent LLM debate traces are verified in [`tests/test_samples.py`](../tests/test_samples.py):
 
 ```bash
-# Run tests specifically covering the human trace benchmarks
-pytest -v tests/test_samples.py -k "test_sample_scotus_bruen or test_sample_fomc_monetary_policy"
+# Run tests covering real LLM benchmarks and human traces
+pytest -v tests/test_samples.py -k "test_sample_real_llm_debates or test_sample_scotus_bruen or test_sample_fomc_monetary_policy"
 
 # Run the complete test suite
 pytest -v
