@@ -11,7 +11,7 @@ KLens tests the hypothesis that multi-party human deliberation—like artificial
 By analyzing authentic verbatim human debates from public institutions (e.g., the Supreme Court of the United States and the Federal Reserve Federal Open Market Committee), KLens investigates:
 
 1. **Spectral Friction vs. Contraction**: Can the subdominant eigenvalue $\lambda_2$ and certified deadline $T_{\text{cert}}$ quantify ideological deadlock and sudden consensus collapse in human debates?
-2. **Contrarian & Rogue Detection**: Can residual deviation norms isolate persistent human dissenters without manual coding?
+2. **The Geometric Triad (Outliers, Contrarians, & Orthogonals)**: Can residual deviation norms isolate persistent human dissenters, active contrarians, and orthogonal catalysts without manual coding?
 3. **Procedural vs. Substantive Orthogonality**: How does the operator project procedural participants (such as moderators or presiding officers) relative to substantive debaters?
 4. **Semantic Consensus Extraction**: Can SVD decomposition of centered disagreement vectors identify the real human compromise standard?
 
@@ -102,7 +102,7 @@ metrics = stream.process_round_event(current_round=2)
 * **Rapid Contraction Phase ($|\lambda_2| \le 0.75, T_{\text{cert}} \le 10$)**: Signals convergence toward an agreed standard, legal doctrine, or compromise wording.
 
 ### B. The Geometric Triad & Multi-Cluster Local Residuals
-* **Persistent Outliers & Contrarians**: When an active participant consistently exhibits large residuals against the dominant dispute axis or cluster basins (e.g., Richard Fisher in the 2011 FOMC meeting), KLens raises `ORTHOGONAL_PERSISTENCE` (alongside `PERSISTENT_ROGUE`).
+* **Persistent Outliers & Contrarians**: When an active participant consistently exhibits large residuals against the dominant dispute axis or cluster basins (e.g., Richard Fisher in the 2011 FOMC meeting), KLens raises `ORTHOGONAL_PERSISTENCE` (with legacy backward-compatibility support for `PERSISTENT_ROGUE`).
 * **Orthogonal Subspace Detection & Resolving the Phantom Center**: Moderators, Chief Justices, or committee chairs whose speech consists primarily of administrative facilitation (*"Justice Thomas?"*, *"Thank you, counsel"*) project into a 90° transverse subspace relative to substantive arguments. Multi-cluster local residuals $d_i^{\text{local}}(t) = \min_k \|z_i(t) - C_k(t)\|$ isolate these structural orthogonal agents cleanly without distorting substantive faction clustering or falling prey to the "Phantom Center" problem.
 
 ---
@@ -118,7 +118,7 @@ metrics = stream.process_round_event(current_round=2)
 
 ```
 Round  1 | Insufficient history for spectral decomposition (< 2 rounds)
-Round  2 | Agents:  8 | λ2: 0.9315 | T_cert:  43 rounds | Rogue: Clarence Thomas | Factions: 5
+Round  2 | Agents:  8 | λ2: 0.9315 | T_cert:  43 rounds | Orthogonal: Clarence Thomas | Factions: 5
 Round  3 | Agents: 11 | λ2: 0.9465 | T_cert:  55 rounds | [ALERT] T_CERT_EXCEEDED
 Round  4 | Agents: 11 | λ2: 0.9833 | T_cert: 179 rounds | [ALERT] SLOW_CONVERGENCE & T_CERT_EXCEEDED
 Round  5 | Agents: 11 | λ2: 0.6488 | T_cert:   7 rounds | Contraction Rate -> 0.61x
@@ -150,15 +150,15 @@ Round  6 | Agents: 12 | λ2: 0.7126 | T_cert:   9 rounds | Contraction Rate -> 0
 
 ```
 Round  1 | Insufficient history for spectral decomposition (< 2 rounds)
-Round  2 | Agents: 23 | λ2: 0.8585 | T_cert:  20 rounds | Rogue: Leahy    | Factions: 11
-Round  3 | Agents: 23 | λ2: 0.9594 | T_cert:  73 rounds | Rogue: Fisher   | [ALERT] SLOW_CONVERGENCE
-Round  4 | Agents: 23 | λ2: 0.9701 | T_cert:  99 rounds | Rogue: Bernanke | [ALERT] T_CERT_EXCEEDED
-Round  5 | Agents: 25 | λ2: 0.9841 | T_cert: 187 rounds | Rogue: Fisher   | [ALERT] PERSISTENT_ROGUE
+Round  2 | Agents: 23 | λ2: 0.8585 | T_cert:  20 rounds | Orthogonal: Leahy    | Factions: 11
+Round  3 | Agents: 23 | λ2: 0.9594 | T_cert:  73 rounds | Orthogonal: Fisher   | [ALERT] SLOW_CONVERGENCE
+Round  4 | Agents: 23 | λ2: 0.9701 | T_cert:  99 rounds | Orthogonal: Bernanke | [ALERT] T_CERT_EXCEEDED
+Round  5 | Agents: 25 | λ2: 0.9841 | T_cert: 187 rounds | Orthogonal: Fisher   | [ALERT] ORTHOGONAL_PERSISTENCE
 ```
 
 ### Empirical Observations
 1. **Detection of Historical Contrarian Dissenter**:
-   * Dallas Fed President **Richard Fisher** was repeatedly isolated as the primary rogue agent across Rounds 3, 4, and 5.
+   * Dallas Fed President **Richard Fisher** was repeatedly isolated as the primary contrarian agent across Rounds 3, 4, and 5.
    * In the actual historical vote, Fisher voted **No**, leading an unprecedented 3-way dissent against Bernanke's "mid-2013" explicit forward guidance.
 2. **Escalating Polarization**:
    * Disagreement radius $\lambda_2$ rose steadily from $0.8585 \to 0.9594 \to 0.9701 \to 0.9841$.
@@ -184,10 +184,10 @@ Round  5 | Agents: 25 | λ2: 0.9841 | T_cert: 187 rounds | Rogue: Fisher   | [AL
 
 ```
 Round  1 | Insufficient history for spectral decomposition (< 2 rounds)
-Round  2 | Agents: 15 | λ2: 0.8493 | T_cert:  19 rounds | Rogue: Bonner   | Factions: 13
-Round  3 | Agents: 17 | λ2: 0.9414 | T_cert:  50 rounds | Rogue: Kryscio  | Factions: 12
-Round  4 | Agents: 17 | λ2: 0.9799 | T_cert: 148 rounds | Rogue: Kryscio  | Factions: 15 | [ALERT] SLOW_CONVERGENCE & T_CERT_EXCEEDED
-Round  5 | Agents: 17 | λ2: 0.6180 | T_cert:   7 rounds | Rogue: Bonner   | Factions:  9 | Contraction Rate -> 0.61x
+Round  2 | Agents: 15 | λ2: 0.8493 | T_cert:  19 rounds | Orthogonal: Bonner   | Factions: 13
+Round  3 | Agents: 17 | λ2: 0.9414 | T_cert:  50 rounds | Orthogonal: Kryscio  | Factions: 12
+Round  4 | Agents: 17 | λ2: 0.9799 | T_cert: 148 rounds | Orthogonal: Bonner   | Factions: 15 | [ALERT] SLOW_CONVERGENCE & T_CERT_EXCEEDED
+Round  5 | Agents: 17 | λ2: 0.6180 | T_cert:   7 rounds | Orthogonal: Bonner   | Factions:  9 | Contraction Rate -> 0.61x
 ```
 
 ### Empirical Observations
@@ -199,8 +199,8 @@ Round  5 | Agents: 17 | λ2: 0.6180 | T_cert:   7 rounds | Rogue: Bonner   | Fac
    * In Round 5, SVD position extraction isolated the exact doctrinal divide between the clinical skeptics and the biomarker proponents:
      * **Faction 1** (Alexander, Kesselheim, Thambisetty): *"don't think that the evidence in Study 302 provides substantial evidence of efficacy of effectiveness of this drug and the way that 301 was sliced and diced to support that further justifies that."*
      * **Faction 2** (Duda, Jones, Onyike): *"I voted yes because I do believe there's strong evidence of a pharmacodynamic effect on Alzheimer disease pathology, specifically amyloid pathology..."*
-3. **Institutional Procedural Facilitator**:
-   * Acting Designated Federal Officer **Dr. LaToya Bonner** was flagged as rogue in Rounds 2 and 5 due to procedural roll-call voting instructions (*"We will now move voting members to the voting breakout room to vote only"*), confirming the "moderator effect" on institutional administrative speech.
+3. **Institutional Procedural Facilitator (Orthogonal Subspace)**:
+   * Acting Designated Federal Officer **Dr. LaToya Bonner** was flagged as orthogonal in Rounds 2, 4, and 5 due to procedural roll-call voting instructions (*"We will now move voting members to the voting breakout room to vote only"*), confirming the "moderator effect" on institutional administrative speech.
 
 ---
 
@@ -220,20 +220,20 @@ Round  5 | Agents: 17 | λ2: 0.6180 | T_cert:   7 rounds | Rogue: Bonner   | Fac
 
 ```
 Round  1 | Insufficient history for spectral decomposition (< 2 rounds)
-Round  2 | Agents: 13 | λ2: 0.8634 | T_cert:  21 rounds | Rogue: David Faber        | Factions: 12
-Round  3 | Agents: 14 | λ2: 0.9502 | T_cert:  59 rounds | Rogue: Patrick Pichette   | Factions: 12 | [ALERT] SLOW_CONVERGENCE & T_CERT_EXCEEDED
-Round  4 | Agents: 14 | λ2: 0.9804 | T_cert: 152 rounds | Rogue: Martin Lipton      | Factions: 13 | [ALERT] SLOW_CONVERGENCE & T_CERT_EXCEEDED
-Round  5 | Agents: 14 | λ2: 0.7592 | T_cert:  11 rounds | Rogue: William Savitt     | Factions: 11 | Contraction Rate -> 0.52x
+Round  2 | Agents: 13 | λ2: 0.8634 | T_cert:  21 rounds | Orthogonal: David Faber        | Factions: 12
+Round  3 | Agents: 14 | λ2: 0.9502 | T_cert:  59 rounds | Orthogonal: Patrick Pichette   | Factions: 12 | [ALERT] SLOW_CONVERGENCE & T_CERT_EXCEEDED
+Round  4 | Agents: 14 | λ2: 0.9804 | T_cert: 152 rounds | Orthogonal: Martin Lipton      | Factions: 13 | [ALERT] SLOW_CONVERGENCE & T_CERT_EXCEEDED
+Round  5 | Agents: 14 | λ2: 0.7592 | T_cert:  11 rounds | Orthogonal: William Savitt     | Factions: 11 | Contraction Rate -> 0.52x
 ```
 
 ### Empirical Observations
 1. **Severe Mid-Debate Deadlock**:
    * As the acquirer demanded raw firehose log data and threatened termination over alleged fake accounts/spam bots, $\lambda_2$ rose from $0.8634 \to 0.9502 \to 0.9804$.
    * $T_{\text{cert}}$ spiked to **152 rounds** in Round 4, mathematically certifying intractable dispute over the Delaware Material Adverse Effect (MAE) standard under *Akorn v. Fresenius*.
-2. **Consensus Phase Collapse via Specific Performance (Rogue Rallying Consensus)**:
+2. **Consensus Phase Collapse via Specific Performance (Orthogonal Catalyst Rallying Consensus)**:
    * Faced with Chancellor McCormick's strict contractual enforcement doctrine in Delaware Chancery Court, the buyer capitulated to close at $54.20.
    * Deliberation collapsed dramatically in Round 5 ($\lambda_2 = 0.7592, T_{\text{cert}} = 11$, contraction rate $0.52\times$).
-   * **Centripetal Rogue Dynamics**: Litigation counsel **William Savitt** held an uncompromising position at the semantic margin (Section 9.9 specific performance decree). The temporal evolution grid reveals the group centroid $\bar{z}(t)$ migrating directly toward Savitt's coordinate, pulling the disparate board and management factions into compliance with his legal enforcement doctrine.
+   * **Centripetal Orthogonal Dynamics**: Litigation counsel **William Savitt** held an uncompromising position at the semantic margin (Section 9.9 specific performance decree). The temporal evolution grid reveals the group centroid $\bar{z}(t)$ migrating directly toward Savitt's coordinate, pulling the disparate board and management factions into compliance with his legal enforcement doctrine.
 3. **Semantic Center of Disagreement**:
    > **Center of Disagreement**: *Delaware Law vs. 20 Cash* ($54.20 per share cash consideration vs legal enforcement covenants)
 4. **Consensus Centroid Concept**:
@@ -244,7 +244,7 @@ Round  5 | Agents: 14 | λ2: 0.7592 | T_cert:  11 rounds | Rogue: William Savitt
    * **Faction 5** (Elon Musk): Information access under Section 6.4 and spam/bot due diligence demands.
    * **Faction 7** (Martin Lipton): High Delaware legal bar for Material Adverse Effect (MAE).
    * **Faction 9** (Ned Segal): Disbursement flow and per-share cash conversion mechanics.
-   * **Rogue Stance** (William Savitt): Litigation counsel pursuing a decree of specific performance.
+   * **Orthogonal Stance** (William Savitt): Litigation counsel pursuing a decree of specific performance.
 
 
 ---
@@ -262,10 +262,10 @@ Round  5 | Agents: 14 | λ2: 0.7592 | T_cert:  11 rounds | Rogue: William Savitt
 
 ```
 Round  1 | Insufficient history for spectral decomposition (< 2 rounds)
-Round  2 | Agents: 14 | λ2: 0.8929 | T_cert:  27 rounds | Rogue: Russell Archer          | Factions: 13
-Round  3 | Agents: 14 | λ2: 0.9641 | T_cert:  82 rounds | Rogue: ALJ Kelly Hymes         | Factions: 12 | [ALERT] SLOW_CONVERGENCE & T_CERT_EXCEEDED
-Round  4 | Agents: 14 | λ2: 0.9766 | T_cert: 127 rounds | Rogue: ALJ Kelly Hymes         | Factions: 11 | [ALERT] SLOW_CONVERGENCE & T_CERT_EXCEEDED
-Round  5 | Agents: 14 | λ2: 0.6119 | T_cert:   7 rounds | Rogue: President Alice Reynolds| Factions: 13 | Contraction Rate -> 0.59x
+Round  2 | Agents: 14 | λ2: 0.8929 | T_cert:  27 rounds | Orthogonal: Russell Archer          | Factions: 13
+Round  3 | Agents: 14 | λ2: 0.9641 | T_cert:  82 rounds | Orthogonal: ALJ Kelly Hymes         | Factions: 12 | [ALERT] SLOW_CONVERGENCE & T_CERT_EXCEEDED
+Round  4 | Agents: 14 | λ2: 0.9766 | T_cert: 127 rounds | Orthogonal: ALJ Kelly Hymes         | Factions: 11 | [ALERT] SLOW_CONVERGENCE & T_CERT_EXCEEDED
+Round  5 | Agents: 14 | λ2: 0.6119 | T_cert:   7 rounds | Orthogonal: President Alice Reynolds| Factions: 13 | Contraction Rate -> 0.59x
 ```
 
 ### Empirical Observations
@@ -301,10 +301,10 @@ Round  5 | Agents: 14 | λ2: 0.6119 | T_cert:   7 rounds | Rogue: President Alic
 
 ```
 Round  1 | Insufficient history for spectral decomposition (< 2 rounds)
-Round  2 | Agents: 13 | λ2: 0.8651 | T_cert:  21 rounds | Rogue: Joseph Borelli         | Factions: 10
-Round  3 | Agents: 14 | λ2: 0.9710 | T_cert: 102 rounds | Rogue: Speaker Adrienne Adams | Factions: 12 | [ALERT] SLOW_CONVERGENCE & T_CERT_EXCEEDED
-Round  4 | Agents: 14 | λ2: 0.5433 | T_cert:   5 rounds | Rogue: Speaker Adrienne Adams | Factions: 13 | Contraction Rate -> 0.62x
-Round  5 | Agents: 14 | λ2: 0.6361 | T_cert:   7 rounds | Rogue: Speaker Adrienne Adams | Factions: 10 | [ALERT] PERSISTENT_ROGUE
+Round  2 | Agents: 13 | λ2: 0.8651 | T_cert:  21 rounds | Orthogonal: Joseph Borelli         | Factions: 10
+Round  3 | Agents: 14 | λ2: 0.9710 | T_cert: 102 rounds | Orthogonal: Speaker Adrienne Adams | Factions: 12 | [ALERT] SLOW_CONVERGENCE & T_CERT_EXCEEDED
+Round  4 | Agents: 14 | λ2: 0.5433 | T_cert:   5 rounds | Orthogonal: Speaker Adrienne Adams | Factions: 13 | Contraction Rate -> 0.62x
+Round  5 | Agents: 14 | λ2: 0.6361 | T_cert:   7 rounds | Orthogonal: Speaker Adrienne Adams | Factions: 10 | [ALERT] ORTHOGONAL_PERSISTENCE
 ```
 
 ### Empirical Observations
@@ -312,8 +312,8 @@ Round  5 | Agents: 14 | λ2: 0.6361 | T_cert:   7 rounds | Rogue: Speaker Adrien
    * In Round 3, widespread advisory rejections by 38 of 59 Community Boards and stormwater flooding fears spiked $\lambda_2$ to $0.9710$ ($T_{\text{cert}} = 102$ rounds).
 2. **Capital Deal Catalyst**:
    * Announcing the $5.0 Billion Capital Infrastructure & Tenant Protection Agreement (funding $2.0B for sewers, $1.5B for NYCHA, and $1.0B for preservation) dissolved the impasse, contracting the system in Round 4 to $\lambda_2 = 0.5433$ ($T_{\text{cert}} = 5$ rounds).
-3. **Persistent Procedural Outlier**:
-   * Speaker Adrienne Adams was flagged as `PERSISTENT_ROGUE` across Rounds 3, 4, and 5 because her presiding administrative and roll-call statements (*"The clerk will call the roll on Land Use Matter 0118-2024..."*) occupied an orthogonal subspace relative to substantive zoning debates.
+3. **Persistent Procedural Outlier (Orthogonal Facilitator)**:
+   * Speaker Adrienne Adams was flagged as `ORTHOGONAL_PERSISTENCE` across Rounds 3, 4, and 5 because her presiding administrative and roll-call statements (*"The clerk will call the roll on Land Use Matter 0118-2024..."*) occupied an orthogonal subspace relative to substantive zoning debates.
 4. **Final Roll-Call Polarization**:
    * The Council adopted the zoning resolution by a contested 31–18 vote, cleanly separating outer-borough conservatives and socialist skeptics from leadership.
 5. **Center of Disagreement & Consensus**:
@@ -328,7 +328,7 @@ Comparing empirical trajectories across verbatim human proceedings (SCOTUS, FOMC
 
 ### 1. Faction Topologies & Clustering Dynamics: Hyper-Fragmentation vs. Micro-Coalition
 * **Real Multi-Agent LLM Swarms (`Factions = 1 to 2`)**:
-  * In all real LLM traces across 7 rounds, the system rapidly collapses into **1 dominant consensus bloc** (with the rogue holdout isolated outside), or at most **2 factions** (e.g. *Bitcoin* hardware wallet debates). 
+  * In all real LLM traces across 7 rounds, the system rapidly collapses into **1 dominant consensus bloc** (with the orthogonal holdout isolated outside), or at most **2 factions** (e.g. *Bitcoin* hardware wallet debates). 
   * Models exhibit strong normative pull: even when disagreeing on edge cases, they converge on the semantic vocabulary and framing of their peers.
 * **Human Deliberations (`Factions = 5 to 21`)**:
   * In the Federal Reserve FOMC meeting, faction counts escalate monotonically over rounds: `11 → 16 → 20 → 21 factions`.
@@ -342,11 +342,11 @@ Comparing empirical trajectories across verbatim human proceedings (SCOTUS, FOMC
   * Human institutions enter debate with immediate, severe spectral friction ($\lambda_2 \ge 0.85 - 0.93$) and escalate into certified deadlock territory ($T_{\text{cert}} = 102 - 187$ rounds). 
   * In SCOTUS, Delaware M&A, CPUC, and NYC Council, consensus occurs through abrupt non-linear phase transitions when a structural compromise or legal standard is locked in ($\lambda_2$ plummeting from $0.97 - 0.98 \to 0.54 - 0.75$).
 
-### 3. Outlier and Contrarian Mechanics: Substantive Holdouts vs. The "Moderator Effect"
+### 3. The Geometric Triad in Action: Substantive Holdouts vs. The "Moderator Effect"
 * **Real LLM Swarms (Persistent Role-Driven Holdouts)**:
-  * In real LLM traces, the `PERSISTENT_ROGUE` detector cleanly isolates the same substantive persona across **5+ consecutive rounds** (e.g., `Entomologist`, `Cryptocurrency Expert`, `Computer Science Theorist`, `Local Resident`). Dissent is driven by persistent prompt persona boundaries.
+  * In real LLM traces, the `ORTHOGONAL_PERSISTENCE` detector cleanly isolates the same substantive persona across **5+ consecutive rounds** (e.g., `Entomologist`, `Cryptocurrency Expert`, `Computer Science Theorist`, `Local Resident`). Dissent is driven by persistent prompt persona boundaries.
 * **Human Deliberations (Procedural Manifolds & Shifting Dissent)**:
-  * In human institutions, the rogue detector captures institutional facilitators (Chief Justice Roberts, Speaker Adams, DFO Bonner, Chairman Bernanke) whose administrative procedural turn-taking lies on an orthogonal subspace relative to substantive debate arguments.
+  * In human institutions, the detector captures institutional facilitators (Chief Justice Roberts, Speaker Adams, DFO Bonner, Chairman Bernanke) whose administrative procedural turn-taking lies on an orthogonal subspace relative to substantive debate arguments. Multi-cluster local residuals ensure that these facilitators do not distort the clustering or convergence tracking of substantive debaters.
 
 ### 4. Linguistic Geometry & Turn Mechanics
 * **Explicit Alignment Markers**: In real LLM debates, 65%–75% of speaker turns contain explicit semantic stance markers (`[AGREE]`, `[DISAGREE]`). In human transcripts, this is **0.0%**; humans negotiate via implicit rhetorical concessions, questioning, and indirect pushback.
