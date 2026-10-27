@@ -146,6 +146,8 @@ def run_file(
     solver: str,
     plot_path: Optional[str] = None,
     show_plot: bool = False,
+    plot_style: str = "telemetry",
+    html_path: Optional[str] = None,
 ) -> int:
     if not os.path.exists(transcript_file):
         print(f"Error: file not found: {transcript_file}", file=sys.stderr)
@@ -211,7 +213,8 @@ def run_file(
             resolved_plot = plot_path
         elif plot_path is not None:
             base = os.path.splitext(os.path.basename(transcript_file))[0]
-            resolved_plot = os.path.join("out", f"{base}_telemetry.png")
+            suffix = "_evolution.png" if plot_style == "evolution" else "_telemetry.png"
+            resolved_plot = os.path.join("out", f"{base}{suffix}")
         else:
             resolved_plot = None
 
@@ -220,9 +223,22 @@ def run_file(
             output_path=resolved_plot,
             show=show_plot,
             title=f"KLens Telemetry: {os.path.basename(transcript_file)}",
+            style=plot_style,
         )
         if resolved_plot:
             print(f"Spectral telemetry dashboard saved to: {os.path.abspath(resolved_plot)}")
+
+    if html_path is not None:
+        from klens.vis import export_interactive_timeline_html
+        resolved_html = html_path if len(html_path) > 0 else os.path.join(
+            "out", f"{os.path.splitext(os.path.basename(transcript_file))[0]}_interactive.html"
+        )
+        out_html = export_interactive_timeline_html(
+            processor,
+            output_path=resolved_html,
+            title=f"KLens Interactive Evolution: {os.path.basename(transcript_file)}",
+        )
+        print(f"Interactive timeline HTML exported to: {out_html}")
 
     return 0
 
@@ -321,6 +337,19 @@ def main(argv: Optional[List[str]] = None) -> int:
         help="Generate visual telemetry dashboard PNG (default: out/<basename>_telemetry.png)",
     )
     run_parser.add_argument(
+        "--style",
+        choices=["telemetry", "diagnostic", "evolution", "shortcut"],
+        default="telemetry",
+        help="Plot style: telemetry, diagnostic, evolution, or shortcut (default: telemetry)",
+    )
+    run_parser.add_argument(
+        "--html",
+        nargs="?",
+        const="",
+        default=None,
+        help="Export standalone interactive HTML5 evolution timeline (default: out/<basename>_interactive.html)",
+    )
+    run_parser.add_argument(
         "--show",
         action="store_true",
         default=False,
@@ -334,6 +363,19 @@ def main(argv: Optional[List[str]] = None) -> int:
         "-o",
         default=None,
         help="Path for output PNG (default: out/<basename>_telemetry.png)",
+    )
+    plot_parser.add_argument(
+        "--style",
+        choices=["telemetry", "diagnostic", "evolution", "shortcut"],
+        default="telemetry",
+        help="Plot style: telemetry, diagnostic, evolution, or shortcut (default: telemetry)",
+    )
+    plot_parser.add_argument(
+        "--html",
+        nargs="?",
+        const="",
+        default=None,
+        help="Export standalone interactive HTML5 evolution timeline (default: out/<basename>_interactive.html)",
     )
     plot_parser.add_argument(
         "--show",
@@ -393,13 +435,16 @@ def main(argv: Optional[List[str]] = None) -> int:
             args.solver,
             plot_path=args.plot,
             show_plot=args.show,
+            plot_style=args.style,
+            html_path=args.html,
         )
     elif args.command == "plot":
         temp_csv = args.csv or os.path.join("out", f"_tmp_{os.path.basename(args.transcript)}.csv")
         plot_target = args.output
-        if not plot_target and not args.show:
+        if not plot_target and not args.show and args.html is None:
             base = os.path.splitext(os.path.basename(args.transcript))[0]
-            plot_target = os.path.join("out", f"{base}_telemetry.png")
+            suffix = "_evolution.png" if args.style == "evolution" else "_telemetry.png"
+            plot_target = os.path.join("out", f"{base}{suffix}")
         ret = run_file(
             args.transcript,
             temp_csv,
@@ -409,6 +454,8 @@ def main(argv: Optional[List[str]] = None) -> int:
             args.solver,
             plot_path=plot_target,
             show_plot=args.show,
+            plot_style=args.style,
+            html_path=args.html,
         )
         if args.csv is None and os.path.exists(temp_csv):
             try:

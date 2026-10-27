@@ -410,6 +410,16 @@ def render_spectral_dashboard(
             title=title or "Consensus Acceleration via Centroid Token Injection (Spectral Shortcut)",
             dpi=dpi,
         )
+    elif style == "evolution":
+        return render_temporal_evolution_grid(
+            source=source,
+            speakers=speakers,
+            rounds=rounds,
+            output_path=output_path,
+            show=show,
+            title=title or "Opinion Space Evolution: Concentrations, Factions & Trajectories Over Time",
+            dpi=dpi,
+        )
 
     # 'telemetry' style
     plt = _ensure_matplotlib(show=show)
@@ -628,3 +638,587 @@ def plot_from_transcript_file(
     )
 
     return processor, output_path
+
+
+def render_temporal_evolution_grid(
+    source: Union[LiveTranscriptStreamProcessor, np.ndarray],
+    speakers: Optional[Sequence[str]] = None,
+    rounds: Optional[Sequence[int]] = None,
+    output_path: Optional[str] = None,
+    show: bool = False,
+    title: str = "Opinion Space Evolution: Concentrations, Factions & Trajectories Over Time",
+    dpi: int = 220,
+):
+    """
+    Renders a multi-round small multiples facet grid (1 x T or 2 x ceil(T/2))
+    depicting opinion space concentrations, faction clustering, velocity vectors,
+    and centroid / rogue movement across each round.
+    """
+    plt = _ensure_matplotlib(show=show)
+    Z, resolved_speakers, resolved_rounds, feature_names = _resolve_source_data(source, speakers, rounds)
+    T, N, d = Z.shape
+
+    rogue_speaker, rogue_idx = detect_rogue_from_states(Z, resolved_speakers)
+
+    pca = PCA(n_components=2, random_state=42)
+    all_states = Z.reshape(-1, d)
+    pca.fit(all_states)
+
+    Z_2d = np.zeros((T, N, 2))
+    for t in range(T):
+        Z_2d[t] = pca.transform(Z[t])
+
+    Z_mean = Z.mean(axis=1)
+    Z_mean_2d = pca.transform(Z_mean)
+
+    # Layout dimensions
+    ncols = min(3, T)
+    nrows = int(np.ceil(T / ncols))
+    fig, axes = plt.subplots(nrows, ncols, figsize=(6.2 * ncols, 5.6 * nrows), dpi=dpi, squeeze=False)
+    fig.patch.set_facecolor("#ffffff")
+    fig.suptitle(title, fontsize=14, fontweight="bold", y=0.995)
+
+    all_x = Z_2d[:, :, 0].flatten()
+    all_y = Z_2d[:, :, 1].flatten()
+    x_pad = (all_x.max() - all_x.min()) * 0.18 + 0.05
+    y_pad = (all_y.max() - all_y.min()) * 0.18 + 0.05
+    xlim = (all_x.min() - x_pad, all_x.max() + x_pad)
+    ylim = (all_y.min() - y_pad, all_y.max() + y_pad)
+
+    palette = ["#2563eb", "#059669", "#d97706", "#7c3aed", "#db2777", "#0891b2", "#475569", "#ea580c"]
+
+    for t in range(T):
+        row = t // ncols
+        col = t % ncols
+        ax = axes[row, col]
+        ax.set_facecolor("#f8fafc")
+
+        # 1. Intra-faction clustering & density contours for round t
+        factions = cluster_factions(Z[t], resolved_speakers, rogue_idx=rogue_idx, similarity_threshold=0.60)
+
+        # Plot KDE / Confidence Ellipses around factions with >= 2 members
+        for f_idx, fac in enumerate(factions):
+            f_indices = [resolved_speakers.index(s) for s in fac.members if s in resolved_speakers]
+            if len(f_indices) >= 2:
+                fac_pts = Z_2d[t, f_indices, :]
+                mean_pt = fac_pts.mean(axis=0)
+                cov = np.cov(fac_pts[:, 0], fac_pts[:, 1])
+                f_col = palette[f_idx % len(palette)]
+                
+                # Plot intra-faction connective graph edges
+                for i_a in range(len(f_indices)):
+                    for i_b in range(i_a + 1, len(f_indices)):
+                        pt_a = Z_2d[t, f_indices[i_a], :]
+                        pt_b = Z_2d[t, f_indices[i_b], :]
+                        ax.plot([pt_a[0], pt_b[0]], [pt_a[1], pt_b[1]], color=f_col, alpha=0.25, linestyle="-", linewidth=1.2)
+
+                # Ellipse envelope
+                if cov.ndim == 2 and not np.isnan(cov).any():
+                    evals, evecs = np.linalg.eigh(cov)
+                    order = evals.argsort()[::-1]
+                    evals, evecs = evals[order], evecs[:, order]
+                    angle = np.degrees(np.arctan2(*evecs[:, 0][::-1]))
+                    w, h = 2.4 * np.sqrt(np.maximum(evals, 1e-4))
+                    w, h = max(w, 0.25), max(h, 0.20)
+                    ellipse = Ellipse(xy=mean_pt, width=w, height=h, angle=angle, facecolor=f_col, alpha=0.12, edgecolor=f_col, linestyle="--", linewidth=1.2, zorder=2)
+                    ax.add_patch(ellipse)
+
+        # 2. Historical fading trails of agents
+        if t > 0:
+            for i in range(N):
+                c = "#dc2626" if i == rogue_idx else "#94a3b8"
+                past_pts = Z_2d[:t + 1, i, :]
+                ax.plot(past_pts[:, 0], past_pts[:, 1], color=c, alpha=0.35, linestyle=":", linewidth=1.0, zorder=3)
+
+        # 3. Agent Scatter Markers & Movement Velocity Vectors
+        for i, spk in enumerate(resolved_speakers):
+            is_rogue = (i == rogue_idx)
+            c = "#dc2626" if is_rogue else palette[i % len(palette)]
+            m = "X" if is_rogue else "o"
+            pt = Z_2d[t, i, :]
+
+            # Velocity arrow to next round (if t < T - 1)
+            if t < T - 1:
+                next_pt = Z_2d[t + 1, i, :]
+                dx = (next_pt[0] - pt[0]) * 0.75
+                dy = (next_pt[1] - pt[1]) * 0.75
+                if np.hypot(dx, dy) > 0.02:
+                    ax.annotate(
+                        "",
+                        xy=(pt[0] + dx, pt[1] + dy),
+                        xytext=(pt[0], pt[1]),
+                        arrowprops=dict(arrowstyle="->", color=c, lw=1.2, alpha=0.75),
+                        zorder=4,
+                    )
+
+            ax.scatter(pt[0], pt[1], color=c, s=65 if is_rogue else 45, marker=m, edgecolors="#0f172a", linewidth=1.0, zorder=5)
+            # Label rogue or key speakers
+            if is_rogue or len(resolved_speakers) <= 8:
+                ax.text(pt[0] + 0.018, pt[1] + 0.015, spk, fontsize=7.2, color="#0f172a", fontweight="bold" if is_rogue else "normal", zorder=6)
+
+        # 4. Consensus Centroid with Drift Trail
+        past_centroid = Z_mean_2d[:t + 1, :]
+        ax.plot(past_centroid[:, 0], past_centroid[:, 1], color="#0f172a", linestyle="-", linewidth=2.0, zorder=6)
+        curr_cen = Z_mean_2d[t, :]
+        ax.scatter(curr_cen[0], curr_cen[1], color="#eab308", s=120, marker="*", edgecolors="#0f172a", linewidth=1.5, zorder=7)
+
+        # Velocity arrow for Centroid
+        if t < T - 1:
+            next_cen = Z_mean_2d[t + 1, :]
+            c_dx = (next_cen[0] - curr_cen[0]) * 0.8
+            c_dy = (next_cen[1] - curr_cen[1]) * 0.8
+            if np.hypot(c_dx, c_dy) > 0.01:
+                ax.annotate(
+                    "",
+                    xy=(curr_cen[0] + c_dx, curr_cen[1] + c_dy),
+                    xytext=(curr_cen[0], curr_cen[1]),
+                    arrowprops=dict(arrowstyle="->", color="#eab308", lw=2.2),
+                    zorder=7,
+                )
+
+        # Title & Subtitles with Metrics
+        cur_dispersion = float(np.mean([np.linalg.norm(Z[t, i, :] - Z_mean[t]) for i in range(N)]))
+        ax.set_title(f"Round {resolved_rounds[t]} | Dispersion: {cur_dispersion:.3f}", fontsize=11, fontweight="bold", pad=8)
+        ax.set_xlim(xlim)
+        ax.set_ylim(ylim)
+        ax.set_xlabel("Principal Semantic Dimension (PC1)", fontsize=8.5)
+        ax.set_ylabel("Disagreement Observable (PC2)", fontsize=8.5)
+        ax.grid(True, linestyle=":", alpha=0.55)
+
+    # Hide unused subplots if T < nrows * ncols
+    for extra in range(T, nrows * ncols):
+        fig.delaxes(axes[extra // ncols, extra % ncols])
+
+    plt.tight_layout()
+
+    if output_path:
+        os.makedirs(os.path.dirname(os.path.abspath(output_path)), exist_ok=True)
+        fig.savefig(output_path, bbox_inches="tight")
+
+    if show:
+        plt.show()
+
+    return fig
+
+
+def export_interactive_timeline_html(
+    source: Union[LiveTranscriptStreamProcessor, np.ndarray],
+    speakers: Optional[Sequence[str]] = None,
+    rounds: Optional[Sequence[int]] = None,
+    output_path: str = "out/interactive_deliberation.html",
+    title: str = "KLens Interactive Opinion Space & Cluster Evolution",
+) -> str:
+    """
+    Exports a standalone, zero-dependency interactive HTML5/Canvas visualization
+    with a scrubbable round timeline, play/pause controls, dynamic cluster hulls,
+    animated agent comet trails, and hover inspection tooltips.
+    """
+    Z, resolved_speakers, resolved_rounds, feature_names = _resolve_source_data(source, speakers, rounds)
+    T, N, d = Z.shape
+
+    rogue_speaker, rogue_idx = detect_rogue_from_states(Z, resolved_speakers)
+
+    pca = PCA(n_components=2, random_state=42)
+    all_states = Z.reshape(-1, d)
+    pca.fit(all_states)
+
+    Z_2d = np.zeros((T, N, 2))
+    for t in range(T):
+        Z_2d[t] = pca.transform(Z[t])
+
+    Z_mean = Z.mean(axis=1)
+    Z_mean_2d = pca.transform(Z_mean)
+
+    # Normalize coordinates into Canvas [50, 750] range
+    all_x = Z_2d[:, :, 0].flatten()
+    all_y = Z_2d[:, :, 1].flatten()
+    min_x, max_x = float(all_x.min()), float(all_x.max())
+    min_y, max_y = float(all_y.min()), float(all_y.max())
+    pad_x = (max_x - min_x) * 0.15 if (max_x > min_x) else 1.0
+    pad_y = (max_y - min_y) * 0.15 if (max_y > min_y) else 1.0
+    min_x -= pad_x
+    max_x += pad_x
+    min_y -= pad_y
+    max_y += pad_y
+
+    rounds_data = []
+    for t in range(T):
+        factions = cluster_factions(Z[t], resolved_speakers, rogue_idx=rogue_idx, similarity_threshold=0.60)
+        fac_payload = [
+            {"id": f.id, "members": f.members, "topic": f.topic}
+            for f in factions
+        ]
+        agent_positions = []
+        for i, spk in enumerate(resolved_speakers):
+            agent_positions.append({
+                "speaker": spk,
+                "x": float(Z_2d[t, i, 0]),
+                "y": float(Z_2d[t, i, 1]),
+                "is_rogue": bool(i == rogue_idx),
+            })
+        rounds_data.append({
+            "round": int(resolved_rounds[t]),
+            "centroid": {"x": float(Z_mean_2d[t, 0]), "y": float(Z_mean_2d[t, 1])},
+            "dispersion": float(np.mean([np.linalg.norm(Z[t, i, :] - Z_mean[t]) for i in range(N)])),
+            "agents": agent_positions,
+            "factions": fac_payload,
+        })
+
+    json_payload = json.dumps({
+        "rounds": rounds_data,
+        "speakers": resolved_speakers,
+        "rogue_speaker": rogue_speaker,
+        "bounds": {"min_x": min_x, "max_x": max_x, "min_y": min_y, "max_y": max_y},
+        "title": title,
+    })
+
+    html_content = f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>{title}</title>
+<style>
+  body {{
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    margin: 0;
+    padding: 24px;
+    background: #0f172a;
+    color: #f8fafc;
+  }}
+  .container {{
+    max-width: 1100px;
+    margin: 0 auto;
+    background: #1e293b;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+  }}
+  h1 {{
+    font-size: 20px;
+    margin-top: 0;
+    margin-bottom: 8px;
+    color: #f1f5f9;
+  }}
+  .subtitle {{
+    font-size: 13px;
+    color: #94a3b8;
+    margin-bottom: 20px;
+  }}
+  .controls {{
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: #0f172a;
+    padding: 12px 18px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+  }}
+  button {{
+    background: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 16px;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }}
+  button:hover {{ background: #2563eb; }}
+  .slider-wrapper {{
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }}
+  input[type=range] {{
+    flex: 1;
+    accent-color: #3b82f6;
+    cursor: pointer;
+  }}
+  .stats-card {{
+    font-size: 13px;
+    color: #cbd5e1;
+    min-width: 220px;
+    text-align: right;
+  }}
+  .canvas-wrapper {{
+    position: relative;
+    background: #090d16;
+    border: 1px solid #334155;
+    border-radius: 8px;
+    overflow: hidden;
+  }}
+  canvas {{
+    display: block;
+    width: 100%;
+    height: auto;
+  }}
+  .legend {{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-top: 14px;
+    font-size: 12px;
+    color: #94a3b8;
+  }}
+  .legend-item {{
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }}
+  .legend-color {{
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+  }}
+  .tooltip {{
+    position: absolute;
+    background: rgba(15, 23, 42, 0.95);
+    border: 1px solid #475569;
+    color: #f8fafc;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    pointer-events: none;
+    display: none;
+    z-index: 10;
+  }}
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>{title}</h1>
+  <div class="subtitle">Spectral Deliberation Dynamics • Visualizing Faction Concentrations, Movement Vectors, and Centroid Rallying</div>
+  
+  <div class="controls">
+    <button id="playBtn">Play Timeline</button>
+    <div class="slider-wrapper">
+      <span style="font-size: 12px; color: #94a3b8;">Round:</span>
+      <input type="range" id="roundSlider" min="0" max="{T - 1}" value="0" step="1">
+      <span id="roundLabel" style="font-weight: bold; color: #38bdf8; min-width: 70px;">Round {resolved_rounds[0]}</span>
+    </div>
+    <div class="stats-card" id="statsCard">Dispersion: 0.000</div>
+  </div>
+
+  <div class="canvas-wrapper">
+    <canvas id="viewCanvas" width="1050" height="650"></canvas>
+    <div id="tooltip" class="tooltip"></div>
+  </div>
+
+  <div class="legend">
+    <div class="legend-item"><div class="legend-color" style="background: #eab308; clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);"></div><span>Consensus Centroid z̄(t)</span></div>
+    <div class="legend-item"><div class="legend-color" style="background: #ef4444;"></div><span>Rogue Catalyst (Savitt / Outlier)</span></div>
+    <div class="legend-item"><div class="legend-color" style="background: #3b82f6;"></div><span>Active Deliberating Agents</span></div>
+    <div class="legend-item"><div class="legend-color" style="background: rgba(59, 130, 246, 0.2); border: 1px dashed #3b82f6;"></div><span>Faction Density Clusters</span></div>
+    <div class="legend-item"><div class="legend-color" style="background: #cbd5e1; height: 2px;"></div><span>Temporal Motion Trails</span></div>
+  </div>
+</div>
+
+<script>
+const DATA = {json_payload};
+const canvas = document.getElementById("viewCanvas");
+const ctx = canvas.getContext("2d");
+const slider = document.getElementById("roundSlider");
+const label = document.getElementById("roundLabel");
+const stats = document.getElementById("statsCard");
+const playBtn = document.getElementById("playBtn");
+const tooltip = document.getElementById("tooltip");
+
+let currentRoundIdx = 0;
+let isPlaying = false;
+let playInterval = null;
+
+const bounds = DATA.bounds;
+const W = canvas.width;
+const H = canvas.height;
+const PAD = 50;
+
+function mapX(x) {{
+  return PAD + (x - bounds.min_x) / (bounds.max_x - bounds.min_x) * (W - 2 * PAD);
+}}
+function mapY(y) {{
+  return (H - PAD) - (y - bounds.min_y) / (bounds.max_y - bounds.min_y) * (H - 2 * PAD);
+}}
+
+const colors = ["#38bdf8", "#34d399", "#fbbf24", "#a78bfa", "#f472b6", "#2dd4bf", "#cbd5e1"];
+
+function render() {{
+  ctx.clearRect(0, 0, W, H);
+  
+  // Grid lines
+  ctx.strokeStyle = "rgba(51, 65, 85, 0.4)";
+  ctx.lineWidth = 1;
+  ctx.setLineDash([4, 4]);
+  for (let x = PAD; x <= W - PAD; x += 100) {{
+    ctx.beginPath(); ctx.moveTo(x, PAD); ctx.lineTo(x, H - PAD); ctx.stroke();
+  }}
+  for (let y = PAD; y <= H - PAD; y += 80) {{
+    ctx.beginPath(); ctx.moveTo(PAD, y); ctx.lineTo(W - PAD, y); ctx.stroke();
+  }}
+  ctx.setLineDash([]);
+
+  const rData = DATA.rounds[currentRoundIdx];
+
+  // 1. Faction Density Envelopes
+  if (rData.factions) {{
+    rData.factions.forEach((f, fIdx) => {{
+      if (f.members.length >= 2) {{
+        const pts = [];
+        rData.agents.forEach(a => {{
+          if (f.members.includes(a.speaker)) {{
+            pts.push({{x: mapX(a.x), y: mapY(a.y)}});
+          }}
+        }});
+        if (pts.length >= 2) {{
+          const c = colors[fIdx % colors.length];
+          // Connective edges
+          ctx.strokeStyle = c;
+          ctx.lineWidth = 1.2;
+          ctx.globalAlpha = 0.35;
+          for (let i = 0; i < pts.length; i++) {{
+            for (let j = i + 1; j < pts.length; j++) {{
+              ctx.beginPath();
+              ctx.moveTo(pts[i].x, pts[i].y);
+              ctx.lineTo(pts[j].x, pts[j].y);
+              ctx.stroke();
+            }}
+          }}
+          // Hull bubble
+          const cx = pts.reduce((acc, p) => acc + p.x, 0) / pts.length;
+          const cy = pts.reduce((acc, p) => acc + p.y, 0) / pts.length;
+          let maxR = 0;
+          pts.forEach(p => {{
+            const d = Math.hypot(p.x - cx, p.y - cy);
+            if (d > maxR) maxR = d;
+          }});
+          ctx.beginPath();
+          ctx.arc(cx, cy, maxR + 25, 0, Math.PI * 2);
+          ctx.fillStyle = c;
+          ctx.globalAlpha = 0.08;
+          ctx.fill();
+          ctx.strokeStyle = c;
+          ctx.globalAlpha = 0.4;
+          ctx.setLineDash([4, 4]);
+          ctx.stroke();
+          ctx.setLineDash([]);
+          ctx.globalAlpha = 1.0;
+        }}
+      }}
+    }});
+  }}
+
+  // 2. Motion Trails (from round 0 to current)
+  for (let spkIdx = 0; spkIdx < DATA.speakers.length; spkIdx++) {{
+    const isRogue = (DATA.speakers[spkIdx] === DATA.rogue_speaker);
+    ctx.strokeStyle = isRogue ? "rgba(239, 68, 68, 0.4)" : "rgba(148, 163, 184, 0.25)";
+    ctx.lineWidth = isRogue ? 2 : 1;
+    ctx.beginPath();
+    for (let t = 0; t <= currentRoundIdx; t++) {{
+      const a = DATA.rounds[t].agents[spkIdx];
+      const px = mapX(a.x);
+      const py = mapY(a.y);
+      if (t === 0) ctx.moveTo(px, py);
+      else ctx.lineTo(px, py);
+    }}
+    ctx.stroke();
+  }}
+
+  // 3. Centroid Trail & Marker
+  ctx.strokeStyle = "#eab308";
+  ctx.lineWidth = 2.5;
+  ctx.beginPath();
+  for (let t = 0; t <= currentRoundIdx; t++) {{
+    const c = DATA.rounds[t].centroid;
+    const cx = mapX(c.x);
+    const cy = mapY(c.y);
+    if (t === 0) ctx.moveTo(cx, cy);
+    else ctx.lineTo(cx, cy);
+  }}
+  ctx.stroke();
+
+  const curCen = rData.centroid;
+  const ccx = mapX(curCen.x);
+  const ccy = mapY(curCen.y);
+  ctx.fillStyle = "#eab308";
+  ctx.beginPath();
+  ctx.arc(ccx, ccy, 8, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = "#000";
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // 4. Agent Nodes & Velocity Vectors
+  rData.agents.forEach((a, idx) => {{
+    const ax = mapX(a.x);
+    const ay = mapY(a.y);
+
+    // Velocity arrow
+    if (currentRoundIdx < DATA.rounds.length - 1) {{
+      const nextA = DATA.rounds[currentRoundIdx + 1].agents[idx];
+      const nax = mapX(nextA.x);
+      const nay = mapY(nextA.y);
+      const dx = (nax - ax) * 0.7;
+      const dy = (nay - ay) * 0.7;
+      if (Math.hypot(dx, dy) > 8) {{
+        ctx.strokeStyle = a.is_rogue ? "#ef4444" : "rgba(56, 189, 248, 0.7)";
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(ax, ay);
+        ctx.lineTo(ax + dx, ay + dy);
+        ctx.stroke();
+      }}
+    }}
+
+    // Agent circle
+    ctx.fillStyle = a.is_rogue ? "#ef4444" : "#38bdf8";
+    ctx.beginPath();
+    ctx.arc(ax, ay, a.is_rogue ? 7 : 5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = "#0f172a";
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    // Text label
+    ctx.fillStyle = a.is_rogue ? "#fca5a5" : "#e2e8f0";
+    ctx.font = a.is_rogue ? "bold 11px sans-serif" : "10px sans-serif";
+    ctx.fillText(a.speaker, ax + 8, ay + 3);
+  }});
+
+  // Update controls display
+  label.innerText = `Round ${{rData.round}}`;
+  stats.innerText = `Disagreement Dispersion: ${{rData.dispersion.toFixed(3)}}`;
+}}
+
+slider.addEventListener("input", (e) => {{
+  currentRoundIdx = parseInt(e.target.value);
+  render();
+}});
+
+playBtn.addEventListener("click", () => {{
+  if (isPlaying) {{
+    clearInterval(playInterval);
+    playBtn.innerText = "Play Timeline";
+    isPlaying = false;
+  }} else {{
+    playBtn.innerText = "Pause Timeline";
+    isPlaying = true;
+    playInterval = setInterval(() => {{
+      currentRoundIdx = (currentRoundIdx + 1) % DATA.rounds.length;
+      slider.value = currentRoundIdx;
+      render();
+    }}, 1200);
+  }}
+}});
+
+render();
+</script>
+</body>
+</html>"""
+
+    os.makedirs(os.path.dirname(os.path.abspath(output_path)), exist_ok=True)
+    with open(output_path, "w", encoding="utf-8") as f:
+        f.write(html_content)
+
+    return os.path.abspath(output_path)
+

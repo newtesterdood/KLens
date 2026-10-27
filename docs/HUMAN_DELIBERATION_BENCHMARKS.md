@@ -212,6 +212,9 @@ Round  5 | Agents: 17 | λ2: 0.6180 | T_cert:   7 rounds | Rogue: Bonner   | Fac
 **Transcript**: [`samples/delaware_merger_deliberation.json`](../samples/delaware_merger_deliberation.json) (56 turns across 14 directors, management, legal counsel, and financial advisors)
 
 ![Delaware Merger Deliberation Telemetry](../assets/delaware_merger_telemetry.png)
+![Delaware Merger Deliberation Evolution](../assets/delaware_merger_evolution.png)
+
+> **Interactive Timeline**: Open `out/delaware_merger_interactive.html` in any web browser to scrub through the animated evolution timeline with cluster hulls and agent velocity vectors.
 
 ### Turn-by-Turn Spectral Dynamics
 
@@ -227,9 +230,10 @@ Round  5 | Agents: 14 | λ2: 0.7592 | T_cert:  11 rounds | Rogue: William Savitt
 1. **Severe Mid-Debate Deadlock**:
    * As the acquirer demanded raw firehose log data and threatened termination over alleged fake accounts/spam bots, $\lambda_2$ rose from $0.8634 \to 0.9502 \to 0.9804$.
    * $T_{\text{cert}}$ spiked to **152 rounds** in Round 4, mathematically certifying intractable dispute over the Delaware Material Adverse Effect (MAE) standard under *Akorn v. Fresenius*.
-2. **Consensus Phase Collapse via Specific Performance**:
+2. **Consensus Phase Collapse via Specific Performance (Rogue Rallying Consensus)**:
    * Faced with Chancellor McCormick's strict contractual enforcement doctrine in Delaware Chancery Court, the buyer capitulated to close at $54.20.
    * Deliberation collapsed dramatically in Round 5 ($\lambda_2 = 0.7592, T_{\text{cert}} = 11$, contraction rate $0.52\times$).
+   * **Centripetal Rogue Dynamics**: Litigation counsel **William Savitt** held an uncompromising position at the semantic margin (Section 9.9 specific performance decree). The temporal evolution grid reveals the group centroid $\bar{z}(t)$ migrating directly toward Savitt's coordinate, pulling the disparate board and management factions into compliance with his legal enforcement doctrine.
 3. **Semantic Center of Disagreement**:
    > **Center of Disagreement**: *Delaware Law vs. 20 Cash* ($54.20 per share cash consideration vs legal enforcement covenants)
 4. **Consensus Centroid Concept**:
@@ -241,6 +245,7 @@ Round  5 | Agents: 14 | λ2: 0.7592 | T_cert:  11 rounds | Rogue: William Savitt
    * **Faction 7** (Martin Lipton): High Delaware legal bar for Material Adverse Effect (MAE).
    * **Faction 9** (Ned Segal): Disbursement flow and per-share cash conversion mechanics.
    * **Rogue Stance** (William Savitt): Litigation counsel pursuing a decree of specific performance.
+
 
 ---
 

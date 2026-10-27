@@ -53,6 +53,12 @@ klens run samples/delaware_merger_deliberation.json \
   --plot assets/delaware_merger_telemetry.png \
   --output out/metrics_delaware_merger.csv
 
+# 4b. Generate Multi-Round Temporal Evolution Grid & Interactive HTML Timeline
+klens plot samples/delaware_merger_deliberation.json \
+  --style evolution \
+  --output assets/delaware_merger_evolution.png \
+  --html out/delaware_merger_interactive.html
+
 # 5. California PUC Infrastructure Rate Hearing (45 turns across 14 Commissioners & Advocates)
 klens run samples/puc_infrastructure_hearing.json \
   --plot assets/puc_hearing_telemetry.png \

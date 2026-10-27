@@ -79,3 +79,17 @@ def test_cli_demo_with_plot_flag(capsys):
         assert ret == 0
         assert os.path.exists(out_png)
         assert os.path.exists(out_csv)
+
+
+def test_render_temporal_evolution_grid_and_html():
+    sample_file = os.path.join(SAMPLES_DIR, "delaware_merger_deliberation.json")
+    with tempfile.TemporaryDirectory() as tmpdir:
+        out_png = os.path.join(tmpdir, "merger_evo.png")
+        out_html = os.path.join(tmpdir, "merger_timeline.html")
+        ret = main(["plot", sample_file, "--style", "evolution", "--output", out_png, "--html", out_html])
+        assert ret == 0
+        assert os.path.exists(out_png)
+        assert os.path.getsize(out_png) > 10000
+        assert os.path.exists(out_html)
+        assert os.path.getsize(out_html) > 5000
+
