@@ -403,7 +403,7 @@ def render_spectral_dashboard(
             rounds=rounds,
             output_path=output_path,
             show=show,
-            title=title or "Multi-Agent Spectral Analysis: Faction Identification & Rogue Agent Detection",
+            title=title or "Multi-Agent Spectral Analysis: Faction Identification & Orthogonal Agent Detection",
             dpi=dpi,
         )
     elif style == "shortcut":
