@@ -1,7 +1,10 @@
-# Research Perspective: Spectral Telemetry and Operator-Theoretic Foundations for Multi-Agent Deliberation
+# [DRAFT] Research Perspective: Spectral Telemetry and Operator-Theoretic Foundations for Multi-Agent Deliberation
+
+> **STATUS: WORKING DRAFT — FOR PEER REVIEW & DISCUSSION ONLY**  
+> *This document represents ongoing collaborative research at the intersection of applied dynamical systems, sociophysics, and multi-agent AI systems.*
 
 **Author / Maintainer**: KLens Research Initiative  
-**Date**: October 2026  
+**Date**: October 2026 (Draft v0.1)  
 **Subject**: Synthesizing Koopman Operator Theory, Multi-Agent Language Systems, and Sociophysics  
 
 ---
