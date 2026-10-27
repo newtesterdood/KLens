@@ -2,9 +2,15 @@ import numpy as np
 import pytest
 
 from klens.spectral import (
+    classify_topological_state,
     cluster_factions,
     compute_koopman_metrics,
+    compute_multi_cluster_residuals,
+    detect_cluster_migrations,
+    detect_orthogonal_agent,
+    detect_orthogonal_from_states,
     detect_rogue_agent,
+    detect_rogue_from_states,
     extract_centroid_keywords,
     lift_state,
 )
@@ -95,3 +101,85 @@ def test_extract_centroid_keywords():
     vocab = ["alpha", "beta", "gamma", "delta", "epsilon"]
     top_keywords = extract_centroid_keywords(centroid, vocab, top_k=3)
     assert top_keywords == ["delta", "beta", "gamma"]
+
+
+def test_multi_cluster_residuals_resolves_phantom_center():
+    # 4-4-2 distribution:
+    # 4 agents in Faction A at [1.0, 0.0]
+    # 4 agents in Faction B at [-1.0, 0.0]
+    # 2 agents at the origin [0.0, 0.0] (the global mean)
+    N = 10
+    d = 2
+    T = 2
+    Z = np.zeros((T, N, d))
+    for t in range(T):
+        Z[t, 0:4, 0] = 1.0   # Faction A
+        Z[t, 4:8, 0] = -1.0  # Faction B
+        Z[t, 8:10, 0] = 0.0  # Origin agents (Phantom center)
+
+    # Compute global mean vs multi-cluster local residual
+    global_mean = Z.mean(axis=1) # [0.0, 0.0]
+    global_residuals = np.linalg.norm(Z[0] - global_mean[0], axis=1)
+    # Under global centroid, origin agents falsely have 0 residual, while cohesive faction members have 1.0!
+    assert np.allclose(global_residuals[8:10], 0.0)
+    assert np.allclose(global_residuals[0:4], 1.0)
+
+    # Now verify multi-cluster local residuals
+    local_residuals, assignments, centroids = compute_multi_cluster_residuals(Z, n_clusters=2, seed=42)
+    # Faction A members have 0 distance to Faction A
+    assert np.allclose(local_residuals[0, 0:4], 0.0, atol=1e-5)
+    # Faction B members have 0 distance to Faction B
+    assert np.allclose(local_residuals[0, 4:8], 0.0, atol=1e-5)
+    # The 2 origin agents have distance 1.0 from both faction centroids
+    assert np.allclose(local_residuals[0, 8:10], 1.0, atol=1e-5)
+    # Proves local residuals solve the Phantom Center problem!
+
+
+def test_detect_orthogonal_agent_transverse():
+    T, N, d = 3, 5, 4
+    speakers = [f"Agent_{i}" for i in range(N)]
+    Z = np.zeros((T, N, d))
+
+    # Agents 0..3 form two clusters moving along dimension 0 (collective drift)
+    for t in range(T):
+        drift = 0.5 * t
+        Z[t, 0:2, 0] = 1.0 + drift
+        Z[t, 2:4, 0] = -1.0 + drift
+
+        # Agent 4 is an orthogonal catalyst moving along dimension 1 (transverse 90° subspace)
+        Z[t, 4, 1] = 4.0 + 1.0 * t
+
+    ortho_speaker, ortho_idx = detect_orthogonal_from_states(Z, speakers)
+    assert ortho_speaker == "Agent_4"
+    assert ortho_idx == 4
+
+    # Verify backward compatible alias
+    rogue_spk, rogue_i = detect_rogue_from_states(Z, speakers)
+    assert rogue_spk == "Agent_4"
+    assert rogue_i == 4
+
+
+def test_detect_cluster_migrations():
+    # 2 rounds, 4 agents. Agent 2 changes cluster assignment from round 1 to round 2
+    speakers = ["A", "B", "C", "D"]
+    assignments = np.array([
+        [0, 0, 1, 1],
+        [0, 0, 0, 1], # C migrated from cluster 1 to cluster 0
+    ])
+    migrations = detect_cluster_migrations(assignments, speakers)
+    assert len(migrations) == 1
+    assert "C (Cluster 2 -> Cluster 1 at Round 2)" in migrations[0]
+
+
+def test_classify_topological_state():
+    # 1. Dissolution
+    assert classify_topological_state(1.02, 2, [], 0.5, 0.2) == "Dissolution"
+    # 2. Migration
+    assert classify_topological_state(0.90, 2, ["A migrated"], 0.5, 0.2) == "Migration"
+    # 3. Dissent
+    assert classify_topological_state(0.88, 2, [], 2.5, 0.5) == "Dissent"
+    # 4. Factionalization
+    assert classify_topological_state(0.92, 3, [], 0.5, 0.4) == "Factionalization"
+    # 5. Convergence
+    assert classify_topological_state(0.65, 1, [], 0.2, 0.15) == "Convergence"
+

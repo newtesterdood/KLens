@@ -81,16 +81,160 @@ def compute_koopman_metrics(
     return abs_l2, T_cert, Delta, Z_mean[:, 0, :]
 
 
+def compute_multi_cluster_residuals(
+    Z: np.ndarray,
+    n_clusters: Optional[int] = None,
+    seed: int = 42,
+) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """
+    Computes multi-cluster local residuals d_i^{local}(t) = min_k ||z_i(t) - C_k(t)||
+    to resolve the Phantom Center problem when factions >= 2.
+
+    Returns:
+        local_residuals: (T, N) array of minimum Euclidean distances to nearest cluster centroid.
+        cluster_assignments: (T, N) integer cluster index per agent per round.
+        centroids: (T, K, d) cluster centroids per round.
+    """
+    is_2d = False
+    if Z.ndim == 2:
+        is_2d = True
+        Z = Z[np.newaxis, :, :]
+
+    T, N, d = Z.shape
+    speakers = [f"Agent_{i}" for i in range(N)]
+
+    local_residuals = np.zeros((T, N))
+    cluster_assignments = np.zeros((T, N), dtype=int)
+    centroids_list = []
+
+    for t in range(T):
+        states_t = Z[t]
+
+        # First, check for emergent cohesive multi-member factions via cosine similarity
+        factions = cluster_factions(states_t, speakers, similarity_threshold=0.60)
+        multi_member = [f for f in factions if len(f.members) >= 2]
+
+        if len(multi_member) >= 1:
+            viable_centers = np.array([
+                states_t[[speakers.index(s) for s in f.members]].mean(axis=0)
+                for f in multi_member
+            ])
+        else:
+            k = n_clusters if n_clusters is not None else min(4, max(2, N // 3))
+            unique_states = len(np.unique(states_t, axis=0))
+            cur_k = max(1, min(k, unique_states))
+            if cur_k < 2:
+                viable_centers = states_t.mean(axis=0, keepdims=True)
+            else:
+                kmeans = KMeans(n_clusters=cur_k, random_state=seed, n_init="auto").fit(states_t)
+                centers = kmeans.cluster_centers_
+                labels = kmeans.labels_
+                counts = np.bincount(labels, minlength=cur_k)
+                viable_idx = np.where(counts >= 2)[0]
+                if len(viable_idx) == 0:
+                    viable_idx = np.arange(cur_k)
+                viable_centers = centers[viable_idx]
+
+        centroids_list.append(viable_centers)
+        dists_to_clusters = np.linalg.norm(states_t[:, np.newaxis, :] - viable_centers[np.newaxis, :, :], axis=2)
+        local_residuals[t] = np.min(dists_to_clusters, axis=1)
+        cluster_assignments[t] = np.argmin(dists_to_clusters, axis=1)
+
+    max_k_found = max(c.shape[0] for c in centroids_list)
+    centroids_arr = np.zeros((T, max_k_found, d))
+    for t, c in enumerate(centroids_list):
+        centroids_arr[t, :c.shape[0], :] = c
+
+    if is_2d:
+        return local_residuals[0], cluster_assignments[0], centroids_arr[0]
+    return local_residuals, cluster_assignments, centroids_arr
+
+
+def detect_cluster_migrations(
+    cluster_assignments: np.ndarray,
+    speakers: Sequence[str],
+) -> List[str]:
+    """
+    Tracks when an agent's nearest cluster assignment changes across consecutive rounds.
+    """
+    if cluster_assignments.ndim == 1:
+        return []
+
+    T, N = cluster_assignments.shape
+    migrations: List[str] = []
+    for t in range(1, T):
+        for i in range(N):
+            prev_c = cluster_assignments[t - 1, i]
+            curr_c = cluster_assignments[t, i]
+            if prev_c != curr_c:
+                migrations.append(
+                    f"{speakers[i]} (Cluster {prev_c + 1} -> Cluster {curr_c + 1} at Round {t + 1})"
+                )
+    return migrations
+
+
+def detect_orthogonal_from_states(
+    Z: np.ndarray,
+    speakers: Sequence[str],
+    seed: int = 42,
+) -> Tuple[str, int]:
+    """
+    Detects the primary Orthogonal Agent: an agent that is persistently distant from all
+    emergent cluster centroids AND whose trajectory is decoupled / transverse to collective drift.
+    """
+    T, N, d = Z.shape
+    if N <= 1:
+        return speakers[0], 0
+
+    local_res, _, _ = compute_multi_cluster_residuals(Z, seed=seed)
+    mean_residuals = local_res.mean(axis=0)
+
+    # Transverse decoupling factor relative to collective group drift
+    if T >= 2:
+        drift = Z.mean(axis=1)[-1] - Z.mean(axis=1)[0]
+        drift_norm = float(np.linalg.norm(drift))
+        decoupling_factors = np.ones(N)
+        if drift_norm > 1e-6:
+            for i in range(N):
+                vel = Z[-1, i] - Z[0, i]
+                vel_norm = float(np.linalg.norm(vel))
+                if vel_norm > 1e-6:
+                    cos_theta = float(np.dot(vel, drift) / (vel_norm * drift_norm))
+                    cos_theta = float(np.clip(cos_theta, -1.0, 1.0))
+                    # High transverse score when orthogonal to collective drift (cos_theta ~ 0)
+                    transverse_score = 1.0 - abs(cos_theta)
+                    decoupling_factors[i] = 1.0 + 0.4 * transverse_score
+        scores = mean_residuals * decoupling_factors
+    else:
+        scores = mean_residuals
+
+    ortho_idx = int(np.argmax(scores))
+    return speakers[ortho_idx], ortho_idx
+
+
 def detect_rogue_from_states(
     Z: np.ndarray,
     speakers: Sequence[str],
 ) -> Tuple[str, int]:
-    T, N, d = Z.shape
-    Z_mean = Z.mean(axis=1, keepdims=True)
-    delta_3d = Z - Z_mean
-    avg_disagreements = np.linalg.norm(delta_3d, axis=2).mean(axis=0)
-    rogue_idx = int(np.argmax(avg_disagreements))
-    return speakers[rogue_idx], rogue_idx
+    """
+    Backward-compatible alias pointing to detect_orthogonal_from_states.
+    """
+    return detect_orthogonal_from_states(Z, speakers)
+
+
+def detect_orthogonal_agent(
+    Delta: np.ndarray,
+    speakers: Sequence[str],
+    T: int,
+    N: int,
+    d: int,
+    seed: int = 42,
+) -> Tuple[str, int]:
+    """
+    Detects orthogonal agent from disagreement tensor Delta.
+    """
+    Z_proxy = Delta.reshape(T, N, d)
+    return detect_orthogonal_from_states(Z_proxy, speakers, seed=seed)
 
 
 def detect_rogue_agent(
@@ -100,10 +244,37 @@ def detect_rogue_agent(
     N: int,
     d: int,
 ) -> Tuple[str, int]:
-    delta_3d = Delta.reshape(T, N, d)
-    avg_disagreements = np.linalg.norm(delta_3d, axis=2).mean(axis=0)
-    rogue_idx = int(np.argmax(avg_disagreements))
-    return speakers[rogue_idx], rogue_idx
+    """
+    Backward-compatible alias pointing to detect_orthogonal_agent.
+    """
+    return detect_orthogonal_agent(Delta, speakers, T, N, d)
+
+
+def classify_topological_state(
+    l2_magnitude: float,
+    faction_count: int,
+    migrations: List[str],
+    max_residual: float,
+    median_residual: float,
+    predicted_contraction: Optional[float] = None,
+) -> str:
+    """
+    Classifies collective reasoning into one of the 5 canonical Topological States:
+    1. Dissolution: Dispersed or expanding entropy (|lambda_2| >= 1.0).
+    2. Migration: Dynamic cluster reassignment across rounds.
+    3. Factionalization: Distinct multi-cluster basins (K >= 2, slow decay).
+    4. Dissent: Persistent isolation of an orthogonal or contrarian agent.
+    5. Convergence: Collapsing consensus attractor (|lambda_2| < 0.85).
+    """
+    if l2_magnitude >= 1.0:
+        return "Dissolution"
+    if migrations:
+        return "Migration"
+    if max_residual > 1.8 * max(median_residual, 1e-4):
+        return "Dissent"
+    if faction_count >= 2 and l2_magnitude >= 0.85:
+        return "Factionalization"
+    return "Convergence"
 
 
 def coarse_grain_faction_centroids(
@@ -147,23 +318,25 @@ def coarse_grain_faction_centroids(
 def cluster_factions(
     final_states: np.ndarray,
     speakers: Sequence[str],
-    rogue_idx: int,
+    rogue_idx: Optional[int] = None,
     similarity_threshold: float = 0.65,
+    orthogonal_idx: Optional[int] = None,
 ) -> List[Faction]:
     N = len(speakers)
     sim_matrix = cosine_similarity(final_states)
 
     factions: List[Faction] = []
     visited = set()
-    non_rogue_indices = [i for i in range(N) if i != rogue_idx]
+    excluded_idx = orthogonal_idx if orthogonal_idx is not None else rogue_idx
+    non_isolated_indices = [i for i in range(N) if i != excluded_idx]
 
     faction_counter = 1
-    for i in non_rogue_indices:
+    for i in non_isolated_indices:
         if i in visited:
             continue
         members = [speakers[i]]
         visited.add(i)
-        for j in non_rogue_indices:
+        for j in non_isolated_indices:
             if j not in visited and sim_matrix[i, j] >= similarity_threshold:
                 members.append(speakers[j])
                 visited.add(j)
@@ -239,11 +412,10 @@ def predict_agent_trajectories(
     for i, spk in enumerate(speakers):
         agent_norms[spk] = float(np.linalg.norm(delta_pred_3d[i]))
 
-    predicted_next_rogue = max(agent_norms.items(), key=lambda kv: kv[1])[0]
+    predicted_next_agent = max(agent_norms.items(), key=lambda kv: kv[1])[0]
 
     current_total_norm = float(np.linalg.norm(Delta[-1]))
     pred_total_norm = float(np.linalg.norm(delta_pred_flat))
     contraction_ratio = (pred_total_norm / current_total_norm) if current_total_norm > 1e-12 else 1.0
 
-    return predicted_next_rogue, round(contraction_ratio, 4), agent_norms
-
+    return predicted_next_agent, round(contraction_ratio, 4), agent_norms

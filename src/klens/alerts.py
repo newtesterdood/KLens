@@ -67,22 +67,35 @@ class AlertMonitor:
                 )
             )
 
-        # 3. Persistent rogue agent
-        if self.history and self.config.rogue_persistence_rounds > 1:
+        # 3. Persistent orthogonal / rogue agent
+        limit = min(self.config.orthogonal_persistence_rounds, self.config.rogue_persistence_rounds)
+        if self.history and limit > 1:
             streak = 1
-            current_rogue = metrics.rogue_agent_detected
+            current_ortho = metrics.orthogonal_agent_detected or metrics.rogue_agent_detected
             for past in reversed(self.history):
-                if past.rogue_agent_detected == current_rogue:
+                past_ortho = past.orthogonal_agent_detected or past.rogue_agent_detected
+                if past_ortho == current_ortho:
                     streak += 1
                 else:
                     break
-            if streak >= self.config.rogue_persistence_rounds:
+            if streak >= limit:
+                alerts.append(
+                    Alert(
+                        level=AlertLevel.WARNING,
+                        code="ORTHOGONAL_PERSISTENCE",
+                        message=(
+                            f"Agent '{current_ortho}' flagged as orthogonal for {streak} "
+                            f"consecutive rounds. Sustained transverse divergence detected."
+                        ),
+                        round_id=r_id,
+                    )
+                )
                 alerts.append(
                     Alert(
                         level=AlertLevel.WARNING,
                         code="PERSISTENT_ROGUE",
                         message=(
-                            f"Agent '{current_rogue}' flagged as rogue for {streak} "
+                            f"Agent '{current_ortho}' flagged as rogue for {streak} "
                             f"consecutive rounds. Sustained divergence detected."
                         ),
                         round_id=r_id,

@@ -12,6 +12,7 @@ from klens.models import AlertConfig, HierarchicalConfig, SpectralMetrics
 from klens.spectral import (
     cluster_factions,
     compute_koopman_metrics,
+    detect_orthogonal_from_states,
     detect_rogue_from_states,
     extract_centroid_keywords,
     lift_state,
@@ -72,15 +73,15 @@ def render_faction_rogue_dashboard(
     rounds: Optional[Sequence[int]] = None,
     output_path: Optional[str] = None,
     show: bool = False,
-    title: str = "Multi-Agent Spectral Analysis: Faction Identification & Rogue Agent Detection",
+    title: str = "Multi-Agent Spectral Analysis: Faction Identification & Orthogonal Agent Detection",
     dpi: int = 250,
 ):
     """
     Renders the exact 4-panel diagnostic dashboard matching the KLens reference specification:
-    1. Top-Left: Agent Trajectories in Opinion Space (PCA Projection) with ROGUE ISOLATED annotation
-    2. Top-Right: Agent Disagreement Magnitude ||z_i(t) - z_bar(t)|| with Rogue Isolation Threshold
+    1. Top-Left: Agent Trajectories in Opinion Space (PCA Projection) with ORTHOGONAL DETECTED annotation
+    2. Top-Right: Agent Disagreement Magnitude ||z_i(t) - z_bar(t)|| with Orthogonal Isolation Threshold
     3. Bottom-Left: Agent Disagreement Cosine Similarity Heatmap (Faction Clustering)
-    4. Bottom-Right: SPECTRAL DIAGNOSTIC SUMMARY card (Factions, Rogue Outlier, Pruning Impact, Landmark Centroid)
+    4. Bottom-Right: SPECTRAL DIAGNOSTIC SUMMARY card (Factions, Orthogonal Catalyst / Outlier, Pruning Impact, Landmark Centroid)
     """
     plt = _ensure_matplotlib(show=show)
     Z, resolved_speakers, resolved_rounds, feature_names = _resolve_source_data(source, speakers, rounds)
@@ -89,8 +90,8 @@ def render_faction_rogue_dashboard(
     Z_mean = Z.mean(axis=1) # (T, d)
     Delta = Z - Z_mean[:, np.newaxis, :] # (T, N, d)
 
-    # 1. Detect Rogue Agent
-    rogue_speaker, rogue_idx = detect_rogue_from_states(Z, resolved_speakers)
+    # 1. Detect Orthogonal Agent
+    rogue_speaker, rogue_idx = detect_orthogonal_from_states(Z, resolved_speakers)
 
     # 2. Compute individual disagreement norms over rounds
     agent_dist = np.zeros((N, T))
@@ -98,7 +99,7 @@ def render_faction_rogue_dashboard(
         for t in range(T):
             agent_dist[i, t] = np.linalg.norm(Delta[t, i, :])
 
-    # Outlier score & Rogue threshold
+    # Outlier score & Orthogonal threshold
     mean_dists = agent_dist.mean(axis=1)
     non_rogue_indices = [i for i in range(N) if i != rogue_idx]
     median_non_rogue = np.median(mean_dists[non_rogue_indices]) if non_rogue_indices else 1.0
@@ -162,11 +163,11 @@ def render_faction_rogue_dashboard(
     ax1.plot(Z_mean_2d[:, 0], Z_mean_2d[:, 1], "k:", alpha=0.6, linewidth=1.5)
     ax1.scatter(Z_mean_2d[-1, 0], Z_mean_2d[-1, 1], color="#000000", s=130, marker="*", edgecolors="#000000", label="Centroid (Consensus Landmark)", zorder=6)
 
-    # Highlight Rogue Agent with Red Oval and Callout Text
+    # Highlight Orthogonal Agent with Red Oval and Callout Text
     rogue_pt = Z_2d[-1, rogue_idx, :]
     rogue_oval = Ellipse(rogue_pt, width=0.45, height=0.35, color="#dc2626", fill=False, linestyle="-", linewidth=2.0, zorder=7)
     ax1.add_patch(rogue_oval)
-    ax1.text(rogue_pt[0] + 0.12, rogue_pt[1] + 0.08, "ROGUE ISOLATED", color="#dc2626", fontsize=8, fontweight="bold", zorder=8)
+    ax1.text(rogue_pt[0] + 0.12, rogue_pt[1] + 0.08, "ORTHOGONAL DETECTED", color="#dc2626", fontsize=8, fontweight="bold", zorder=8)
 
     ax1.set_title("Agent Trajectories in Opinion Space (PCA Projection)", fontsize=10.5, fontweight="bold", pad=8)
     ax1.set_xlabel("Dimension 1: Efficiency vs. Depth")
@@ -183,13 +184,13 @@ def render_faction_rogue_dashboard(
 
     for i, spk in enumerate(resolved_speakers):
         if i == rogue_idx:
-            ax2.plot(round_axis, agent_dist[i], "-", color="#dc2626", linewidth=2.4, label=f"{spk} (Rogue)", zorder=6)
+            ax2.plot(round_axis, agent_dist[i], "-", color="#dc2626", linewidth=2.4, label=f"{spk} (Orthogonal)", zorder=6)
         else:
             style = "--" if i % 2 == 0 else ":"
             ax2.plot(round_axis, agent_dist[i], linestyle=style, color=palette[i % len(palette)], linewidth=1.6, alpha=0.85, label=spk)
 
-    # Rogue Isolation Threshold
-    ax2.axhline(rogue_threshold, color="#f87171", linestyle=":", linewidth=1.5, label="Rogue Isolation Threshold")
+    # Orthogonal Isolation Threshold
+    ax2.axhline(rogue_threshold, color="#f87171", linestyle=":", linewidth=1.5, label="Orthogonal Isolation Threshold")
 
     ax2.set_title(r"Agent Disagreement Magnitude $||z_i(t) - \bar{z}(t)||$", fontsize=10.5, fontweight="bold", pad=8)
     ax2.set_xlabel("Debate Round (t)")
@@ -277,9 +278,9 @@ def render_faction_rogue_dashboard(
         "---------------------------------------------------------------------------\n\n"
         f"{disagreement_block}"
         f"{factions_block}\n\n"
-        f"• Rogue Agent Flagged: {rogue_speaker}\n"
-        f"  - Outlier Score: {outlier_score:.2f}x median threshold (Divergent)\n"
-        f"  - Action: Prune {rogue_speaker.split('(')[0].strip()} to drop λ2 from {l2_all:.2f} -> {l2_pruned:.2f}\n"
+        f"• Orthogonal Agent Detected: {rogue_speaker}\n"
+        f"  - Outlier / Decoupling Score: {outlier_score:.2f}x median threshold\n"
+        f"  - Subdominant Mode: λ2 = {l2_all:.2f} (counterfactual without agent: {l2_pruned:.2f})\n"
         f"            (Accelerates T_cert from {t_cert_all} to {t_cert_pruned} rounds).\n\n"
         f"• Centroid ({centroid_title}):\n"
         f"  \"{centroid_summary_str}\""
@@ -307,6 +308,9 @@ def render_faction_rogue_dashboard(
         plt.show()
 
     return fig
+
+
+render_faction_orthogonal_dashboard = render_faction_rogue_dashboard
 
 
 def render_shortcut_comparison(
@@ -646,19 +650,19 @@ def render_temporal_evolution_grid(
     rounds: Optional[Sequence[int]] = None,
     output_path: Optional[str] = None,
     show: bool = False,
-    title: str = "Opinion Space Evolution: Concentrations, Factions & Trajectories Over Time",
+    title: str = "Opinion Space Evolution: Faction Density Clusters, Concentrations & Trajectories Over Time",
     dpi: int = 220,
 ):
     """
     Renders a multi-round small multiples facet grid (1 x T or 2 x ceil(T/2))
     depicting opinion space concentrations, faction clustering, velocity vectors,
-    and centroid / rogue movement across each round.
+    and centroid / orthogonal movement across each round.
     """
     plt = _ensure_matplotlib(show=show)
     Z, resolved_speakers, resolved_rounds, feature_names = _resolve_source_data(source, speakers, rounds)
     T, N, d = Z.shape
 
-    rogue_speaker, rogue_idx = detect_rogue_from_states(Z, resolved_speakers)
+    rogue_speaker, rogue_idx = detect_orthogonal_from_states(Z, resolved_speakers)
 
     pca = PCA(n_components=2, random_state=42)
     all_states = Z.reshape(-1, d)
@@ -732,9 +736,9 @@ def render_temporal_evolution_grid(
 
         # 3. Agent Scatter Markers & Movement Velocity Vectors
         for i, spk in enumerate(resolved_speakers):
-            is_rogue = (i == rogue_idx)
-            c = "#dc2626" if is_rogue else palette[i % len(palette)]
-            m = "X" if is_rogue else "o"
+            is_ortho = (i == rogue_idx)
+            c = "#dc2626" if is_ortho else palette[i % len(palette)]
+            m = "X" if is_ortho else "o"
             pt = Z_2d[t, i, :]
 
             # Velocity arrow to next round (if t < T - 1)
@@ -751,10 +755,10 @@ def render_temporal_evolution_grid(
                         zorder=4,
                     )
 
-            ax.scatter(pt[0], pt[1], color=c, s=65 if is_rogue else 45, marker=m, edgecolors="#0f172a", linewidth=1.0, zorder=5)
-            # Label rogue or key speakers
-            if is_rogue or len(resolved_speakers) <= 8:
-                ax.text(pt[0] + 0.018, pt[1] + 0.015, spk, fontsize=7.2, color="#0f172a", fontweight="bold" if is_rogue else "normal", zorder=6)
+            ax.scatter(pt[0], pt[1], color=c, s=65 if is_ortho else 45, marker=m, edgecolors="#0f172a", linewidth=1.0, zorder=5)
+            # Label orthogonal or key speakers
+            if is_ortho or len(resolved_speakers) <= 8:
+                ax.text(pt[0] + 0.018, pt[1] + 0.015, spk, fontsize=7.2, color="#0f172a", fontweight="bold" if is_ortho else "normal", zorder=6)
 
         # 4. Consensus Centroid with Drift Trail
         past_centroid = Z_mean_2d[:t + 1, :]
@@ -816,7 +820,7 @@ def export_interactive_timeline_html(
     Z, resolved_speakers, resolved_rounds, feature_names = _resolve_source_data(source, speakers, rounds)
     T, N, d = Z.shape
 
-    rogue_speaker, rogue_idx = detect_rogue_from_states(Z, resolved_speakers)
+    rogue_speaker, rogue_idx = detect_orthogonal_from_states(Z, resolved_speakers)
 
     pca = PCA(n_components=2, random_state=42)
     all_states = Z.reshape(-1, d)
@@ -854,6 +858,7 @@ def export_interactive_timeline_html(
                 "speaker": spk,
                 "x": float(Z_2d[t, i, 0]),
                 "y": float(Z_2d[t, i, 1]),
+                "is_orthogonal": bool(i == rogue_idx),
                 "is_rogue": bool(i == rogue_idx),
             })
         rounds_data.append({
@@ -867,6 +872,7 @@ def export_interactive_timeline_html(
     json_payload = json.dumps({
         "rounds": rounds_data,
         "speakers": resolved_speakers,
+        "orthogonal_speaker": rogue_speaker,
         "rogue_speaker": rogue_speaker,
         "bounds": {"min_x": min_x, "max_x": max_x, "min_y": min_y, "max_y": max_y},
         "title": title,
@@ -1008,7 +1014,7 @@ def export_interactive_timeline_html(
 
   <div class="legend">
     <div class="legend-item"><div class="legend-color" style="background: #eab308; clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);"></div><span>Consensus Centroid z̄(t)</span></div>
-    <div class="legend-item"><div class="legend-color" style="background: #ef4444;"></div><span>Rogue Catalyst (Savitt / Outlier)</span></div>
+    <div class="legend-item"><div class="legend-color" style="background: #ef4444;"></div><span>Orthogonal Catalyst / Outlier</span></div>
     <div class="legend-item"><div class="legend-color" style="background: #3b82f6;"></div><span>Active Deliberating Agents</span></div>
     <div class="legend-item"><div class="legend-color" style="background: rgba(59, 130, 246, 0.2); border: 1px dashed #3b82f6;"></div><span>Faction Density Clusters</span></div>
     <div class="legend-item"><div class="legend-color" style="background: #cbd5e1; height: 2px;"></div><span>Temporal Motion Trails</span></div>
@@ -1110,9 +1116,9 @@ function render() {{
 
   // 2. Motion Trails (from round 0 to current)
   for (let spkIdx = 0; spkIdx < DATA.speakers.length; spkIdx++) {{
-    const isRogue = (DATA.speakers[spkIdx] === DATA.rogue_speaker);
-    ctx.strokeStyle = isRogue ? "rgba(239, 68, 68, 0.4)" : "rgba(148, 163, 184, 0.25)";
-    ctx.lineWidth = isRogue ? 2 : 1;
+    const isOrtho = (DATA.speakers[spkIdx] === DATA.orthogonal_speaker || DATA.speakers[spkIdx] === DATA.rogue_speaker);
+    ctx.strokeStyle = isOrtho ? "rgba(239, 68, 68, 0.4)" : "rgba(148, 163, 184, 0.25)";
+    ctx.lineWidth = isOrtho ? 2 : 1;
     ctx.beginPath();
     for (let t = 0; t <= currentRoundIdx; t++) {{
       const a = DATA.rounds[t].agents[spkIdx];
@@ -1152,6 +1158,7 @@ function render() {{
   rData.agents.forEach((a, idx) => {{
     const ax = mapX(a.x);
     const ay = mapY(a.y);
+    const isOrtho = Boolean(a.is_orthogonal || a.is_rogue);
 
     // Velocity arrow
     if (currentRoundIdx < DATA.rounds.length - 1) {{
@@ -1161,7 +1168,7 @@ function render() {{
       const dx = (nax - ax) * 0.7;
       const dy = (nay - ay) * 0.7;
       if (Math.hypot(dx, dy) > 8) {{
-        ctx.strokeStyle = a.is_rogue ? "#ef4444" : "rgba(56, 189, 248, 0.7)";
+        ctx.strokeStyle = isOrtho ? "#ef4444" : "rgba(56, 189, 248, 0.7)";
         ctx.lineWidth = 1.5;
         ctx.beginPath();
         ctx.moveTo(ax, ay);
@@ -1171,17 +1178,17 @@ function render() {{
     }}
 
     // Agent circle
-    ctx.fillStyle = a.is_rogue ? "#ef4444" : "#38bdf8";
+    ctx.fillStyle = isOrtho ? "#ef4444" : "#38bdf8";
     ctx.beginPath();
-    ctx.arc(ax, ay, a.is_rogue ? 7 : 5, 0, Math.PI * 2);
+    ctx.arc(ax, ay, isOrtho ? 7 : 5, 0, Math.PI * 2);
     ctx.fill();
     ctx.strokeStyle = "#0f172a";
     ctx.lineWidth = 1.5;
     ctx.stroke();
 
     // Text label
-    ctx.fillStyle = a.is_rogue ? "#fca5a5" : "#e2e8f0";
-    ctx.font = a.is_rogue ? "bold 11px sans-serif" : "10px sans-serif";
+    ctx.fillStyle = isOrtho ? "#fca5a5" : "#e2e8f0";
+    ctx.font = isOrtho ? "bold 11px sans-serif" : "10px sans-serif";
     ctx.fillText(a.speaker, ax + 8, ay + 3);
   }});
 

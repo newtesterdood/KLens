@@ -57,3 +57,17 @@ def test_alert_persistent_rogue():
     rogue_alerts = [a for a in alerts_r4 if a.code == "PERSISTENT_ROGUE"]
     assert len(rogue_alerts) == 1
     assert "Agent_Rogue" in rogue_alerts[0].message
+
+
+def test_alert_orthogonal_persistence():
+    config = AlertConfig(orthogonal_persistence_rounds=3)
+    monitor = AlertMonitor(config=config)
+
+    monitor.evaluate(create_dummy_metrics(round_id=2, rogue="Agent_Orthogonal"))
+    monitor.evaluate(create_dummy_metrics(round_id=3, rogue="Agent_Orthogonal"))
+    alerts_r4 = monitor.evaluate(create_dummy_metrics(round_id=4, rogue="Agent_Orthogonal"))
+
+    ortho_alerts = [a for a in alerts_r4 if a.code == "ORTHOGONAL_PERSISTENCE"]
+    assert len(ortho_alerts) == 1
+    assert "Agent_Orthogonal" in ortho_alerts[0].message
+

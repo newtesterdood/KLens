@@ -14,18 +14,20 @@ from klens.models import (
     TranscriptTurn,
 )
 from klens.spectral import (
+    classify_topological_state,
     cluster_factions,
     coarse_grain_faction_centroids,
     compute_koopman_metrics,
+    compute_multi_cluster_residuals,
+    detect_cluster_migrations,
+    detect_orthogonal_agent,
+    detect_orthogonal_from_states,
     detect_rogue_agent,
     detect_rogue_from_states,
     extract_centroid_keywords,
     predict_agent_trajectories,
 )
 from klens.semantic import synthesize_deliberation_topics
-
-
-
 
 
 class LiveTranscriptStreamProcessor:
@@ -110,6 +112,15 @@ class LiveTranscriptStreamProcessor:
         Z, feature_names = self.encoder.encode_grid(text_grid, rounds, speakers)
         d = len(feature_names)
 
+        # 1. Multi-cluster local residuals & cluster migrations
+        local_residuals, cluster_assignments, _ = compute_multi_cluster_residuals(
+            Z=Z,
+            seed=self.hierarchical_config.seed,
+        )
+        migrations = detect_cluster_migrations(cluster_assignments, speakers)
+        agent_cluster_map = {speakers[i]: int(cluster_assignments[-1, i]) for i in range(N)}
+        agent_residual_map = {speakers[i]: float(local_residuals[-1, i]) for i in range(N)}
+
         is_hierarchical = False
         if self.hierarchical_config.enabled and N > self.hierarchical_config.max_factions:
             Z_macro, factions = coarse_grain_faction_centroids(
@@ -123,7 +134,9 @@ class LiveTranscriptStreamProcessor:
                 solver=self.hierarchical_config.solver,
                 seed=self.hierarchical_config.seed,
             )
-            rogue_speaker, _ = detect_rogue_from_states(Z, speakers)
+            orthogonal_speaker, orthogonal_idx = detect_orthogonal_from_states(
+                Z, speakers, seed=self.hierarchical_config.seed
+            )
             is_hierarchical = True
         else:
             l2_mag, t_cert, Delta, Z_mean = compute_koopman_metrics(
@@ -132,12 +145,14 @@ class LiveTranscriptStreamProcessor:
                 seed=self.hierarchical_config.seed,
             )
 
-            rogue_speaker, rogue_idx = detect_rogue_agent(Delta, speakers, T, N, d)
+            orthogonal_speaker, orthogonal_idx = detect_orthogonal_from_states(
+                Z, speakers, seed=self.hierarchical_config.seed
+            )
             final_states = Z[-1]
             factions = cluster_factions(
                 final_states=final_states,
                 speakers=speakers,
-                rogue_idx=rogue_idx,
+                orthogonal_idx=orthogonal_idx,
                 similarity_threshold=0.65,
             )
 
@@ -147,7 +162,7 @@ class LiveTranscriptStreamProcessor:
         factions_str = " | ".join([f.format_summary() for f in factions])
         centroid_str = ";".join(centroid_keywords)
 
-        pred_rogue, pred_contraction, _ = predict_agent_trajectories(
+        pred_agent, pred_contraction, _ = predict_agent_trajectories(
             Z=Z,
             speakers=speakers,
             steps_ahead=1,
@@ -163,8 +178,19 @@ class LiveTranscriptStreamProcessor:
             speakers=speakers,
             rounds=rounds,
             factions=factions,
-            rogue_speaker=rogue_speaker,
+            rogue_speaker=orthogonal_speaker,
             vectorizer=vectorizer,
+        )
+
+        max_res = float(np.max(local_residuals[-1])) if len(local_residuals[-1]) > 0 else 0.0
+        med_res = float(np.median(local_residuals[-1])) if len(local_residuals[-1]) > 0 else 0.0
+        topo_state = classify_topological_state(
+            l2_magnitude=l2_mag,
+            faction_count=len(factions),
+            migrations=migrations,
+            max_residual=max_res,
+            median_residual=med_res,
+            predicted_contraction=pred_contraction,
         )
 
         metrics = SpectralMetrics(
@@ -172,7 +198,8 @@ class LiveTranscriptStreamProcessor:
             active_agents_count=N,
             lambda_2_magnitude=l2_mag,
             certified_deadline_rounds=t_cert,
-            rogue_agent_detected=rogue_speaker,
+            orthogonal_agent_detected=orthogonal_speaker,
+            rogue_agent_detected=orthogonal_speaker,
             faction_count=len(factions),
             factions_summary=factions_str,
             centroid_top_keywords=centroid_str,
@@ -180,12 +207,17 @@ class LiveTranscriptStreamProcessor:
             centroid_keywords_list=centroid_keywords,
             is_converging=(l2_mag < 1.0),
             is_hierarchical=is_hierarchical,
-            predicted_next_rogue=pred_rogue,
+            predicted_next_orthogonal=pred_agent,
+            predicted_next_rogue=pred_agent,
             predicted_contraction_ratio=pred_contraction,
             topic_synthesis=topic_synth,
             center_of_disagreement=topic_synth.center_of_disagreement if topic_synth else "",
             centroid_concept=topic_synth.centroid_concept if topic_synth else "",
             centroid_statement=topic_synth.centroid_statement if topic_synth else "",
+            topological_state=topo_state,
+            agent_cluster_assignments=agent_cluster_map,
+            agent_local_residuals=agent_residual_map,
+            agent_migrations=migrations,
         )
 
         new_alerts = self.alert_monitor.evaluate(metrics)
@@ -198,7 +230,6 @@ class LiveTranscriptStreamProcessor:
         self.latest_metrics = metrics
 
         self.exporter.log_metrics(metrics)
-
 
         for cb in self.round_callbacks:
             cb(metrics)

@@ -38,10 +38,11 @@ SAMPLE_DEBATE_TURNS = [
 def format_metrics_table_row(m: SpectralMetrics) -> str:
     status_indicator = "✓ Converging" if m.is_converging else "✗ Diverging"
     mode_str = f" [Hierarchical K={m.faction_count}]" if m.is_hierarchical else ""
+    detected_agent = m.orthogonal_agent_detected or m.rogue_agent_detected
     return (
         f"Round {m.round_id:2d} | Agents: {m.active_agents_count} | "
         f"λ2: {m.lambda_2_magnitude:.4f} | T_cert: {m.certified_deadline_rounds:3d} rounds | "
-        f"Rogue: {m.rogue_agent_detected:<8} | Factions: {m.faction_count} | [{status_indicator}]{mode_str}"
+        f"Orthogonal: {detected_agent:<8} | Factions: {m.faction_count} | [{status_indicator}]{mode_str}"
     )
 
 
@@ -60,9 +61,9 @@ def format_semantic_synthesis_summary(m: SpectralMetrics) -> str:
     for f in synth.factions:
         lines.append(f"• Faction {f.id} ({len(f.members)} members): {f.topic}")
         lines.append(f"  Position: \"{f.representative_statement}\"")
-    if synth.rogue_stance:
-        r = synth.rogue_stance
-        lines.append(f"\n--- Rogue Dissent Position ({r.members[0]}) ---")
+    if synth.orthogonal_stance or synth.rogue_stance:
+        r = synth.orthogonal_stance or synth.rogue_stance
+        lines.append(f"\n--- Orthogonal / Dissent Position ({r.members[0]}) ---")
         lines.append(f"• Stance: {r.topic}")
         lines.append(f"  Position: \"{r.representative_statement}\"")
     return "\n".join(lines)
@@ -108,8 +109,9 @@ def run_demo(
             print(format_metrics_table_row(metrics))
             print(f"  Centroid keywords: {metrics.centroid_top_keywords}")
             print(f"  Factions: {metrics.factions_summary}")
-            if metrics.predicted_next_rogue:
-                pred_str = f"  Forecast (Round {r+1}): Projected Rogue -> {metrics.predicted_next_rogue}"
+            pred_agent = metrics.predicted_next_orthogonal or metrics.predicted_next_rogue
+            if pred_agent:
+                pred_str = f"  Forecast (Round {r+1}): Projected Orthogonal -> {pred_agent}"
                 if metrics.predicted_contraction_ratio is not None:
                     pred_str += f" | Contraction Rate -> {metrics.predicted_contraction_ratio:.2f}x"
                 print(pred_str)
@@ -194,8 +196,9 @@ def run_file(
             print(format_metrics_table_row(metrics))
             print(f"  Keywords: {metrics.centroid_top_keywords}")
             print(f"  Factions: {metrics.factions_summary}")
-            if metrics.predicted_next_rogue:
-                pred_str = f"  Forecast (Round {r+1}): Projected Rogue -> {metrics.predicted_next_rogue}"
+            pred_agent = metrics.predicted_next_orthogonal or metrics.predicted_next_rogue
+            if pred_agent:
+                pred_str = f"  Forecast (Round {r+1}): Projected Orthogonal -> {pred_agent}"
                 if metrics.predicted_contraction_ratio is not None:
                     pred_str += f" | Contraction Rate -> {metrics.predicted_contraction_ratio:.2f}x"
                 print(pred_str)

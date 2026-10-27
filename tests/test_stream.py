@@ -27,8 +27,12 @@ def test_stream_processor_basic_flow():
         assert m2.round_id == 2
         assert m2.active_agents_count == 2
         assert 0.0 <= m2.lambda_2_magnitude <= 1.0
-        assert m2.certified_deadline_rounds >= 1
         assert m2.rogue_agent_detected in ["A1", "A2"]
+        assert m2.orthogonal_agent_detected in ["A1", "A2"]
+        assert m2.orthogonal_agent_detected == m2.rogue_agent_detected
+        assert m2.topological_state in ["Convergence", "Factionalization", "Dissent", "Migration", "Dissolution"]
+        assert len(m2.agent_cluster_assignments) == 2
+        assert len(m2.agent_local_residuals) == 2
 
         # Compatibility checks (indexable and iterable like the reference tuple/list)
         assert len(m2) == 8

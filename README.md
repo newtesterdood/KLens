@@ -25,23 +25,23 @@ The KLens workbench provides experimental tooling to investigate four fundamenta
 1. **Text-Based Debate Trajectories**: Ingesting turn-by-turn dialogue embeddings to reconstruct centered disagreement manifolds $\Delta(t) = Z(t) - \bar{Z}(t)$ across arbitrary rounds.
 2. **Issue Identification & Resolution**: Tracking consensus centroids $\bar{z}(t)$ as they drift through semantic space, isolating the exact coordinates and keywords where compromise solidifies.
 3. **Faction Formation & Polarization**: Employing sub-dominant eigenvector mode attribution and cosine clustering to reveal emergent metastable ideological blocs before they openly declare opposition.
-4. **Rogue Entity & Bottleneck Isolation**: Tracking micro-level residual deviations to pinpoint contrarian entities that anchor discussion, enabling principled pruning or mediation.
+4. **Topology of Collective Reasoning & Multi-Cluster Local Residuals**: Resolving the "Phantom Center" problem using local residuals $d_i^{\text{local}}(t) = \min_k \|z_i(t) - C_k(t)\|$, cleanly classifying agents into the geometric triad: Outliers, Contrarians, and Orthogonals.
 
 
 ## Visual Telemetry & Spectral Diagnostics
 
 KLens visualizes the dynamical geometry and operator spectra of multi-party deliberation across three complementary diagnostic dashboards:
 
-### 1. Multi-Agent Spectral Analysis: Faction Identification & Rogue Detection
+### 1. Multi-Agent Spectral Analysis: Faction Identification & Orthogonal Detection
 
-The primary diagnostic dashboard isolates contrarian agents, measures disagreement decay relative to the theoretical isolation threshold, visualizes faction cohesion via cosine similarity, and synthesizes operational spectral certificates:
+The primary diagnostic dashboard isolates orthogonal agents, measures disagreement decay relative to the theoretical isolation threshold, visualizes faction cohesion via cosine similarity, and synthesizes operational spectral certificates:
 
 ![Multi-Agent Spectral Analysis](assets/multi_agent_spectral_analysis.png)
 
-* **Panel 1: PCA Opinion Space with Landmark Centroid**: 2D projection of agent belief states alongside the evolving consensus centroid $\bar{z}(t)$, highlighting isolated rogue agents.
-* **Panel 2: Agent Disagreement Magnitude $\|z_i(t) - \bar{z}(t)\|$**: Turn-by-turn disagreement norm plotted against the Rogue Isolation Threshold ($\mu + 1.5\sigma$).
-* **Panel 3: Pairwise Cosine Similarity Heatmap**: 6x6 cohesion matrix revealing intra-faction alignment and inter-faction antagonism with exact cosine coefficients.
-* **Panel 4: Monospace Spectral Diagnostic & Semantic Summary**: Real-time summary detailing the primary Center of Disagreement, Faction Topics & verbatim Positions, Rogue Dissent Position, Consensus Centroid statement, subdominant eigenvalue $\lambda_2$, certified deadline $T_{\text{cert}}$, and counterfactual pruning impact.
+* **Panel 1: PCA Opinion Space with Landmark Centroid**: 2D projection of agent belief states alongside the evolving consensus centroid $\bar{z}(t)$, highlighting isolated orthogonal agents with `ORTHOGONAL DETECTED` callouts.
+* **Panel 2: Agent Disagreement Magnitude $\|z_i(t) - \bar{z}(t)\|$**: Turn-by-turn disagreement norm plotted against the Orthogonal Isolation Threshold ($\mu + 1.5\sigma$).
+* **Panel 3: Pairwise Cosine Similarity Heatmap**: Cohesion matrix revealing intra-faction alignment and inter-faction antagonism with exact cosine coefficients.
+* **Panel 4: Monospace Spectral Diagnostic & Semantic Summary**: Real-time summary detailing the primary Center of Disagreement, Faction Topics & verbatim Positions, Orthogonal Dissent Position, Consensus Centroid statement, subdominant eigenvalue $\lambda_2$, certified deadline $T_{\text{cert}}$, and counterfactual isolation impact.
 
 ---
 
@@ -342,9 +342,21 @@ The decay envelope satisfies $\|\Delta(t)\| \le C |\lambda_2|^t$.
 For convergence tolerance $\epsilon > 0$ (default $\epsilon = 0.05$):
 $$T_{\text{cert}} = \left\lceil \frac{\ln(1/\epsilon)}{-\ln|\lambda_2|} \right\rceil$$
 
-### 5. Rogue Agent Detection & Faction Clustering
-- **Rogue Detection**: $\arg\max_i \frac{1}{T} \sum_{t=1}^T \|\Delta_i(t)\|_2$
-- **Faction Clustering**: Pairwise cosine similarity on non-rogue final states with threshold $\ge 0.65$.
+### 5. Multi-Cluster Local Residuals & Orthogonal Agent Detection
+To eliminate the **Phantom Center Problem** where a single global mean $\bar{z}$ mischaracterizes multi-faction debates, KLens evaluates local residuals against emergent cluster centroids $C_k(t)$:
+$$d_i^{\text{local}}(t) = \min_k \|\mathbf{z}_i(t) - \mathbf{C}_k(t)\|$$
+
+KLens classifies participants into the **Geometric Triad**:
+- **Outlier**: Raw Euclidean distance from the aggregate center $d_i = \|z_i - \bar{z}\|$.
+- **Contrarian**: 180° collinear opposition along the primary dispute axis $\cos \angle(z_i - \bar{z}, v_{\text{dispute}}) \approx -1$.
+- **Orthogonal**: Transverse 90° decoupled trajectory with high multi-cluster residual $d_i^{\text{local}} > \tau$ and decoupled velocity $\langle \dot{z}_i, v_{\text{drift}} \rangle \approx 0$.
+
+Collective reasoning is classified across the **5 Topological States**:
+1. **Convergence (Contraction)**: $|\lambda_2| < 0.85$, clusters collapse toward consensus attractor.
+2. **Factionalization (Bifurcation)**: Multiple cohesive, distinct cluster basins emerge ($K \ge 2$).
+3. **Dissent (Persistent Isolation)**: Orthogonal or contrarian agents remaining outside dominant clusters.
+4. **Migration (Ideological Defection)**: Agents actively shifting cluster assignment across rounds ($c_i(t) \ne c_i(t-1)$).
+5. **Dissolution (Entropy / Fracture)**: $|\lambda_2| \ge 1.0$, clusters disperse across the manifold.
 
 ![Metastable Faction Polarization & Consensus Centroid Contraction](assets/faction_centroid_drift.png)
 
@@ -354,7 +366,7 @@ $$T_{\text{cert}} = \left\lceil \frac{\ln(1/\epsilon)}{-\ln|\lambda_2|} \right\r
 Because the finite-dimensional Koopman operator $\hat{K}$ acts as a linear forward transition generator in the lifted observable space ($\Psi_{t+1} \approx \Psi_t \hat{K}$), KLens projects agent positions $k$ rounds ahead:
 $$\hat{\Psi}(t+k) = \Psi(t) \hat{K}^k$$
 Extracting the unlifted state indices $\hat{\Delta}(t+k) = \hat{\Psi}(t+k)[:, 1 : 1 + Nd]$ yields forward forecasting:
-* **Projected Rogue Agent**: $\arg\max_i \|\hat{\Delta}_i(t+k)\|_2$, forecasting which participant will drift furthest into contrarian disagreement in future rounds.
+* **Projected Orthogonal Agent**: $\arg\max_i \|\hat{\Delta}_i(t+k)\|_2$, forecasting which participant will drift furthest into transverse disagreement in future rounds.
 * **Projected Contraction Rate**: $\frac{\|\hat{\Delta}(t+k)\|}{\|\Delta(t)\|}$, predicting whether upcoming debate rounds will contract toward consensus ($< 1.0$) or expand into deadlock ($> 1.0$).
 
 ### 7. Semantic Topic Synthesis & Position Content Extraction
@@ -547,7 +559,7 @@ Entries are appended to `spectral_debate_log.csv` at each round:
 | `active_agents_count` | Integer | Number of participating agents |
 | `lambda_2_magnitude` | Float | Magnitude of subdominant eigenvalue $|\lambda_2|$ |
 | `certified_deadline_rounds`| Integer | Certified deadline $T_{\text{cert}}$ |
-| `rogue_agent_detected` | String | Agent with highest average disagreement norm |
+| `rogue_agent_detected` | String | Primary orthogonal / outlier agent detected (accessible via `orthogonal_agent_detected`) |
 | `faction_count` | Integer | Number of non-rogue agent clusters |
 | `factions_summary` | String | Faction membership groupings |
 | `centroid_top_keywords` | String | Semicolon-delimited top centroid keywords |
@@ -569,7 +581,7 @@ round,active_agents_count,lambda_2_magnitude,certified_deadline_rounds,rogue_age
 2. **`DIVERGENT_DYNAMICS`**: $|\lambda_2| \ge 1.0$ (non-contractive / divergent trajectory).
 3. **`CRITICAL_SPECTRAL_RADIUS`**: $|\lambda_2| \ge 0.99$ (extreme stagnation).
 4. **`SLOW_CONVERGENCE`**: $|\lambda_2| \ge 0.95$.
-5. **`PERSISTENT_ROGUE`**: Same agent remains rogue for $K$ consecutive rounds.
+5. **`ORTHOGONAL_PERSISTENCE` / `PERSISTENT_ROGUE`**: Same agent remains persistently orthogonal/divergent for $K$ consecutive rounds.
 
 ---
 

@@ -101,9 +101,9 @@ metrics = stream.process_round_event(current_round=2)
 * **High-Friction Phase ($|\lambda_2| \ge 0.95, T_{\text{cert}} > 50$)**: Signals deep ideological deadlock or polarization. Triggered when participants reiterate entrenched positions without concessions.
 * **Rapid Contraction Phase ($|\lambda_2| \le 0.75, T_{\text{cert}} \le 10$)**: Signals convergence toward an agreed standard, legal doctrine, or compromise wording.
 
-### B. Rogue Dissent vs. Procedural Outliers
-* **Persistent Rogue Dissenter**: When an active participant consistently exhibits the highest disagreement norm $\|z_i(t) - \bar{z}(t)\| > \mu + 1.5\sigma$ over consecutive rounds (e.g., Richard Fisher in the 2011 FOMC meeting), KLens raises `PERSISTENT_ROGUE`.
-* **Orthogonal Subspace Detection**: Moderators, Chief Justices, or committee chairs whose speech consists primarily of administrative facilitation (*"Justice Thomas?"*, *"Thank you, counsel"*) will project into an orthogonal subspace relative to substantive arguments. KLens isolates these as structural outliers without corrupting the faction clustering of substantive participants.
+### B. The Geometric Triad & Multi-Cluster Local Residuals
+* **Persistent Outliers & Contrarians**: When an active participant consistently exhibits large residuals against the dominant dispute axis or cluster basins (e.g., Richard Fisher in the 2011 FOMC meeting), KLens raises `ORTHOGONAL_PERSISTENCE` (alongside `PERSISTENT_ROGUE`).
+* **Orthogonal Subspace Detection & Resolving the Phantom Center**: Moderators, Chief Justices, or committee chairs whose speech consists primarily of administrative facilitation (*"Justice Thomas?"*, *"Thank you, counsel"*) project into a 90° transverse subspace relative to substantive arguments. Multi-cluster local residuals $d_i^{\text{local}}(t) = \min_k \|z_i(t) - C_k(t)\|$ isolate these structural orthogonal agents cleanly without distorting substantive faction clustering or falling prey to the "Phantom Center" problem.
 
 ---
 
