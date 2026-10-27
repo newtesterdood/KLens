@@ -13,6 +13,8 @@ Recent foundational research has introduced rigorous mathematical frameworks to 
 
 **KLens was built to point the lens made possible by their research directly back at the mirror.** Rather than treating discussion as static textual outputs, KLens treats deliberative processes—across synthetic LLMs, human deliberation traces, and hybrid human-AI debates—as continuous-time nonlinear dynamical systems. By projecting non-linear belief trajectories into an observable Hilbert space, KLens investigates whether operator spectra can uncover the universal dynamics of how collectives form factions, isolate contrarians, and converge on key issue resolutions.
 
+> 📖 **Research Perspective**: Read the comprehensive cross-disciplinary whitepaper on this emerging area of study: [**Spectral Telemetry and Operator-Theoretic Foundations for Multi-Agent Deliberation**](docs/RESEARCH_PERSPECTIVE.md).
+
 ---
 
 ## Core Deliberation Inquiries
