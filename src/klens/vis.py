@@ -235,6 +235,10 @@ def render_faction_rogue_dashboard(
         synth = source.latest_metrics.topic_synthesis
 
     if synth:
+        k_star_block = (
+            f"• Effective Channels (K*): {synth.initial_k_star:.2f} -> {synth.effective_channels_k_star:.2f} "
+            f"({synth.total_channels_identified} identified)\n\n"
+        )
         disagreement_block = f"• Center of Disagreement:\n  {synth.center_of_disagreement}\n\n"
         centroid_title = synth.centroid_concept
         centroid_summary_str = synth.centroid_statement or (" ".join(centroid_keywords[:3]).capitalize() + " with selective auditing.")
@@ -249,9 +253,11 @@ def render_faction_rogue_dashboard(
             pos_stmt = f.representative_statement
             if len(pos_stmt) > 65:
                 pos_stmt = pos_stmt[:62] + "..."
-            faction_lines.append(f"• Faction {letter} ({f.topic}): {members_str}\n  - Position: \"{pos_stmt}\"")
+            role_weight = f" [{f.dynamical_role} | {f.consensus_weight * 100:.0f}% weight]"
+            faction_lines.append(f"• Faction {letter} ({f.topic}){role_weight}: {members_str}\n  - Position: \"{pos_stmt}\"")
         factions_block = "\n\n".join(faction_lines)
     else:
+        k_star_block = ""
         disagreement_block = ""
         centroid_title = "Consensus Landmark"
         centroid_summary_str = " ".join(centroid_keywords[:3]).capitalize() + " with selective auditing."
@@ -276,6 +282,7 @@ def render_faction_rogue_dashboard(
     summary_text = (
         "SPECTRAL DIAGNOSTIC & SEMANTIC SUMMARY:\n"
         "---------------------------------------------------------------------------\n\n"
+        f"{k_star_block}"
         f"{disagreement_block}"
         f"{factions_block}\n\n"
         f"• Orthogonal Agent Detected: {rogue_speaker}\n"

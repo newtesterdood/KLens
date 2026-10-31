@@ -60,6 +60,9 @@ class FactionStance:
     keywords: List[str]
     representative_statement: str
     position_summary: str
+    consensus_weight: float = 0.0
+    dynamical_role: str = "Synthesizing Compromiser"
+    contributed_terms: List[str] = field(default_factory=list)
 
 
 @dataclass(frozen=True)
@@ -73,6 +76,9 @@ class DeliberationTopicSynthesis:
     factions: List[FactionStance]
     rogue_stance: Optional[FactionStance] = None
     orthogonal_stance: Optional[FactionStance] = None
+    effective_channels_k_star: float = 1.0
+    initial_k_star: float = 1.0
+    total_channels_identified: int = 1
 
     def __post_init__(self):
         if self.orthogonal_stance and not self.rogue_stance:
@@ -118,6 +124,7 @@ class SpectralMetrics:
     agent_cluster_assignments: dict[str, int] = field(default_factory=dict)
     agent_local_residuals: dict[str, float] = field(default_factory=dict)
     agent_migrations: List[str] = field(default_factory=list)
+    effective_channels_k_star: float = 1.0
 
     def __post_init__(self):
         if self.orthogonal_agent_detected and not self.rogue_agent_detected:

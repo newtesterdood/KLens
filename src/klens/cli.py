@@ -42,7 +42,7 @@ def format_metrics_table_row(m: SpectralMetrics) -> str:
     return (
         f"Round {m.round_id:2d} | Agents: {m.active_agents_count} | "
         f"λ2: {m.lambda_2_magnitude:.4f} | T_cert: {m.certified_deadline_rounds:3d} rounds | "
-        f"Orthogonal: {detected_agent:<8} | Factions: {m.faction_count} | [{status_indicator}]{mode_str}"
+        f"Orthogonal: {detected_agent:<8} | Factions: {m.faction_count} | K*: {m.effective_channels_k_star:.2f} | [{status_indicator}]{mode_str}"
     )
 
 
@@ -52,6 +52,7 @@ def format_semantic_synthesis_summary(m: SpectralMetrics) -> str:
         return ""
     lines = [
         "\n=== Deliberation Semantic Synthesis ===",
+        f"• Effective Reasoning Channels (K*): {synth.initial_k_star:.2f} -> {synth.effective_channels_k_star:.2f} ({synth.total_channels_identified} channels identified)",
         f"• Center of Disagreement: {synth.center_of_disagreement}",
         f"  \"{synth.center_of_disagreement_statement}\"",
         f"• Consensus Centroid Concept: {synth.centroid_concept}",
@@ -59,13 +60,15 @@ def format_semantic_synthesis_summary(m: SpectralMetrics) -> str:
         "\n--- Faction Topics & Positions ---",
     ]
     for f in synth.factions:
-        lines.append(f"• Faction {f.id} ({len(f.members)} members): {f.topic}")
+        lines.append(f"• Faction {f.id} [{f.dynamical_role} | {f.consensus_weight * 100:.0f}% Conclusion Weight] ({len(f.members)} members): {f.topic}")
         lines.append(f"  Position: \"{f.representative_statement}\"")
+        lines.append(f"  Contributed to Conclusion: {', '.join(f.contributed_terms)}")
     if synth.orthogonal_stance or synth.rogue_stance:
         r = synth.orthogonal_stance or synth.rogue_stance
-        lines.append(f"\n--- Orthogonal / Dissent Position ({r.members[0]}) ---")
+        lines.append(f"\n--- Orthogonal / Dissent Position ({r.members[0]}) [{r.dynamical_role} | {r.consensus_weight * 100:.0f}% Conclusion Weight] ---")
         lines.append(f"• Stance: {r.topic}")
         lines.append(f"  Position: \"{r.representative_statement}\"")
+        lines.append(f"  Contributed to Conclusion: {', '.join(r.contributed_terms)}")
     return "\n".join(lines)
 
 

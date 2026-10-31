@@ -4,6 +4,7 @@ import pytest
 from klens.spectral import (
     classify_topological_state,
     cluster_factions,
+    compute_effective_channels_k_star,
     compute_koopman_metrics,
     compute_multi_cluster_residuals,
     detect_cluster_migrations,
@@ -182,4 +183,23 @@ def test_classify_topological_state():
     assert classify_topological_state(0.92, 3, [], 0.5, 0.4) == "Factionalization"
     # 5. Convergence
     assert classify_topological_state(0.65, 1, [], 0.2, 0.15) == "Convergence"
+
+
+def test_compute_effective_channels_k_star():
+    N = 6
+    d = 10
+    v = np.random.RandomState(42).randn(d)
+    identical_states = np.tile(v, (N, 1))
+    k_star_identical = compute_effective_channels_k_star(identical_states)
+    assert pytest.approx(1.0, abs=1e-3) == k_star_identical
+
+    ortho_states = np.eye(N, d)
+    k_star_ortho = compute_effective_channels_k_star(ortho_states)
+    assert pytest.approx(float(N), abs=1e-3) == k_star_ortho
+
+    T = 3
+    Z = np.zeros((T, N, d))
+    Z[0] = ortho_states
+    Z[-1] = identical_states
+    assert pytest.approx(1.0, abs=1e-3) == compute_effective_channels_k_star(Z)
 

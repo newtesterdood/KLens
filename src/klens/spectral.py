@@ -419,3 +419,43 @@ def predict_agent_trajectories(
     contraction_ratio = (pred_total_norm / current_total_norm) if current_total_norm > 1e-12 else 1.0
 
     return predicted_next_agent, round(contraction_ratio, 4), agent_norms
+
+
+def compute_effective_channels_k_star(states: np.ndarray) -> float:
+    """
+    Computes the effective number of reasoning channels K* via spectral participation ratio.
+    Accepts states of shape (N, d) or (T, N, d) (evaluates at final round states[-1]).
+    """
+    if states.ndim == 3:
+        if states.shape[0] == 0:
+            return 1.0
+        X_raw = states[-1]
+    elif states.ndim == 2:
+        X_raw = states
+    else:
+        return 1.0
+
+    N, d = X_raw.shape
+    if N <= 1 or d == 0:
+        return 1.0
+
+    norms = np.linalg.norm(X_raw, axis=1, keepdims=True)
+    nonzero_mask = (norms[:, 0] > 1e-12)
+    if not np.any(nonzero_mask):
+        return 1.0
+
+    X = np.zeros_like(X_raw, dtype=float)
+    X[nonzero_mask] = X_raw[nonzero_mask] / norms[nonzero_mask]
+
+    G = X @ X.T
+    eigvals = np.linalg.eigvalsh(G)
+    gamma = np.maximum(0.0, eigvals)
+
+    s1 = float(np.sum(gamma))
+    s2 = float(np.sum(gamma ** 2))
+    if s2 <= 1e-12:
+        return 1.0
+
+    k_star = (s1 ** 2) / s2
+    k_star_clipped = float(np.clip(k_star, 1.0, float(N)))
+    return round(k_star_clipped, 4)

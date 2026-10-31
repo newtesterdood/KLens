@@ -18,6 +18,7 @@ from klens.semantic import synthesize_deliberation_topics
 from klens.spectral import (
     cluster_factions,
     coarse_grain_faction_centroids,
+    compute_effective_channels_k_star,
     compute_koopman_metrics,
     detect_rogue_agent,
     detect_rogue_from_states,
@@ -49,6 +50,7 @@ __all__ = [
     "TranscriptTurn",
     "cluster_factions",
     "coarse_grain_faction_centroids",
+    "compute_effective_channels_k_star",
     "compute_koopman_metrics",
     "detect_rogue_agent",
     "detect_rogue_from_states",

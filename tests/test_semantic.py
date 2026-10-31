@@ -104,3 +104,46 @@ def test_stream_processor_attaches_topic_synthesis():
     assert len(m.centroid_concept) > 0
     assert len(m.centroid_statement) > 0
     assert "hybrid" in m.centroid_statement.lower()
+
+
+def test_channel_incorporation_and_attribution():
+    processor = LiveTranscriptStreamProcessor(
+        csv_log_path="out/test_channel_attribution.csv",
+        auto_init_csv=False,
+    )
+    processor.ingest_turn(1, "Agent_A", "We must adopt public cloud to scale elastic workloads.")
+    processor.ingest_turn(1, "Agent_B", "Cloud is unacceptable. Data security requires on-prem hardware.")
+    processor.ingest_turn(1, "Agent_C", "Zero trust isolation must govern all communication.")
+    processor.ingest_turn(2, "Agent_A", "A hybrid model running cloud frontends with private on-prem databases works.")
+    processor.ingest_turn(2, "Agent_B", "We agree on the hybrid architecture with private on-prem databases.")
+    processor.ingest_turn(2, "Agent_C", "We concede and accept hybrid architecture with on-prem databases.")
+
+    m = processor.process_round_event(2)
+    assert m is not None
+    assert m.effective_channels_k_star >= 1.0
+
+    synth = m.topic_synthesis
+    assert synth is not None
+    assert synth.effective_channels_k_star >= 1.0
+    assert synth.initial_k_star >= 1.0
+    assert synth.total_channels_identified >= 1
+
+    valid_roles = {
+        "Primary Attractor",
+        "Conceding Coalition",
+        "Synthesizing Compromiser",
+        "Unreconciled Dissent",
+    }
+
+    all_stances = list(synth.factions)
+    if synth.rogue_stance:
+        all_stances.append(synth.rogue_stance)
+
+    total_weight = sum(s.consensus_weight for s in all_stances)
+    assert pytest.approx(1.0, abs=1e-3) == total_weight
+
+    for stance in all_stances:
+        assert stance.dynamical_role in valid_roles
+        assert len(stance.contributed_terms) > 0
+        assert stance.consensus_weight >= 0.0
+

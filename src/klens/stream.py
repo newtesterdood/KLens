@@ -17,6 +17,7 @@ from klens.spectral import (
     classify_topological_state,
     cluster_factions,
     coarse_grain_faction_centroids,
+    compute_effective_channels_k_star,
     compute_koopman_metrics,
     compute_multi_cluster_residuals,
     detect_cluster_migrations,
@@ -193,6 +194,8 @@ class LiveTranscriptStreamProcessor:
             predicted_contraction=pred_contraction,
         )
 
+        k_star = compute_effective_channels_k_star(Z[-1])
+
         metrics = SpectralMetrics(
             round_id=current_round,
             active_agents_count=N,
@@ -218,6 +221,7 @@ class LiveTranscriptStreamProcessor:
             agent_cluster_assignments=agent_cluster_map,
             agent_local_residuals=agent_residual_map,
             agent_migrations=migrations,
+            effective_channels_k_star=k_star,
         )
 
         new_alerts = self.alert_monitor.evaluate(metrics)

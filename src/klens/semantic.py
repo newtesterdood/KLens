@@ -11,6 +11,7 @@ from klens.models import (
     FactionStance,
     TranscriptTurn,
 )
+from klens.spectral import compute_effective_channels_k_star
 
 COMMON_ACRONYMS: Set[str] = {
     "slm", "llm", "ai", "gpu", "cpu", "api", "apis", "ciso", "cfo", "dba",
@@ -168,6 +169,79 @@ def find_representative_statement(
     return best_statement, best_speaker
 
 
+def _compute_channel_dynamics_and_weights(
+    Z: np.ndarray,
+    speakers: Sequence[str],
+    channel_member_lists: List[List[str]],
+    is_dissent_flags: List[bool],
+) -> Tuple[List[float], List[str]]:
+    T, N, d = Z.shape
+    K = len(channel_member_lists)
+    if K == 0:
+        return [], []
+
+    speaker_to_idx = {s: i for i, s in enumerate(speakers)}
+    z_bar_0 = Z[0].mean(axis=0)
+    z_bar_T = Z[-1].mean(axis=0)
+
+    s_scores: List[float] = []
+    d_self_list: List[float] = []
+    d_pull_list: List[float] = []
+
+    for k in range(K):
+        m_list = channel_member_lists[k]
+        m_idx = [speaker_to_idx[m] for m in m_list if m in speaker_to_idx]
+        if m_idx:
+            C_k_0 = Z[0, m_idx, :].mean(axis=0)
+            C_k_T = Z[-1, m_idx, :].mean(axis=0)
+        else:
+            C_k_0 = z_bar_0
+            C_k_T = z_bar_T
+
+        norm_C = float(np.linalg.norm(C_k_T))
+        norm_z = float(np.linalg.norm(z_bar_T))
+        if norm_C > 1e-12 and norm_z > 1e-12:
+            cos_sim = float(np.dot(C_k_T, z_bar_T) / (norm_C * norm_z))
+        else:
+            cos_sim = 0.0
+        s_k = max(0.0, cos_sim)
+        s_scores.append(s_k)
+
+        d_self = float(np.linalg.norm(C_k_T - C_k_0))
+        d_pull = float(np.linalg.norm(z_bar_0 - C_k_0) - np.linalg.norm(z_bar_T - C_k_0))
+        d_self_list.append(d_self)
+        d_pull_list.append(d_pull)
+
+    s_sum = sum(s_scores)
+    if s_sum > 1e-12:
+        alphas = [s / s_sum for s in s_scores]
+    else:
+        alphas = [1.0 / K for _ in range(K)]
+
+    roles: List[str] = []
+    for k in range(K):
+        is_dissent = is_dissent_flags[k] if k < len(is_dissent_flags) else False
+        s_k = s_scores[k]
+        d_self_k = d_self_list[k]
+        d_pull_k = d_pull_list[k]
+
+        if is_dissent and s_k < 0.50:
+            role = "Unreconciled Dissent"
+        elif d_pull_k > d_self_k + 0.05:
+            role = "Primary Attractor"
+        elif d_self_k > d_pull_k + 0.05:
+            role = "Conceding Coalition"
+        else:
+            role = "Synthesizing Compromiser"
+        roles.append(role)
+
+    weights = [round(float(a), 4) for a in alphas]
+    if len(weights) > 0:
+        weights[-1] = round(1.0 - sum(weights[:-1]), 4)
+
+    return weights, roles
+
+
 def synthesize_deliberation_topics(
     records: Sequence[TranscriptTurn],
     Z: np.ndarray,
@@ -239,11 +313,74 @@ def synthesize_deliberation_topics(
     )
     disagreement_keywords = (pole_a_kw + pole_b_kw)[:6]
 
-    # 3. Faction Topics, Keywords, and Positions
+    # 3. Channel Dynamics, Faction Topics, Keywords, and Positions
     speaker_to_idx = {s: i for i, s in enumerate(speakers)}
-    faction_stances: List[FactionStance] = []
+    channel_member_lists: List[List[str]] = [list(f.members) for f in factions]
+    is_dissent_flags: List[bool] = [False] * len(factions)
+    has_rogue = bool(rogue_speaker and rogue_speaker in speaker_to_idx)
+    if has_rogue and rogue_speaker:
+        channel_member_lists.append([rogue_speaker])
+        is_dissent_flags.append(True)
 
-    for f in factions:
+    weights, roles = _compute_channel_dynamics_and_weights(
+        Z=Z,
+        speakers=speakers,
+        channel_member_lists=channel_member_lists,
+        is_dissent_flags=is_dissent_flags,
+    )
+
+    feature_to_idx = {name: idx for idx, name in enumerate(feature_names)}
+    consensus_vocab_pool: Set[str] = set()
+    for p in centroid_phrases:
+        consensus_vocab_pool.add(p.lower())
+        for token in re.findall(r"\b[A-Za-z0-9_-]+\b", p.lower()):
+            if token not in STOP_WORDS and len(token) > 2:
+                consensus_vocab_pool.add(token)
+    for kw in top_centroid_kw:
+        consensus_vocab_pool.add(kw.lower())
+    for token in re.findall(r"\b[A-Za-z0-9_-]+\b", centroid_statement.lower()):
+        if token not in STOP_WORDS and len(token) > 2:
+            consensus_vocab_pool.add(token)
+
+    def _extract_contributed_terms(
+        c_phrases: List[str],
+        c_kw: List[str],
+        fallback_topic: str,
+    ) -> List[str]:
+        matched: List[str] = []
+        for p in c_phrases:
+            p_clean = p.strip()
+            if not p_clean:
+                continue
+            p_lower = p_clean.lower()
+            if p_lower in consensus_vocab_pool:
+                if p_clean not in matched:
+                    matched.append(p_clean)
+            elif p_lower in feature_to_idx and final_centroid[feature_to_idx[p_lower]] > 0:
+                if p_clean not in matched:
+                    matched.append(p_clean)
+
+        for k in c_kw:
+            k_clean = k.strip()
+            if not k_clean:
+                continue
+            k_lower = k_clean.lower()
+            if k_lower in consensus_vocab_pool:
+                if k_clean not in matched:
+                    matched.append(k_clean)
+            elif k_lower in feature_to_idx and final_centroid[feature_to_idx[k_lower]] > 0:
+                if k_clean not in matched:
+                    matched.append(k_clean)
+
+        terms = matched[:3]
+        if not terms:
+            terms = [k for k in c_kw[:2] if k]
+        if not terms:
+            terms = [fallback_topic] if fallback_topic else ["consensus"]
+        return terms
+
+    faction_stances: List[FactionStance] = []
+    for f_idx, f in enumerate(factions):
         member_set = set(f.members)
         member_indices = [speaker_to_idx[m] for m in f.members if m in speaker_to_idx]
         if member_indices:
@@ -283,6 +420,10 @@ def synthesize_deliberation_topics(
 
         pos_summary = f"Endorses {f_topic.lower()}: \"{f_stmt}\"" if f_stmt else f"Supports {f_topic}."
 
+        f_weight = weights[f_idx] if f_idx < len(weights) else 0.0
+        f_role = roles[f_idx] if f_idx < len(roles) else "Synthesizing Compromiser"
+        f_contributed = _extract_contributed_terms(f_phrases, f_kw, f_topic)
+
         faction_stances.append(
             FactionStance(
                 id=f.id,
@@ -291,12 +432,15 @@ def synthesize_deliberation_topics(
                 keywords=f_kw,
                 representative_statement=f_stmt,
                 position_summary=pos_summary,
+                consensus_weight=f_weight,
+                dynamical_role=f_role,
+                contributed_terms=f_contributed,
             )
         )
 
     # 4. Rogue Entity Stance & Statement
     rogue_stance: Optional[FactionStance] = None
-    if rogue_speaker and rogue_speaker in speaker_to_idx:
+    if has_rogue and rogue_speaker:
         r_idx = speaker_to_idx[rogue_speaker]
         r_state = Z[-1, r_idx, :]
         r_delta = r_state - final_centroid
@@ -329,6 +473,10 @@ def synthesize_deliberation_topics(
 
         r_summary = f"Holds dissenting position on {r_topic.lower()}: \"{r_stmt}\""
 
+        r_weight = weights[-1] if weights else 0.0
+        r_role = roles[-1] if roles else "Unreconciled Dissent"
+        r_contributed = _extract_contributed_terms(r_phrases, r_kw, r_topic)
+
         rogue_stance = FactionStance(
             id=99,
             members=[rogue_speaker],
@@ -336,7 +484,16 @@ def synthesize_deliberation_topics(
             keywords=r_kw,
             representative_statement=r_stmt,
             position_summary=r_summary,
+            consensus_weight=r_weight,
+            dynamical_role=r_role,
+            contributed_terms=r_contributed,
         )
+
+    k_star_T = compute_effective_channels_k_star(Z[-1])
+    k_star_0 = compute_effective_channels_k_star(Z[0])
+    total_channels = len(faction_stances) + (1 if rogue_stance else 0)
+    if total_channels == 0:
+        total_channels = 1
 
     return DeliberationTopicSynthesis(
         center_of_disagreement=center_of_disagreement,
@@ -347,4 +504,7 @@ def synthesize_deliberation_topics(
         disagreement_keywords=disagreement_keywords,
         factions=faction_stances,
         rogue_stance=rogue_stance,
+        effective_channels_k_star=k_star_T,
+        initial_k_star=k_star_0,
+        total_channels_identified=total_channels,
     )
