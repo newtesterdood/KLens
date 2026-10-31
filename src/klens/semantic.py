@@ -237,7 +237,7 @@ def _compute_channel_dynamics_and_weights(
 
     weights = [round(float(a), 4) for a in alphas]
     if len(weights) > 0:
-        weights[-1] = round(1.0 - sum(weights[:-1]), 4)
+        weights[-1] = max(0.0, round(1.0 - sum(weights[:-1]), 4))
 
     return weights, roles
 

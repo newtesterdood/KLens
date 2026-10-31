@@ -60,12 +60,14 @@ def format_semantic_synthesis_summary(m: SpectralMetrics) -> str:
         "\n--- Faction Topics & Positions ---",
     ]
     for f in synth.factions:
-        lines.append(f"• Faction {f.id} [{f.dynamical_role} | {f.consensus_weight * 100:.0f}% Conclusion Weight] ({len(f.members)} members): {f.topic}")
+        pct = max(0.0, f.consensus_weight * 100)
+        lines.append(f"• Faction {f.id} [{f.dynamical_role} | {pct:.0f}% Conclusion Weight] ({len(f.members)} members): {f.topic}")
         lines.append(f"  Position: \"{f.representative_statement}\"")
         lines.append(f"  Contributed to Conclusion: {', '.join(f.contributed_terms)}")
     if synth.orthogonal_stance or synth.rogue_stance:
         r = synth.orthogonal_stance or synth.rogue_stance
-        lines.append(f"\n--- Orthogonal / Dissent Position ({r.members[0]}) [{r.dynamical_role} | {r.consensus_weight * 100:.0f}% Conclusion Weight] ---")
+        r_pct = max(0.0, r.consensus_weight * 100)
+        lines.append(f"\n--- Orthogonal / Dissent Position ({r.members[0]}) [{r.dynamical_role} | {r_pct:.0f}% Conclusion Weight] ---")
         lines.append(f"• Stance: {r.topic}")
         lines.append(f"  Position: \"{r.representative_statement}\"")
         lines.append(f"  Contributed to Conclusion: {', '.join(r.contributed_terms)}")
