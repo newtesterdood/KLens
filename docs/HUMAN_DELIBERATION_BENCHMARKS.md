@@ -322,7 +322,218 @@ Round  5 | Agents: 14 | λ2: 0.6361 | T_cert:   7 rounds | Orthogonal: Speaker A
 
 ---
 
-## 11. Comparative Analysis: Human Deliberations vs. Real & Synthetic Multi-Agent Swarms
+## 11. Benchmark 7: Second Lincoln–Douglas Debate (Freeport, August 27, 1858)
+
+**Proceeding**: Second Joint Senatorial Debate of Illinois, Freeport, Stephenson County, Illinois  
+**Subject**: Congressional Power over Territorial Slavery, *Dred Scott v. Sandford*, and Douglas's "Freeport Doctrine" of Unfriendly Local Legislation  
+**Transcript**: [`samples/debate_lincoln_douglas_1858.json`](../samples/debate_lincoln_douglas_1858.json) (20 structured turns across 3 speakers: Abraham Lincoln, Stephen A. Douglas, and Chairman/Moderator Thomas J. Turner)
+
+![Lincoln-Douglas Debate Telemetry](../assets/debate_lincoln_douglas_telemetry.png)
+
+### Turn-by-Turn Spectral Dynamics
+
+```
+Round  1 | Insufficient history for spectral decomposition (< 2 rounds)
+Round  2 | Agents: 3 | λ2: 0.9776 | T_cert: 133 rounds | Orthogonal: Thomas J. Turner | Factions: 2 | K*: 2.33 | [ALERT] SLOW_CONVERGENCE & T_CERT_EXCEEDED
+Round  3 | Agents: 3 | λ2: 0.6696 | T_cert:   8 rounds | Orthogonal: Thomas J. Turner | Factions: 2 | K*: 1.88 | Contraction Rate -> 0.79x
+Round  4 | Agents: 3 | λ2: 0.4164 | T_cert:   4 rounds | Orthogonal: Thomas J. Turner | Factions: 2 | K*: 2.68 | [ALERT] ORTHOGONAL_PERSISTENCE (3 rounds)
+Round  5 | Agents: 3 | λ2: 0.7062 | T_cert:   9 rounds | Orthogonal: Thomas J. Turner | Factions: 2 | K*: 2.35 | [ALERT] ORTHOGONAL_PERSISTENCE (4 rounds) | Contraction Rate -> 0.60x
+```
+
+### Empirical Observations
+1. **Freeport Doctrine Deadlock Spike**: In Round 2, as Lincoln propounded his four interrogatories pitting the *Dred Scott* ruling against popular sovereignty, $\lambda_2$ opened near marginal stability ($0.9776, T_{\text{cert}} = 133$ rounds).
+2. **Bifurcated Bilateral Contraction**: In Rounds 3–5, both candidates locked into fixed constitutional vocabulary (`popular sovereignty`, `Dred Scott`, `territories`), compressing spectral variance ($\lambda_2 = 0.6696 \to 0.4164 \to 0.7062$).
+3. **Procedural Moderator Isolation (`ORTHOGONAL_PERSISTENCE`)**: Chairman Thomas J. Turner was isolated across all four spectral rounds (`1.07x` median threshold). Counterfactual pruning increases $\lambda_2$ from $0.71 \to 0.83$ ($T_{\text{cert}}: 9 \to 17$ rounds) because removing the procedural bridge leaves two purely antipodal vectors.
+4. **Channel Attribution ($K^*: 2.51 \to 2.35$)**:
+   * **Faction 1** (`Abraham Lincoln`, `Territories No New`, `33%` conclusion weight): Non-extension of slavery into federal territories.
+   * **Faction 2** (`Stephen A. Douglas`, `Her People`, `32%` conclusion weight): Local police regulations under popular sovereignty.
+   * **Orthogonal** (`Thomas J. Turner`, `Dred Scott`, `35%` conclusion weight): Procedural synthesis.
+
+---
+
+## 12. Benchmark 8: First Kennedy–Nixon Presidential Debate (September 26, 1960)
+
+**Proceeding**: First Televised U.S. Presidential Debate, WBBM-TV Studios, Chicago, Illinois  
+**Subject**: Cold War Economic Growth vs. Soviet Competition, Education & Healthcare Funding, Civil Rights, and Farm Surpluses  
+**Transcript**: [`samples/debate_kennedy_nixon_1960.json`](../samples/debate_kennedy_nixon_1960.json) (24 structured turns across 6 speakers: John F. Kennedy, Richard M. Nixon, Moderator Howard K. Smith, and panelists Charles Warren, Sander Vanocur, Stuart Novins)
+
+![Kennedy-Nixon Debate Telemetry](../assets/debate_kennedy_nixon_telemetry.png)
+
+### Turn-by-Turn Spectral Dynamics
+
+```
+Round  1 | Insufficient history for spectral decomposition (< 2 rounds)
+Round  2 | Agents: 5 | λ2: 0.9593 | T_cert:  73 rounds | Orthogonal: John F. Kennedy | Factions: 4 | K*: 3.50 | [ALERT] SLOW_CONVERGENCE & T_CERT_EXCEEDED
+Round  3 | Agents: 6 | λ2: 0.9814 | T_cert: 160 rounds | Orthogonal: Howard K. Smith | Factions: 4 | K*: 2.14 | [ALERT] SLOW_CONVERGENCE & T_CERT_EXCEEDED
+Round  4 | Agents: 6 | λ2: 0.6398 | T_cert:   7 rounds | Orthogonal: Stuart Novins   | Factions: 4 | K*: 2.20 | Contraction Rate -> 0.61x
+Round  5 | Agents: 6 | λ2: 0.8710 | T_cert:  22 rounds | Orthogonal: Howard K. Smith | Factions: 5 | K*: 2.69 | Contraction Rate -> 0.68x
+```
+
+### Empirical Observations
+1. **Peak Domestic Policy Friction**: Round 3 triggered severe deadlock ($\lambda_2 = 0.9814, T_{\text{cert}} = 160$ rounds) as journalists questioned federal teacher-salary and Medicare-financing trade-offs while candidates clashed over federal vs. state jurisdiction.
+2. **Moderator Counterfactual Speedup**: Pruning procedural moderator Howard K. Smith (`1.41x` median threshold) reduces $\lambda_2$ from $0.87 \to 0.80$ ($T_{\text{cert}}: 22 \to 14$ rounds).
+3. **Sparse Panelist Channels in Closing Statements ($K^*: 2.14 \to 2.69$)**:
+   * **Faction 2** (`John F. Kennedy`, `Social Security`, `33%` conclusion weight): Active Round 5 channel emphasizing economic expansion, Social Security healthcare, and civil rights.
+   * **Faction 3** (`Richard M. Nixon`, `Free Citizens State`, `29%` conclusion weight): Active Round 5 channel emphasizing state/local initiative and fiscal restraint.
+   * **Moderator Channel** (`Howard K. Smith`, `Vice President Nixon`, `38%` weight) vs. **Panelists** (`Charles Warren`, `Sander Vanocur`, `Stuart Novins`): Silent in Round 5 (`0%` weight).
+
+---
+
+## 13. Benchmark 9: Baldwin vs. Buckley at the Cambridge Union (February 18, 1965)
+
+**Proceeding**: Cambridge Union Society Debate, Cambridge, England  
+**Motion**: *"The American Dream is at the expense of the American Negro."* (Floor division: 544 Ayes – 164 Noes)  
+**Transcript**: [`samples/debate_baldwin_buckley_1965.json`](../samples/debate_baldwin_buckley_1965.json) (18 structured turns across 5 speakers: Cambridge Union President, Mr. Heycock, James Baldwin, Mr. Burford, William F. Buckley Jr.)
+
+![Baldwin-Buckley Debate Telemetry](../assets/debate_baldwin_buckley_telemetry.png)
+
+### Turn-by-Turn Spectral Dynamics
+
+```
+Round  1 | Insufficient history for spectral decomposition (< 2 rounds)
+Round  2 | Agents: 5 | λ2: 0.9467 | T_cert:  55 rounds | Orthogonal: William F. Buckley Jr.    | Factions: 4 | K*: 1.74 | [ALERT] T_CERT_EXCEEDED
+Round  3 | Agents: 5 | λ2: 0.4296 | T_cert:   4 rounds | Orthogonal: Cambridge Union President | Factions: 3 | K*: 1.87 | Contraction Rate -> 0.70x
+Round  4 | Agents: 5 | λ2: 0.4946 | T_cert:   5 rounds | Orthogonal: Mr. Burford               | Factions: 4 | K*: 2.41 | Contraction Rate -> 0.67x
+Round  5 | Agents: 5 | λ2: 0.7020 | T_cert:   9 rounds | Orthogonal: Mr. Burford               | Factions: 4 | K*: 3.96 | Contraction Rate -> 0.48x
+```
+
+### Empirical Observations
+1. **Shared Vocabulary vs. Ideological Inversion**: In Round 3, `James Baldwin` and `William F. Buckley Jr.` temporarily co-clustered into Faction 1 ($\lambda_2 = 0.4296$) because both argued heavily inside the same lexical manifold (*white civilization*, *race*, *moral responsibility*), demonstrating why TF-IDF captures shared topical vocabulary before ideological separation reasserts itself in Rounds 4–5.
+2. **Maximum Effective Channel Expansion ($K^*: 1.95 \to 3.96$)**: Unlike bilateral debates, all five Round 5 closing speeches introduced distinct ethical, legal, historical, and procedural framing, lifting $K^*$ from $1.95$ to $3.96$ across balanced conclusion weights (`21%` Burford, `21%` President, `20%` Baldwin, `20%` Heycock, `18%` Buckley).
+3. **Center of Disagreement**: *Individual Responsibility Constitutional vs. Motion Before*.
+
+---
+
+## 14. Benchmark 10: Scopes Monkey Trial — Darrow vs. Bryan (July 20, 1925)
+
+**Proceeding**: *State of Tennessee v. John Thomas Scopes* (Day 7 Outdoor Examination), Rhea County Courthouse Lawn, Dayton, Tennessee  
+**Subject**: Butler Act Constitutionality, Exclusion of Scientific Expert Witnesses, and Biblical Literalism vs. Geological Time  
+**Transcript**: [`samples/debate_darrow_bryan_scopes_1925.json`](../samples/debate_darrow_bryan_scopes_1925.json) (25 structured turns across 5 speakers: Judge John T. Raulston, Clarence Darrow, Arthur Garfield Hays, Dudley Field Malone, William Jennings Bryan)
+
+![Scopes Trial Darrow vs Bryan Telemetry](../assets/debate_darrow_bryan_telemetry.png)
+
+### Turn-by-Turn Spectral Dynamics
+
+```
+Round  1 | Insufficient history for spectral decomposition (< 2 rounds)
+Round  2 | Agents: 5 | λ2: 0.9547 | T_cert:  65 rounds | Orthogonal: Judge John T. Raulston | Factions: 4 | K*: 3.60 | [ALERT] SLOW_CONVERGENCE & T_CERT_EXCEEDED
+Round  3 | Agents: 5 | λ2: 0.4833 | T_cert:   5 rounds | Orthogonal: Clarence Darrow        | Factions: 4 | K*: 2.63 | Contraction Rate -> 0.77x
+Round  4 | Agents: 5 | λ2: 0.6020 | T_cert:   6 rounds | Orthogonal: Arthur Garfield Hays   | Factions: 3 | K*: 2.63 | Contraction Rate -> 0.64x
+Round  5 | Agents: 5 | λ2: 0.6703 | T_cert:   8 rounds | Orthogonal: Judge John T. Raulston | Factions: 4 | K*: 4.61 | Contraction Rate -> 0.48x
+```
+
+### Empirical Observations
+1. **Judicial Incommensurability vs. Substantive Examination**: Judge John T. Raulston (`1.03x` median threshold) is isolated as orthogonal in Rounds 2 and 5 for ruling on trial-record admissibility; pruning him lowers $\lambda_2$ from $0.67 \to 0.61$ ($T_{\text{cert}}: 8 \to 7$ rounds).
+2. **Highest Effective Dimensionality Ratio ($K^*: 3.04 \to 4.61$ out of $N=5$)**: Every closing participant held an orthogonal doctrinal slice in Round 5—judicial record admissibility (`Raulston`, `23%`), theological boundary (`Hays`, `22%`), academic freedom (`Malone`, `20%`), empirical cross-examination (`Darrow`, `17%`), and Christian apologetics (`Bryan`, `16%`).
+3. **Center of Disagreement**: *Earth Believes Literal vs. Scientific Witnesses*.
+
+---
+
+## 15. Benchmark 11: Buckley vs. Vidal on ABC News (Chicago DNC, August 28, 1968)
+
+**Proceeding**: ABC News Television Coverage of the 1968 Democratic National Convention, Chicago, Illinois  
+**Subject**: Vietnam War Protests, Chicago Police Conduct, Civil Disobedience vs. Law and Order, and Mutual Ideological Invective  
+**Transcript**: [`samples/debate_buckley_vidal_1968.json`](../samples/debate_buckley_vidal_1968.json) (15 structured turns across 3 speakers: Howard K. Smith, William F. Buckley Jr., Gore Vidal across 4 rounds)
+
+![Buckley-Vidal Debate Telemetry](../assets/debate_buckley_vidal_telemetry.png)
+
+### Turn-by-Turn Spectral Dynamics
+
+```
+Round  1 | Insufficient history for spectral decomposition (< 2 rounds)
+Round  2 | Agents: 3 | λ2: 0.9805 | T_cert: 153 rounds | Orthogonal: William F. Buckley Jr. | Factions: 2 | K*: 2.43 | [ALERT] SLOW_CONVERGENCE & T_CERT_EXCEEDED
+Round  3 | Agents: 3 | λ2: 0.5604 | T_cert:   6 rounds | Orthogonal: William F. Buckley Jr. | Factions: 2 | K*: 2.06 | Contraction Rate -> 0.71x
+Round  4 | Agents: 3 | λ2: 0.5484 | T_cert:   5 rounds | Orthogonal: William F. Buckley Jr. | Factions: 2 | K*: 2.78 | [ALERT] ORTHOGONAL_PERSISTENCE (3 rounds) | Contraction Rate -> 0.58x
+```
+
+### Empirical Observations
+1. **Acute Early Rupture**: Round 2 spikes immediately to $\lambda_2 = 0.9805, T_{\text{cert}} = 153$ rounds as arguments over the Vietcong flag provocation in Grant Park divide the studio.
+2. **Sustained Personal Escalation (`ORTHOGONAL_PERSISTENCE`)**: William F. Buckley Jr. triggers `ORTHOGONAL_PERSISTENCE` across all 3 analyzed rounds (Rounds 2–4), culminating in the Round 4 breakdown (*Center of Disagreement*: *Crypto-nazi on National vs. Just Witnessed*).
+3. **Geometric Boundary in 3-Agent Broadcasts**: Removing Buckley raises counterfactual $\lambda_2$ ($0.55 \to 0.71, T_{\text{cert}}: 5 \to 9$) because Moderator Howard K. Smith (`37%`) and Gore Vidal (`29%`) remain diametrically opposed on broadcast decorum vs. police authoritarianism ($K^*: 2.59 \to 2.78$).
+
+---
+
+## 16. Benchmark 12: Chomsky vs. Foucault — Human Nature: Justice vs. Power (November 1971)
+
+**Proceeding**: International Philosophers Project Debate, Eindhoven University of Technology, Eindhoven, Netherlands  
+**Subject**: Innate Creative Human Nature vs. Historical Epistemes, Universal Rational Justice vs. Class Power Struggle, and Anarcho-Syndicalism  
+**Transcript**: [`samples/debate_chomsky_foucault_1971.json`](../samples/debate_chomsky_foucault_1971.json) (16 structured turns across 3 speakers: Moderator Fons Elders, Noam Chomsky, Michel Foucault)
+
+![Chomsky-Foucault Debate Telemetry](../assets/debate_chomsky_foucault_telemetry.png)
+
+### Turn-by-Turn Spectral Dynamics
+
+```
+Round  1 | Insufficient history for spectral decomposition (< 2 rounds)
+Round  2 | Agents: 3 | λ2: 0.9812 | T_cert: 158 rounds | Orthogonal: Noam Chomsky    | Factions: 2 | K*: 2.68 | [ALERT] SLOW_CONVERGENCE & T_CERT_EXCEEDED
+Round  3 | Agents: 3 | λ2: 0.5663 | T_cert:   6 rounds | Orthogonal: Michel Foucault | Factions: 2 | K*: 2.12 | Contraction Rate -> 0.85x
+Round  4 | Agents: 3 | λ2: 0.7203 | T_cert:  10 rounds | Orthogonal: Michel Foucault | Factions: 2 | K*: 1.91 | Contraction Rate -> 0.84x
+Round  5 | Agents: 3 | λ2: 0.7168 | T_cert:   9 rounds | Orthogonal: Noam Chomsky    | Factions: 2 | K*: 2.55 | Contraction Rate -> 0.62x
+```
+
+### Empirical Observations
+1. **Philosophical Incommensurability Pivot**: Round 2 registers near-unit deadlock ($\lambda_2 = 0.9812, T_{\text{cert}} = 158$ rounds) as Chomsky's universalist biological/rationalist paradigm collides with Foucault's structural-historical anti-essentialism.
+2. **Alternating Orthogonality Without Persistence Alert**: Unlike moderator-dominated debates or Buckley–Vidal, orthogonal assignment alternates dynamically between **Noam Chomsky** (Rounds 2, 5) and **Michel Foucault** (Rounds 3, 4) as each philosopher shifts the axiomatic frame (*scientific knowledge* vs. *institutional power* vs. *justice*).
+3. **Final Divide (`Center of Disagreement`)**: *Centralized Power vs. Proletariat Wages War* ($K^*: 1.84 \to 2.55$), splitting Foucault (`Proletariat Wages War`, `32%`) and Chomsky (`Centralized Power`, `32%`) across Moderator Fons Elders' synthesis prompt (`Universal Rational Justice`, `36%`).
+
+---
+
+## 17. Benchmark 13: First 1992 U.S. Presidential Debate — Bush vs. Clinton vs. Ross Perot (October 11, 1992)
+
+**Proceeding**: First 1992 Presidential Debate, Washington University in St. Louis, Missouri  
+**Subject**: Post-Cold War Stewardship, Federal Deficit & $4 Trillion National Debt Arithmetic, PACs/Lobbyists, and Healthcare/Jobs Reform  
+**Transcript**: [`samples/debate_bush_clinton_perot_1992.json`](../samples/debate_bush_clinton_perot_1992.json) (22 structured turns across 7 speakers: George H.W. Bush, Bill Clinton, Independent H. Ross Perot, Moderator Jim Lehrer, and journalists Ann Compton, Sander Vanocur, John Mashek)
+
+![Bush-Clinton-Perot 1992 Debate Telemetry](../assets/debate_bush_clinton_perot_telemetry.png)
+
+### Turn-by-Turn Spectral Dynamics
+
+```
+Round  1 | Insufficient history for spectral decomposition (< 2 rounds)
+Round  2 | Agents: 5 | λ2: 0.9453 | T_cert:  54 rounds | Orthogonal: Bill Clinton | Factions: 4 | K*: 3.18 | [ALERT] T_CERT_EXCEEDED
+Round  3 | Agents: 6 | λ2: 0.5275 | T_cert:   5 rounds | Orthogonal: Jim Lehrer   | Factions: 5 | K*: 3.30 | Contraction Rate -> 0.72x
+Round  4 | Agents: 7 | λ2: 0.7129 | T_cert:   9 rounds | Orthogonal: Ross Perot   | Factions: 6 | K*: 3.19 | Contraction Rate -> 0.70x
+Round  5 | Agents: 7 | λ2: 0.8837 | T_cert:  25 rounds | Orthogonal: Ross Perot   | Factions: 6 | K*: 3.71 | Forecast R6 -> Ross Perot (0.72x)
+```
+
+### Empirical Observations
+1. **Textbook Substantive Transverse Dissenter (`Ross Perot`)**: Beginning in Round 4 and persisting through Round 5 and the Round 6 forecast, Independent candidate **Ross Perot** is isolated as orthogonal (`1.42x` median threshold) and is the **only** participant across all 7 historic debates classified as **`[Unreconciled Dissent | 21% Conclusion Weight]`** (`contributed_to_conclusion: washington, lobbyists, look`).
+2. **Why `Unreconciled Dissent` Fires Here**: In [`src/klens/semantic.py`](../src/klens/semantic.py), a channel is assigned `Unreconciled Dissent` when `is_dissent=True` and cosine similarity to the terminal mean $\cos(C_k(T), \bar{z}(T)) < 0.50$. While major-party opponents `Bill Clinton` (`27%`) and `George H.W. Bush` (`29%`) overlap around jobs, taxes, and post-Cold War growth, Perot's $4 trillion debt and anti-PAC/lobbyist vocabulary occupies a low-overlap orthogonal axis.
+3. **Counterfactual Stability Check**: Removing Perot moves $\lambda_2$ from $0.88 \to 0.91$ ($T_{\text{cert}}: 25 \to 33$ rounds), revealing that Perot is geometrically decoupled rather than the sole driver of bipartisan fiscal friction between Bush and Clinton.
+
+---
+
+## 18. Pipeline Architecture Comparison: Baseline (`main`) vs. $K^*$ & Conclusion Attribution (`private/k-channels-attribution`)
+
+Every historic debate above was executed independently under both **Pipeline A** (`main`, commit `18fb06c`, dashboards in `assets/main/`) and **Pipeline B** (`private/k-channels-attribution`, commit `6af2e1d`, dashboards in `assets/k_channels/`) using `--style diagnostic`.
+
+### Cross-Debate Comparative Summary
+
+| Historic Debate | $N$ Agents | Peak Friction ($\lambda_2, T_{\text{cert}}$) (Invariant A & B) | Final Round ($\lambda_2, T_{\text{cert}}$) (Invariant A & B) | Pipeline B $K^*$ ($K^*_0 \to K^*_T$) | Final Orthogonal Agent & Counterfactual ($\lambda_2 \to \lambda_2'$) | Pipeline B Unique Role Attribution Finding |
+| :--- | :---: | :--- | :--- | :---: | :--- | :--- |
+| **Lincoln–Douglas (1858)** | 3 | R2: `0.9776`, `133` | R5: `0.7062`, `9` | `2.51 -> 2.35` | `Thomas J. Turner` (`0.71 -> 0.83`) | 3-way split (`33%` / `32%` / `35%`); all `Conceding Coalition`; Turner `ORTHOGONAL_PERSISTENCE` (4 rounds) |
+| **Kennedy–Nixon (1960)** | 6 | R3: `0.9814`, `160` | R5: `0.8710`, `22` | `2.14 -> 2.69` | `Howard K. Smith` (`0.87 -> 0.80`) | Active closing channels (`33%` JFK, `29%` Nixon, `38%` Smith); 3 silent R5 panelists get `0%` weight |
+| **Baldwin–Buckley (1965)** | 5 | R2: `0.9467`, `55` | R5: `0.7020`, `9` | `1.95 -> 3.96` | `Mr. Burford` (`0.70 -> 0.72`) | Balanced 5-channel ethical/legal split (`18%–21%` each); high R5 semantic spread ($K^*=3.96$) |
+| **Scopes / Darrow–Bryan (1925)** | 5 | R2: `0.9547`, `65` | R5: `0.6703`, `8` | `3.04 -> 4.61` | `Judge John T. Raulston` (`0.67 -> 0.61`) | Highest channel dispersion ($K^*/N = 0.922$); `Raulston` judicial cutoff `23%` vs. 4 advocates (`16%–22%`) |
+| **Buckley–Vidal (1968)** | 3 | R2: `0.9805`, `153` | R4: `0.5484`, `5` | `2.59 -> 2.78` | `William F. Buckley Jr.` (`0.55 -> 0.71`) | Buckley `ORTHOGONAL_PERSISTENCE` (3 rounds, `34%`); Vidal `29%`, Smith `37%` |
+| **Chomsky–Foucault (1971)** | 3 | R2: `0.9812`, `158` | R5: `0.7168`, `9` | `1.84 -> 2.55` | `Noam Chomsky` (`0.72 -> 0.86`) | Alternating R2–R5 orthogonals (Chomsky vs. Foucault); balanced `32%` / `32%` / `36%` terminal weights |
+| **Bush–Clinton–Perot (1992)** | 7 | R2: `0.9453`, `54` | R5: `0.8837`, `25` | `3.15 -> 3.71` | `Ross Perot` (`0.88 -> 0.91`) | Only **`Unreconciled Dissent`** (`Ross Perot`, `21%`); Bush `29%`, Clinton `27%`, Lehrer `23%`; 3 R5-silent panelists `0%` |
+
+### Key Architectural & Behavioral Findings (Pipeline A vs. Pipeline B)
+
+1. **Full Core Operator & CSV Invariance**:
+   * Across all 7 historic debates, every `out/runs_main/metrics_*.csv` file and `out/runs_k_channels/metrics_*.csv` file produced by `CSVLogExporter` is **byte-for-byte identical**. `K*` and channel attribution extend `SpectralMetrics`, `DeliberationSynthesis`, CLI logs, and Panel 4 (`--style diagnostic`) without altering $\hat{K}$ eigenvalues ($\lambda_2$), certified deadlines ($T_{\text{cert}}$), RFF lifting, K-Means faction partitioning, or local-residual orthogonal detection.
+2. **Dimensionality Compression via $K^*$ (`compute_effective_channels_k_star`)**:
+   * Computed via the participation ratio of non-negative eigenvalues $\gamma_j = \max(0, \lambda_j(X X^T))$ on row-normalized terminal states $X$, $K^* = (\sum \gamma_j)^2 / \sum \gamma_j^2$ separates nominal participant count $N$ from genuine ideological dimensionality:
+     * **Genuine Multi-Angle Spread**: When all $N=5$ speakers articulate distinct closing arguments (Darrow–Bryan, Baldwin–Buckley), $K^*$ expands strongly ($3.04 \to 4.61$ and $1.95 \to 3.96$).
+     * **Panelist Sparsity Compression**: In moderated 6- and 7-speaker debates where journalist panelists ask questions in Rounds 2–4 and remain silent in Round 5 closing statements (Kennedy–Nixon, Bush–Clinton–Perot), their terminal state vectors $Z[-1, i] = 0$ produce zero Gram rows, compressing $K^*$ toward the active speakers ($K^* = 2.69$ out of $N=6$; $K^* = 3.71$ out of $N=7$).
+3. **Behavioral Edge Cases in `_compute_channel_dynamics_and_weights()`**:
+   * **High Sensitivity of `Unreconciled Dissent` vs. `Conceding Coalition`**: Only **Ross Perot** (`1992`) satisfies both `is_dissent=True` and $\cos(C_k(T), \bar{z}(T)) < 0.50$, cleanly isolating third-party anti-establishment dissent. In 3-speaker debates (`lincoln_douglas`, `buckley_vidal`, `chomsky_foucault`), averaging over $N=3$ non-negative TF-IDF unit vectors lifts the orthogonal speaker's cosine with $\bar{z}(T)$ above $0.50$, classifying them as `Conceding Coalition` despite persistent geometric divergence (`ORTHOGONAL_PERSISTENCE`).
+   * **Zero-Round-T Panelist Artifact (`Primary Attractor | 0% Conclusion Weight`)**: When a participant speaks neither in Round 1 nor in the terminal Round $T$ (e.g., panelists in `kennedy_nixon` and `bush_clinton_perot`), $C_k(0) = C_k(T) = 0 \implies d_{\text{self}} = 0$ and conclusion weight $= 0\%$, while $d_{\text{pull}} = \|\bar{z}(0)\| - \|\bar{z}(T)\| > 0.05$ triggers the `Primary Attractor` branch purely due to global mean-norm attenuation rather than centripetal pull toward an active speaker.
+
+---
+
+## 19. Comparative Analysis: Human Deliberations vs. Real & Synthetic Multi-Agent Swarms
 
 Comparing empirical trajectories across verbatim human proceedings (SCOTUS, FOMC, FDA AdCom, Delaware Chancery, CPUC, NYC Council), real multi-agent LLM debate traces ([`Multi-Agent-LLMs/DEBATE`](https://huggingface.co/datasets/Multi-Agent-LLMs/DEBATE)), and synthetic scenario fixtures exposes four fundamental mathematical and behavioral distinctions:
 
@@ -356,15 +567,18 @@ Comparing empirical trajectories across verbatim human proceedings (SCOTUS, FOMC
 
 ---
 
-## 12. Verification & Automated Test Suite
+## 20. Verification & Automated Test Suite
 
-Both real-world human transcripts and authentic multi-agent LLM debate traces are verified in [`tests/test_samples.py`](../tests/test_samples.py):
+Institutional proceedings, historic public debates, real multi-agent LLM traces, and synthetic fixtures are verified in [`tests/test_samples.py`](../tests/test_samples.py):
 
 ```bash
-# Run tests covering all institutional benchmarks and real LLM traces
+# Run tests covering all institutional, historic debate, real LLM, and synthetic traces
 pytest -v tests/test_samples.py
 
 # Run only the institutional benchmarks
 pytest -v tests/test_samples.py -k "scotus or fomc or adcom or delaware or puc or council"
+
+# Run only the 7 historic public debate benchmarks
+pytest -v tests/test_samples.py -k "lincoln or kennedy or baldwin or bush or darrow or chomsky or buckley"
 ```
 

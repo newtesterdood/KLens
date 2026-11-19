@@ -1,0 +1,139 @@
+{
+  "title": "First 1992 U.S. Presidential Debate: Bush vs. Clinton vs. Ross Perot (October 11, 1992)",
+  "context": "Authentic reconstruction of the historic three-way first presidential debate of 1992 at Washington University in St. Louis, Missouri, on October 11, 1992, featuring President George H.W. Bush, Governor Bill Clinton, and Independent candidate H. Ross Perot, moderated by Jim Lehrer with panelists Ann Compton, Sander Vanocur, and John Mashek. Captures the post-Cold War leadership debate, bipartisan Washington gridlock, healthcare and education investment, and Ross Perot's fiercely transverse, anti-establishment critique of the $4 trillion national debt, PAC money, and deficit arithmetic.",
+  "metadata": {
+    "event": "First 1992 U.S. Presidential Debate (St. Louis)",
+    "date": "1992-10-11",
+    "location": "Washington University, St. Louis, Missouri",
+    "category": "Three-Way Presidential & Orthogonal Reform Debate",
+    "key_themes": [
+      "National Debt & Deficit Reduction",
+      "Washington Gridlock & PAC Reform",
+      "Middle-Class Jobs & Investment in People",
+      "Cold War Aftermath & Commander-in-Chief",
+      "Healthcare Reform"
+    ],
+    "historical_outcome": "First three-candidate presidential debate in U.S. television history; Perot's uncompromising deficit-first, anti-partisan framing lifted his national polling and redefined the 1992 economic agenda.",
+    "speakers": [
+      "Jim Lehrer",
+      "George H.W. Bush",
+      "Bill Clinton",
+      "Ross Perot",
+      "Ann Compton",
+      "Sander Vanocur",
+      "John Mashek"
+    ]
+  },
+  "turns": [
+    {
+      "round": 1,
+      "speaker": "Jim Lehrer",
+      "text": "Good evening, and welcome to this first of the 1992 presidential debates here at Washington University in St. Louis. For the first time in American television history, three candidates share the debate stage: President George H.W. Bush, Governor Bill Clinton, and Independent candidate Ross Perot. Our panel of journalists—Ann Compton of ABC News, John Mashek of the Boston Globe, and Sander Vanocur—will join me in questioning the candidates on the economy, jobs, the deficit, and post-Cold War leadership. Let us begin with our first question on what fundamentally separates each of you from the others."
+    },
+    {
+      "round": 1,
+      "speaker": "George H.W. Bush",
+      "text": "I think what separates me is proven experience in guiding this country through the most dramatic transformation in world history—the end of the Cold War, the collapse of Soviet communism, and victory in Desert Storm—combined with a commitment to keep taxes down, curb government spending, and let American entrepreneurs create jobs without another round of big-spending tax increases from Washington."
+    },
+    {
+      "round": 1,
+      "speaker": "Bill Clinton",
+      "text": "Our country is falling behind because we have had the slowest economic growth since the Great Depression and stagnant wages for working families. What separates me is a plan to put people first: investing in education, job training, infrastructure, and affordable healthcare, creating high-wage jobs in a competitive global economy rather than clinging to twelve years of trickle-down economics that exploded the debt while squeezing the middle class."
+    },
+    {
+      "round": 1,
+      "speaker": "Ross Perot",
+      "text": "I think the principal issue that separates me is that five and a half million ordinary citizens came together on their own and put me on the ballot in all fifty states. I was not put here by either of the two political parties; I was not put here by PAC money, or special-interest lobbyists, or foreign lobby money. Washington has run up a four-trillion-dollar debt while both parties point fingers at each other, and it is time to lift up the hood, look at the engine, and fix the country like a serious business."
+    },
+    {
+      "round": 2,
+      "speaker": "John Mashek",
+      "text": "Mr. President and Governor Clinton, American voters are deeply anxious about unemployment, stagnant middle-class incomes, and persistent recessionary pressures. Why should voters trust your economic blueprint to revive job creation and long-term economic growth without worsening inflation?"
+    },
+    {
+      "round": 2,
+      "speaker": "George H.W. Bush",
+      "text": "Look at the record: inflation is low, interest rates are at their lowest point in decades, and American exports are leading global trade. What holds back faster job growth is a gridlocked Democratic Congress that refuses to pass my capital gains tax cut, enterprise zones, and small business investment incentives. Raising taxes and expanding mandates, as Governor Clinton proposes, will only kill jobs and punish small businesses."
+    },
+    {
+      "round": 2,
+      "speaker": "Bill Clinton",
+      "text": "Mr. President, when you took office you promised thirty million jobs, and we are millions short while healthcare costs crush small employers and families alike. You cannot blame Congress alone when the White House refuses to invest in our workforce, our schools, and public-private manufacturing partnerships. We must shift from defense spending to domestic investment—rebuilding bridges, training workers, and taxing only the wealthiest two percent to invest in America's future."
+    },
+    {
+      "round": 2,
+      "speaker": "Ross Perot",
+      "text": "Here we go again—two politicians blaming each other while we borrow four hundred billion dollars a year! Look, I spent thirty years creating jobs in the private sector, not running for office. When you have a four-trillion-dollar debt, spending billions on new programs without cutting waste, subsidies, and entitlement bloat is pure arithmetic fantasy, and cutting taxes while the deficit explodes is just as reckless. You have got to clean up the barn before you build a new fence—balance the books, rebuild our industrial base, and stop shipping American factory jobs overseas."
+    },
+    {
+      "round": 3,
+      "speaker": "Ann Compton",
+      "text": "Gentlemen, the federal deficit and national debt remain the elephant in the room. Yet neither major party candidate has proposed painful tax increases or deep Medicare and Social Security reforms that might balance the budget. How specifically will you cut the deficit and break the budget gridlock?"
+    },
+    {
+      "round": 3,
+      "speaker": "Ross Perot",
+      "text": "Ann, both parties act like the four-trillion-dollar debt is a crazy relative in the basement nobody wants to mention in polite company! If you want to dance, you have got to pay the fiddler. My detailed deficit plan puts every single card on the table: cut wasteful spending, eliminate corporate subsidies, raise gasoline taxes modestly over five years dedicated strictly to debt reduction, ask affluent retirees to pay taxes on excess Social Security benefits, and institute strict budget caps. Nobody likes bitter medicine, but you cannot cure a broken treasury with painless promises."
+    },
+    {
+      "round": 3,
+      "speaker": "George H.W. Bush",
+      "text": "I agree the deficit must come down, which is why I fought for the 1990 budget enforcement caps and now propose a balanced budget amendment and a line-item veto to stop pork-barrel appropriations. But slapping a massive fifty-cent gasoline tax on working commuters, as Ross proposes, would throw the economy right back into recession, and Governor Clinton's plan raises taxes on small businesses while increasing spending."
+    },
+    {
+      "round": 3,
+      "speaker": "Bill Clinton",
+      "text": "We must cut the deficit in half over four years, not with a regressive gas tax that hits rural drivers hardest, nor with fantasy math, but by growing the economy, controlling runaway healthcare inflation, reducing defense expenditures responsibly after the Cold War, and cutting administrative waste. Investing in people and reducing the deficit go hand in hand when Americans are working and paying taxes."
+    },
+    {
+      "round": 3,
+      "speaker": "Jim Lehrer",
+      "text": "Let us probe deeper into the root cause of Washington gridlock and the health care crisis affecting thirty-five million uninsured Americans. Mr. Vanocur, your question."
+    },
+    {
+      "round": 4,
+      "speaker": "Sander Vanocur",
+      "text": "With the Cold War over and domestic pressures rising—from healthcare costs to urban poverty and public education—voters are asking whether Washington's political system itself is broken. How would your presidency overcome partisan gridlock, reform healthcare, and earn public trust?"
+    },
+    {
+      "round": 4,
+      "speaker": "Bill Clinton",
+      "text": "Gridlock ends when the President takes responsibility instead of pointing fingers at Capitol Hill, unites people around practical healthcare reform that guarantees universal coverage through managed competition and employer insurance, and invests in education and community policing. The Cold War is over; our next national security test is economic renewal and investing in every American citizen."
+    },
+    {
+      "round": 4,
+      "speaker": "George H.W. Bush",
+      "text": "Leadership in the post-Cold War world still demands character, trust, and steady judgment as Commander-in-Chief—because nuclear weapons remain, regional crises erupt without warning, and global markets depend on American stability. On healthcare, our voucher and tax-credit plan expands coverage without turning American medicine over to a government board or crushing small business with employer mandates."
+    },
+    {
+      "round": 4,
+      "speaker": "Ross Perot",
+      "text": "Wait a minute—why do we have gridlock in Washington in the first place? Because both parties are bought and paid for by PACs, special-interest lobbyists, and consultants who spend three hundred million dollars to win elections so they can protect their turf! You do not fix a rigged system with partisan compromises between Democrats and Republicans; you ban foreign lobbyists, eliminate PACs, impose congressional term limits, hold electronic town halls so the owners of this country—the taxpayers—stay in charge, and bring common-sense arithmetic back to government."
+    },
+    {
+      "round": 5,
+      "speaker": "Jim Lehrer",
+      "text": "We have reached the final round of tonight's debate in St. Louis for closing statements. Governor Clinton, President Bush, and Ross Perot will each summarize their vision for the nation's economy, debt, and future."
+    },
+    {
+      "round": 5,
+      "speaker": "George H.W. Bush",
+      "text": "In a rapidly changing post-Cold War world, experience, character, and steady economic stewardship matter more than ever. With lower interest rates, trade expansion, lower taxes, and spending discipline, America will lead the global economy and protect working families without big-government programs."
+    },
+    {
+      "round": 5,
+      "speaker": "Bill Clinton",
+      "text": "For twelve years we tested trickle-down economics, and working families lost ground while deficits soared. Let us bring people together, invest in education, healthcare, and high-wage jobs, and restore America's economic strength and opportunity for every family."
+    },
+    {
+      "round": 5,
+      "speaker": "Ross Perot",
+      "text": "Look at all three of us tonight. Decide who can actually get in there and do the hard arithmetic job, because the party is over in Washington and it is time for the cleanup crew. If we do not confront the four-trillion-dollar debt, special-interest lobbyists, and Washington gridlock head-on, we leave our children a bankrupt nation instead of the American Dream. Thank you, and good night."
+    },
+    {
+      "round": 5,
+      "speaker": "Jim Lehrer",
+      "text": "Thank you, President Bush, Governor Clinton, and Ross Perot, and thank you to Ann Compton, John Mashek, and Sander Vanocur. That concludes our first 1992 presidential debate from St. Louis."
+    }
+  ]
+}

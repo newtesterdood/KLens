@@ -14,6 +14,13 @@ This directory contains reference datasets and discussion transcripts for testin
 | `delaware_merger_deliberation.json` | JSON | 14 | 5 | **Delaware Court of Chancery M&A Deliberation (*Twitter v. Musk*, 2022)**<br>56 high-stakes turns across board directors, management, legal counsel (Wachtell Lipton), and bankers evaluating Musk's $54.20 unsolicited buyout. Tracks poison pill adoption under *Unocal*, Revlon duties, deadlock during fake accounts/MAE dispute ($T_{\text{cert}} = 152$ rounds), and rapid contraction to specific performance resolution ($\lambda_2 = 0.7592, T_{\text{cert}} = 11$). |
 | `puc_infrastructure_hearing.json` | JSON | 14 | 5 | **California Public Utilities Commission Rate Hearing (CPUC NEM 3.0 / D.22-12-056)**<br>45 real-world regulatory turns across 14 commissioners, judges, ratepayer advocates (TURN, Cal Advocates), utilities (SCE, PG&E), and solar coalitions (CALSSA, NRDC). Tracks $3.4B–$4.0B cost-shift debate, CAISO evening duck curve ramping, battery storage pairing mandates, deadlock ($T_{\text{cert}} = 127$ rounds), and unanimous 5–0 decision adoption ($\lambda_2 = 0.6119, T_{\text{cert}} = 7$). |
 | `city_council_policy_meeting.json` | JSON | 14 | 5 | **New York City Council Stated Meeting (Contested 'City of Yes' Zoning & Infrastructure Package)**<br>48 municipal legislative turns across 14 council leaders, land use chairs, and borough representatives. Deliberates Universal Affordability Preference (UAP), outer-borough parking minimum elimination, sewer/stormwater capacity, and deadlock ($T_{\text{cert}} = 102$ rounds) resolved by a landmark $5.0 Billion capital infrastructure agreement leading to a 31–18 stated roll-call vote ($\lambda_2 = 0.6361, T_{\text{cert}} = 7$). |
+| `debate_lincoln_douglas_1858.json` | JSON | 3 | 5 | **Second Lincoln–Douglas Debate at Freeport, IL (Aug 27, 1858)**<br>20 structured debate turns across Abraham Lincoln, Stephen A. Douglas, and moderator Thomas J. Turner. Captures the Freeport Doctrine crisis ($\lambda_2 = 0.9776, T_{\text{cert}} = 133$), moderator subspace persistence (`ORTHOGONAL_PERSISTENCE`: Turner), and bilateral deadlock contraction ($\lambda_2 = 0.7062, T_{\text{cert}} = 9, K^* = 2.51 \to 2.35$). |
+| `debate_kennedy_nixon_1960.json` | JSON | 6 | 5 | **First Kennedy–Nixon Presidential Debate (WBBM-TV, Sept 26, 1960)**<br>24 turns across John F. Kennedy, Richard M. Nixon, moderator Howard K. Smith, and panelists (Charles Warren, Sander Vanocur, Stuart Novins). Tracks peak domestic policy deadlock in Round 3 ($\lambda_2 = 0.9814, T_{\text{cert}} = 160$) shifting to closer bilateral framing ($\lambda_2 = 0.8710, T_{\text{cert}} = 22, K^* = 2.14 \to 2.69$). |
+| `debate_baldwin_buckley_1965.json` | JSON | 5 | 5 | **James Baldwin vs. William F. Buckley Jr. at the Cambridge Union (Feb 18, 1965)**<br>18 turns across 5 participants debating *The American Dream Is at the Expense of the American Negro*. Charts opening geometric tension ($T_{\text{cert}} = 55$), transient Baldwin–Buckley lexical clustering in Round 3 ($\lambda_2 = 0.4296$), and full 5-channel rhetorical divergence in Round 5 ($K^* = 1.95 \to 3.96$). |
+| `debate_bush_clinton_perot_1992.json` | JSON | 7 | 5 | **First 1992 U.S. Presidential Debate: Bush vs. Clinton vs. Ross Perot (Oct 11, 1992)**<br>22 turns across 3 candidates, moderator Jim Lehrer, and 3 journalists. Cleanly isolates **Ross Perot** as a substantive orthogonal agent (`1.42x` median threshold) and **`Unreconciled Dissent`** (`21%` conclusion weight) on the Washington gridlock / $4T national debt axis ($\lambda_2 = 0.8837, T_{\text{cert}} = 25, K^* = 3.15 \to 3.71$). |
+| `debate_darrow_bryan_scopes_1925.json` | JSON | 5 | 5 | **Scopes Monkey Trial Day 7: Clarence Darrow vs. William Jennings Bryan (July 20, 1925)**<br>25 turns across Darrow, Bryan, Hays, Malone, and Judge John T. Raulston. Isolates procedural judicial framing (`Judge John T. Raulston` as orthogonal adjudicator) against biblical literalism vs. scientific inquiry ($K^* = 3.04 \to 4.61$, $\lambda_2 = 0.6703, T_{\text{cert}} = 8$). |
+| `debate_chomsky_foucault_1971.json` | JSON | 3 | 5 | **Chomsky vs. Foucault: *Human Nature — Justice vs. Power* (Eindhoven, Nov 1971)**<br>16 turns across Noam Chomsky, Michel Foucault, and host Fons Elders. Models foundational philosophical non-overlap ($\lambda_2 = 0.9812, T_{\text{cert}} = 158$ in Round 2), isolating Chomsky's anarcho-syndicalist normative axis against Foucault's power critique ($\lambda_2 = 0.7168, T_{\text{cert}} = 9, K^* = 1.84 \to 2.55$). |
+| `debate_buckley_vidal_1968.json` | JSON | 3 | 4 | **Buckley vs. Vidal on ABC News (Chicago DNC, Aug 28, 1968)**<br>15 turns across William F. Buckley Jr., Gore Vidal, and moderator Howard K. Smith. Captures rapid on-air escalation ($\lambda_2 = 0.9805, T_{\text{cert}} = 153$ in Round 2) culminating in `ORTHOGONAL_PERSISTENCE` (Buckley across Rounds 2–4, $\lambda_2 = 0.5484, T_{\text{cert}} = 5, K^* = 2.59 \to 2.78$). |
 | `real_llm_debate_des_moines.json` | JSON | 3 | 7 | **Real LLM Swarm Debate: Geography & Surfing (Hugging Face `Multi-Agent-LLMs/DEBATE`)**<br>35 turns across 3 expert LLM personas (*Geographer*, *Tourism Expert*, *Local Resident*). Real-world multi-round deliberation on geographical constraints with emergent consensus drift. |
 | `real_llm_debate_bitcoin.json` | JSON | 3 | 7 | **Real LLM Swarm Debate: Physicality of Digital Assets (`Multi-Agent-LLMs/DEBATE`)**<br>35 turns across 3 expert LLM personas (*Cryptocurrency Expert*, *Digital Wallet Specialist*, *Physicist*). Deliberates hardware wallet semantics vs. intangible ledger assets. |
 | `real_llm_debate_boolean_logic.json` | JSON | 3 | 7 | **Real LLM Swarm Debate: Boolean Algebra Computation (`Multi-Agent-LLMs/DEBATE`)**<br>35 turns across 3 expert LLM personas (*Computer Science Theorist*, *Computer Programmer*, *Mathematical Logician*). Formal logic debate mapping bitwise operations to universal computation. |
@@ -73,7 +80,53 @@ klens run samples/city_council_policy_meeting.json \
 klens plot samples/delaware_merger_deliberation.json --output out/delaware_telemetry.png
 ```
 
-### 2. Analyze Real-World Multi-Agent LLM Debate Traces (`Multi-Agent-LLMs/DEBATE`)
+### 2. Analyze Historic Public Debates (1858–1992)
+
+```bash
+# 1. Lincoln-Douglas Freeport Debate (1858)
+klens run samples/debate_lincoln_douglas_1858.json \
+  --style diagnostic \
+  --plot assets/debate_lincoln_douglas_telemetry.png \
+  --output out/metrics_lincoln_douglas.csv
+
+# 2. First Kennedy-Nixon Presidential Debate (1960)
+klens run samples/debate_kennedy_nixon_1960.json \
+  --style diagnostic \
+  --plot assets/debate_kennedy_nixon_telemetry.png \
+  --output out/metrics_kennedy_nixon.csv
+
+# 3. James Baldwin vs. William F. Buckley Jr. at Cambridge Union (1965)
+klens run samples/debate_baldwin_buckley_1965.json \
+  --style diagnostic \
+  --plot assets/debate_baldwin_buckley_telemetry.png \
+  --output out/metrics_baldwin_buckley.csv
+
+# 4. Bush vs. Clinton vs. Ross Perot First Presidential Debate (1992)
+klens run samples/debate_bush_clinton_perot_1992.json \
+  --style diagnostic \
+  --plot assets/debate_bush_clinton_perot_telemetry.png \
+  --output out/metrics_bush_clinton_perot.csv
+
+# 5. Scopes Monkey Trial Day 7: Darrow vs. Bryan (1925)
+klens run samples/debate_darrow_bryan_scopes_1925.json \
+  --style diagnostic \
+  --plot assets/debate_darrow_bryan_telemetry.png \
+  --output out/metrics_darrow_bryan.csv
+
+# 6. Noam Chomsky vs. Michel Foucault: Justice vs. Power (1971)
+klens run samples/debate_chomsky_foucault_1971.json \
+  --style diagnostic \
+  --plot assets/debate_chomsky_foucault_telemetry.png \
+  --output out/metrics_chomsky_foucault.csv
+
+# 7. William F. Buckley Jr. vs. Gore Vidal on ABC News (1968)
+klens run samples/debate_buckley_vidal_1968.json \
+  --style diagnostic \
+  --plot assets/debate_buckley_vidal_telemetry.png \
+  --output out/metrics_buckley_vidal.csv
+```
+
+### 3. Analyze Real-World Multi-Agent LLM Debate Traces (`Multi-Agent-LLMs/DEBATE`)
 
 These traces are sourced directly from the open-source [Hugging Face `Multi-Agent-LLMs/DEBATE`](https://huggingface.co/datasets/Multi-Agent-LLMs/DEBATE) benchmark repository, evaluating multi-persona reasoning dynamics across 7 continuous deliberation rounds:
 
@@ -91,7 +144,7 @@ klens run samples/real_llm_debate_boolean_logic.json --output out/real_llm_debat
 klens run samples/real_llm_debate_bee_sting.json --output out/real_llm_debate_bee_sting.csv
 ```
 
-### 3. Synthetic Benchmark Datasets
+### 4. Synthetic Benchmark Datasets
 
 ```bash
 # Multi-Agent LLM Safety Debate (JSON)

@@ -1,0 +1,152 @@
+{
+  "title": "Scopes Monkey Trial (Day 7): Clarence Darrow vs. William Jennings Bryan (July 20, 1925)",
+  "context": "Authentic reconstruction of Day 7 (Monday, July 20, 1925) of Tennessee v. John Thomas Scopes in Dayton, Tennessee, convened outdoors under the Rhea County Courthouse shade trees due to oppressive July heat and fear of courtroom floor collapse. Features Judge John T. Raulston, defense attorneys Clarence Darrow, Arthur Garfield Hays, and Dudley Field Malone, and prosecutor/witness William Jennings Bryan. Tracks Darrow's morning apology resolving his contempt citation and entering scientific expert statements into the appellate record, Hays calling Bryan to the witness stand as an authority on the Bible, and Darrow's escalating cross-examination on Jonah and the big fish, Joshua and the sun, Noah's Flood, the age of the Earth, and the six days of Creation.",
+  "metadata": {
+    "event": "State of Tennessee v. John Thomas Scopes (Day 7 Afternoon Cross-Examination)",
+    "date": "1925-07-20",
+    "location": "Rhea County Courthouse Lawn, Dayton, Tennessee",
+    "category": "Historic Judicial & Epistemic Cross-Examination",
+    "key_themes": [
+      "Biblical Literalism vs. Modern Science",
+      "Evolution & Geology",
+      "Jonah and the Big Fish",
+      "Joshua Commanding the Sun",
+      "Six Days of Creation & Age of the Earth"
+    ],
+    "historical_outcome": "Bryan conceded under Darrow's cross-examination that the 'days' of Genesis could represent vast geological periods rather than 24-hour days, fracturing strict fundamentalist literalism before Judge Raulston struck the testimony the next morning.",
+    "speakers": [
+      "Judge John T. Raulston",
+      "Clarence Darrow",
+      "Arthur Garfield Hays",
+      "Dudley Field Malone",
+      "William Jennings Bryan"
+    ]
+  },
+  "turns": [
+    {
+      "round": 1,
+      "speaker": "Judge John T. Raulston",
+      "text": "The Court of Tennessee against John Thomas Scopes is convened outdoors under the shade trees of the Rhea County Courthouse lawn for the safety and comfort of this vast crowd and to prevent overloading the courtroom floor upstairs. Before proceeding with the defense's formal offers of proof, the Court takes up the citation for contempt entered against Mr. Clarence Darrow on Friday afternoon."
+    },
+    {
+      "round": 1,
+      "speaker": "Clarence Darrow",
+      "text": "Your Honor, I spoke in the heat of intense feeling when our scientific witnesses were excluded from testifying before the jury. I apologize sincerely to the Court for any discourtesy, for I respect the bench and simply seek to preserve a fair appellate record on evolution, geology, and the Butler Act."
+    },
+    {
+      "round": 1,
+      "speaker": "Judge John T. Raulston",
+      "text": "My Savior taught forgiveness, Mr. Darrow, and I accept your apology freely; the contempt citation is remitted. Mr. Hays and Mr. Malone may now place the written affidavits and textbooks of your excluded scientific experts into the record for the appellate court, out of the hearing of the jury."
+    },
+    {
+      "round": 1,
+      "speaker": "Arthur Garfield Hays",
+      "text": "We thank Your Honor. We enter into the record the sworn written statements of distinguished zoologists, geologists, anthropologists, and theologians establishing that evolutionary science is universally accepted and harmonizes with honest religious faith, rather than contradicting it."
+    },
+    {
+      "round": 1,
+      "speaker": "Dudley Field Malone",
+      "text": "In submitting these scientific authorities, the defense insists that truth has nothing to fear from open inquiry, and that no Tennessee statute can constitutionally forbid a public schoolteacher from teaching the established facts of biology and earth history."
+    },
+    {
+      "round": 2,
+      "speaker": "Arthur Garfield Hays",
+      "text": "May it please the Court, the defense desires to call Mr. William Jennings Bryan as a witness for the defense—not upon science, since scientific witnesses were barred, but as an acknowledged expert and lifelong student of the Bible."
+    },
+    {
+      "round": 2,
+      "speaker": "Judge John T. Raulston",
+      "text": "This is an unusual request, gentlemen, to place opposing counsel upon the witness stand. Colonel Bryan, do you have any objection to taking the stand as a witness on the Scriptures?"
+    },
+    {
+      "round": 2,
+      "speaker": "William Jennings Bryan",
+      "text": "No objection whatever, Your Honor! I want the world to know that these gentlemen have no monopoly on intelligence or candor, and that I am not afraid to defend the Word of God against the greatest atheist or agnostic in the United States. Provided I may also examine them afterward, I gladly take the witness chair."
+    },
+    {
+      "round": 2,
+      "speaker": "Clarence Darrow",
+      "text": "Mr. Bryan, you have given considerable study to the Bible, have you not? Tell me plainly: do you claim that everything in the Bible should be literally interpreted? For instance, when the Bible says the whale swallowed Jonah—or rather, that a big fish swallowed Jonah, and he remained there three days and three nights, and then the fish cast him up upon dry land—do you believe that the big fish was literally made to swallow Jonah?"
+    },
+    {
+      "round": 2,
+      "speaker": "William Jennings Bryan",
+      "text": "Let me read the exact language of Scripture: it says the Lord had prepared a great fish to swallow up Jonah. I believe in a God who can make a whale and can make a man and make both do what He pleases! One miracle is just as easy to believe as another for an omnipotent Creator who made the universe."
+    },
+    {
+      "round": 3,
+      "speaker": "Clarence Darrow",
+      "text": "Let us test that literalism further, Mr. Bryan. The Bible states that Joshua commanded the sun to stand still so that the day might be lengthened during battle. Now do you believe that the sun literally stood still in the heavens, or that the earth stood still—since as a matter of science, the earth moves around the sun rather than the sun around the earth?"
+    },
+    {
+      "round": 3,
+      "speaker": "William Jennings Bryan",
+      "text": "I believe what the Bible says! If the inspired writer recorded the event in the ordinary language of the people who saw the sun appear to stand still, I believe God had the power to lengthen that day by arresting the motion of the earth or whatever heavenly body was necessary—without needing to lecture ancient warriors on modern astronomy."
+    },
+    {
+      "round": 3,
+      "speaker": "Clarence Darrow",
+      "text": "Have you ever pondered what would happen to this earth if it suddenly stopped rotating on its axis—turning into a molten mass of destruction? And what of Noah's Flood, which Archbishop Ussher dated at 2348 years before Christ? Do you literally believe every living creature on Earth outside the Ark—including the civilizations of Egypt and China—was drowned forty-two hundred years ago?"
+    },
+    {
+      "round": 3,
+      "speaker": "William Jennings Bryan",
+      "text": "I accept the biblical record of the universal Flood without accepting Archbishop Ussher's marginal chronology as inspired Scripture. Mr. Darrow mocks the faith of millions because he refuses to admit any divine power above human pride, whereas I stand by the plain testimony of the Bible."
+    },
+    {
+      "round": 3,
+      "speaker": "Arthur Garfield Hays",
+      "text": "Your Honor, the witness is using the stand to deliver speeches rather than answer counsel's direct questions about literal biblical interpretation and historical chronology."
+    },
+    {
+      "round": 4,
+      "speaker": "Judge John T. Raulston",
+      "text": "Proceed quietly, Mr. Darrow, and Colonel Bryan will answer the questions directly so the record remains clear."
+    },
+    {
+      "round": 4,
+      "speaker": "Clarence Darrow",
+      "text": "Mr. Bryan, do you think the earth was made in six literal twenty-four-hour days? Look at your own published Bible margins: the creation is fixed at 4004 B.C. Do you believe all life, the stars, the sun, and the earth itself were created in six ordinary days less than six thousand years ago?"
+    },
+    {
+      "round": 4,
+      "speaker": "William Jennings Bryan",
+      "text": "I do not think the 'days' of Genesis must necessarily be twenty-four-hour days! Creation might have continued for millions of years—each day representing a vast geological period of indefinite duration, because the sun was not even created until the fourth day. I have never insisted on a literal twenty-four-hour day for Genesis!"
+    },
+    {
+      "round": 4,
+      "speaker": "Dudley Field Malone",
+      "text": "Mark that concession in the record! If the champion of fundamentalism admits under oath that the days of Genesis may span millions of years rather than literal twenty-four-hour days, then the very literalism used to prosecute John Scopes for teaching evolution collapses on its own foundation!"
+    },
+    {
+      "round": 4,
+      "speaker": "Clarence Darrow",
+      "text": "Then if the six days of creation were not literal twenty-four-hour days, and if we must use human reason and geological science to interpret Scripture—just as you just did on the age of the earth and the sun—by what right do you prosecute a young teacher for teaching modern evolutionary science rather than your private interpretation?"
+    },
+    {
+      "round": 5,
+      "speaker": "William Jennings Bryan",
+      "text": "Your Honor, I think I can shorten this by saying that the only purpose Mr. Darrow has is to slur at the Bible! I will answer his questions—I will answer them all day if necessary—because I am defending the Christian religion against an agnostic who wants to drive God out of the schools and put brute ancestry in His place!"
+    },
+    {
+      "round": 5,
+      "speaker": "Clarence Darrow",
+      "text": "I object to your statement, Mr. Bryan! I am examining you on your fool ideas that no intelligent Christian on earth believes—literal snakes crawling on their bellies, Eve carved from a literal rib, and six-thousand-year creationism while admitting millions of years when cornered!"
+    },
+    {
+      "round": 5,
+      "speaker": "Arthur Garfield Hays",
+      "text": "This extraordinary cross-examination has demonstrated before the entire country why scientific inquiry and biblical theology belong in separate domains and cannot be policed by criminal statute."
+    },
+    {
+      "round": 5,
+      "speaker": "Dudley Field Malone",
+      "text": "The defense asks that this cross-examination stand in the public record as our vindication of academic freedom and scientific truth against dogmatism."
+    },
+    {
+      "round": 5,
+      "speaker": "Judge John T. Raulston",
+      "text": "This Court will hear no further disorder under these trees! Court is adjourned until nine o'clock tomorrow morning, at which time I shall rule on whether Colonel Bryan's testimony on biblical literalism and the age of the earth has any proper place in the legal record of this trial."
+    }
+  ]
+}
