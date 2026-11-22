@@ -2,11 +2,13 @@ from __future__ import annotations
 
 import json
 import os
+import textwrap
 from typing import TYPE_CHECKING, List, Optional, Sequence, Tuple, Union
 import numpy as np
 from sklearn.decomposition import PCA
 from sklearn.metrics.pairwise import cosine_similarity
-from matplotlib.patches import Ellipse
+from matplotlib.patches import Ellipse, FancyBboxPatch, PathPatch
+from matplotlib.path import Path as MplPath
 
 from klens.models import AlertConfig, HierarchicalConfig, SpectralMetrics
 from klens.spectral import (
@@ -243,6 +245,247 @@ def _extract_round_claims(
         claims[r][turn.speaker] = combined[:280] + ("..." if len(combined) > 280 else "")
 
     return claims
+
+
+def _extract_cluster_events_and_flow(
+    source: Union[LiveTranscriptStreamProcessor, np.ndarray],
+    Z: np.ndarray,
+    Z_display_2d: np.ndarray,
+    active_mask: np.ndarray,
+    has_spoken_mask: np.ndarray,
+    speakers: Sequence[str],
+    rounds: Sequence[int],
+    feature_names: Sequence[str],
+    rogue_idx: Optional[int] = None,
+    round_claims: Optional[dict[int, dict[str, str]]] = None,
+    max_inflections: int = 5,
+) -> Tuple[List[List[dict]], List[dict]]:
+    T, N, d = Z.shape
+    claims_by_round = round_claims if round_claims is not None else _extract_round_claims(source, speakers, rounds)
+    has_real_terms = (
+        d > 0
+        and len(feature_names) == d
+        and not all(str(f).startswith("feat_") for f in feature_names)
+    )
+    short_map = dict(zip(speakers, _short_speaker_labels(speakers, max_len=13)))
+    synth = source.latest_metrics.topic_synthesis if (hasattr(source, "latest_metrics") and source.latest_metrics) else None
+    synth_topic_by_id = {f.id: f.topic for f in synth.factions} if synth else {}
+
+    def _top_terms(vec: np.ndarray, k: int = 4) -> List[str]:
+        if not has_real_terms:
+            return []
+        order = np.argsort(vec)[::-1]
+        out: List[str] = []
+        for idx in order:
+            if float(vec[idx]) <= 1e-5:
+                break
+            tok = str(feature_names[idx]).strip()
+            if len(tok) > 1 and not tok.startswith("feat_"):
+                out.append(tok)
+            if len(out) >= k:
+                break
+        return out
+
+    last_claim: dict[str, str] = {}
+    round_clusters: List[List[dict]] = []
+    Z_carried = np.array(Z, copy=True, dtype=float)
+    for i in range(N):
+        last_vec = None
+        for t in range(T):
+            if active_mask[t, i]:
+                last_vec = Z[t, i]
+            elif last_vec is not None:
+                Z_carried[t, i] = last_vec
+
+    for t in range(T):
+        r_id = int(rounds[t])
+        for spk, c_txt in claims_by_round.get(r_id, {}).items():
+            if c_txt:
+                last_claim[spk] = c_txt
+
+        raw_factions = cluster_factions(
+            Z[t],
+            speakers,
+            rogue_idx=rogue_idx,
+            similarity_threshold=0.58,
+        )
+        groups: List[Tuple[int, List[str], str]] = [
+            (f.id, list(f.members), synth_topic_by_id.get(f.id, f.topic) if t == T - 1 else f.topic)
+            for f in raw_factions
+        ]
+        if rogue_idx is not None and 0 <= rogue_idx < N:
+            r_spk = speakers[rogue_idx]
+            if not any(r_spk in g[1] for g in groups):
+                r_topic = ""
+                if synth and (synth.orthogonal_stance or synth.rogue_stance):
+                    r_topic = (synth.orthogonal_stance or synth.rogue_stance).topic
+                groups.append((len(groups) + 1, [r_spk], r_topic))
+
+        act_indices_t = np.where(active_mask[t])[0]
+        c_t = Z[t, act_indices_t].mean(axis=0) if len(act_indices_t) > 0 else Z_carried[t].mean(axis=0)
+        spoken_indices_t = np.where(has_spoken_mask[t])[0]
+        room_vec = Z_carried[t, spoken_indices_t].mean(axis=0) if len(spoken_indices_t) > 0 else c_t
+
+        clusters_t: List[dict] = []
+        for c_ord, (f_id, raw_members, f_topic) in enumerate(groups):
+            spoken_members = [m for m in raw_members if has_spoken_mask[t, speakers.index(m)]]
+            if not spoken_members:
+                continue
+            mem_indices = [speakers.index(m) for m in spoken_members]
+            act_members = [m for m in spoken_members if active_mask[t, speakers.index(m)]]
+
+            pts_2d = Z_display_2d[t, mem_indices, :]
+            cx = float(pts_2d[:, 0].mean())
+            cy = float(pts_2d[:, 1].mean())
+            spread = float(np.mean(np.hypot(pts_2d[:, 0] - cx, pts_2d[:, 1] - cy))) if len(mem_indices) > 1 else 0.0
+
+            c_vec = Z_carried[t, mem_indices, :].mean(axis=0)
+            other_indices = [idx for idx in range(N) if has_spoken_mask[t, idx] and idx not in mem_indices]
+            rest_vec = Z_carried[t, other_indices, :].mean(axis=0) if other_indices else np.zeros(d, dtype=float)
+            contrast_vec = c_vec - 0.85 * rest_vec
+            common_vec = c_vec * (0.20 + room_vec)
+
+            raw_shared = _top_terms(common_vec, k=6) or _top_terms(c_vec, k=6)
+            wedge_terms = _top_terms(contrast_vec, k=3) or raw_shared[:3]
+            distinct_shared = [term for term in raw_shared if term not in wedge_terms[:2]]
+            shared_terms = (distinct_shared + [term for term in raw_shared if term not in distinct_shared])[:3]
+
+            best_spk = spoken_members[0]
+            best_sim = -2.0
+            c_norm = float(np.linalg.norm(c_vec))
+            candidate_pool = act_members if act_members else spoken_members
+            for m_spk in candidate_pool:
+                m_idx = speakers.index(m_spk)
+                v = Z_carried[t, m_idx]
+                v_norm = float(np.linalg.norm(v))
+                sim = float(np.dot(v, c_vec) / (v_norm * c_norm)) if (v_norm > 1e-9 and c_norm > 1e-9) else 0.0
+                has_round_claim = bool(claims_by_round.get(r_id, {}).get(m_spk))
+                score = sim + (0.25 if has_round_claim else 0.0)
+                if score > best_sim:
+                    best_sim = score
+                    best_spk = m_spk
+
+            medoid_claim = claims_by_round.get(r_id, {}).get(best_spk) or last_claim.get(best_spk, "")
+            is_ortho = bool(rogue_idx is not None and rogue_idx in mem_indices and len(mem_indices) == 1)
+            dist_to_center = float(np.linalg.norm(c_vec - c_t))
+
+            event_type = "Collection" if len(spoken_members) >= 2 else "Divergence"
+            prev_sources = 0
+            if is_ortho:
+                event_type = "Divergence"
+            elif t > 0 and round_clusters[t - 1]:
+                matching_prev = [pc for pc in round_clusters[t - 1] if set(pc["members"]) & set(spoken_members)]
+                prev_sources = len(matching_prev)
+                if prev_sources >= 2:
+                    event_type = "Collection"
+                elif prev_sources == 1:
+                    prev_c = matching_prev[0]
+                    if len(spoken_members) < len(prev_c["members"]):
+                        event_type = "Divergence"
+                    elif len(spoken_members) > len(prev_c["members"]) or (len(spoken_members) >= 2 and spread <= prev_c["spread"] * 0.92):
+                        event_type = "Collection"
+                    else:
+                        event_type = "Collection" if len(spoken_members) >= 2 else "Divergence"
+
+            topic_label = (
+                " / ".join(wedge_terms[:2]).title()
+                if (f_topic.startswith("Cluster ") or f_topic.startswith("feat_") or not f_topic) and wedge_terms
+                else (f_topic or f"Cluster {c_ord + 1}")
+            )
+            short_members = ", ".join(short_map.get(m, m) for m in spoken_members[:4])
+            if len(spoken_members) > 4:
+                short_members += f" +{len(spoken_members) - 4}"
+
+            clusters_t.append({
+                "cluster_id": f"R{r_id}_C{c_ord + 1}",
+                "faction_id": f_id,
+                "round": r_id,
+                "round_idx": t,
+                "members": spoken_members,
+                "active_members": act_members,
+                "short_members": short_members,
+                "x": cx,
+                "y": cy,
+                "spread": spread,
+                "dist_to_center": dist_to_center,
+                "is_orthogonal": is_ortho,
+                "event_type": event_type,
+                "prev_sources": prev_sources,
+                "topic": topic_label,
+                "shared_terms": shared_terms,
+                "wedge_terms": wedge_terms,
+                "medoid_speaker": best_spk,
+                "medoid_short_speaker": short_map.get(best_spk, best_spk),
+                "medoid_claim": medoid_claim,
+                "badge_id": None,
+            })
+
+        clusters_t.sort(key=lambda c: (c["is_orthogonal"], -len(c["members"]), c["cluster_id"]))
+        round_clusters.append(clusters_t)
+
+    candidates: List[Tuple[float, dict]] = []
+    for t, c_list in enumerate(round_clusters):
+        for c in c_list:
+            priority = 0.0
+            if len(c["members"]) >= 2:
+                priority = 8.0 + len(c["members"]) * 0.6 + (1.5 if t == T - 1 else 0.0)
+            elif t == T - 1 and c["is_orthogonal"]:
+                priority = 8.5 + c["dist_to_center"]
+            elif c["is_orthogonal"] and len(c["active_members"]) > 0:
+                priority = 5.5 + c["dist_to_center"]
+            elif c["event_type"] == "Divergence" and len(c["active_members"]) > 0 and t > 0:
+                priority = 5.0 + c["dist_to_center"]
+            elif t == 0 and len(c_list) >= 2:
+                priority = 3.2 + c["dist_to_center"]
+            else:
+                priority = 2.0 + c["dist_to_center"]
+
+            if c["medoid_claim"]:
+                priority += 0.5
+            candidates.append((priority, c))
+
+    candidates.sort(key=lambda item: item[0], reverse=True)
+    chosen: List[dict] = []
+    seen_sigs: set = set()
+    for _, cand in candidates:
+        sig = (cand["round_idx"], tuple(sorted(cand["members"])))
+        if sig in seen_sigs:
+            continue
+        if any(
+            existing["is_orthogonal"] and cand["is_orthogonal"] and existing["members"] == cand["members"]
+            for existing in chosen
+        ):
+            continue
+        seen_sigs.add(sig)
+        chosen.append(cand)
+        if len(chosen) >= max_inflections:
+            break
+
+    chosen.sort(key=lambda c: (c["round_idx"], c["is_orthogonal"], -len(c["members"])))
+    inflection_events: List[dict] = []
+    for idx, c in enumerate(chosen, start=1):
+        c["badge_id"] = idx
+        inflection_events.append({
+            "badge_id": idx,
+            "cluster_id": c["cluster_id"],
+            "round": c["round"],
+            "round_idx": c["round_idx"],
+            "event_type": c["event_type"],
+            "is_orthogonal": c["is_orthogonal"],
+            "members": c["members"],
+            "short_members": c["short_members"],
+            "x": c["x"],
+            "y": c["y"],
+            "topic": c["topic"],
+            "shared_terms": c["shared_terms"],
+            "wedge_terms": c["wedge_terms"],
+            "medoid_speaker": c["medoid_speaker"],
+            "medoid_short_speaker": c["medoid_short_speaker"],
+            "medoid_claim": c["medoid_claim"],
+        })
+
+    return round_clusters, inflection_events
+
 
 
 def render_faction_rogue_dashboard(
@@ -658,6 +901,16 @@ def render_spectral_dashboard(
             output_path=output_path,
             show=show,
             title=title or "Participant Paths: Starting Positions, Clustering & Divergence Over Time",
+            dpi=dpi,
+        )
+    elif style == "flow":
+        return render_concept_flow_dashboard(
+            source=source,
+            speakers=speakers,
+            rounds=rounds,
+            output_path=output_path,
+            show=show,
+            title=title or "Alluvial Faction-Flow: Collection & Divergence Concepts, Wedge Terms & Medoid Claims",
             dpi=dpi,
         )
 
@@ -1081,9 +1334,22 @@ def render_trajectory_paths_dashboard(
     _, active_terminal_mask = extract_last_active_states(Z)
     short_names = _short_speaker_labels(resolved_speakers, max_len=14)
     poles, concept_pins = _extract_semantic_biplot(Z, active_mask, Z_2d, feature_names, top_k_pins=8)
+    round_claims = _extract_round_claims(source, resolved_speakers, resolved_rounds)
+    _, inflection_events = _extract_cluster_events_and_flow(
+        source=source,
+        Z=Z,
+        Z_display_2d=Z_display_2d,
+        active_mask=active_mask,
+        has_spoken_mask=has_spoken_mask,
+        speakers=resolved_speakers,
+        rounds=resolved_rounds,
+        feature_names=feature_names,
+        rogue_idx=rogue_idx,
+        round_claims=round_claims,
+        max_inflections=5,
+    )
     synth = source.latest_metrics.topic_synthesis if (hasattr(source, "latest_metrics") and source.latest_metrics) else None
 
-    # Per-round active centroid, per-agent distance to active centroid, K*(t), and mean pairwise similarity
     active_centroids = np.zeros((T, d), dtype=float)
     agent_dist = np.full((N, T), np.nan, dtype=float)
     k_star_series: List[float] = []
@@ -1111,13 +1377,13 @@ def render_trajectory_paths_dashboard(
 
     plt.rcParams["font.sans-serif"] = "DejaVu Sans"
     plt.rcParams["font.size"] = 9.5
-    fig = plt.figure(figsize=(16.5, 8.4), dpi=dpi)
+    fig = plt.figure(figsize=(17.2, 11.6), dpi=dpi)
     fig.patch.set_facecolor("#ffffff")
     if synth and synth.center_of_disagreement:
         fig.suptitle(title, fontsize=13.5, fontweight="bold", y=0.985)
         fig.text(
             0.5,
-            0.942,
+            0.952,
             f"Center of Disagreement: {synth.center_of_disagreement}",
             ha="center",
             fontsize=10.0,
@@ -1127,10 +1393,19 @@ def render_trajectory_paths_dashboard(
     else:
         fig.suptitle(title, fontsize=13.5, fontweight="bold", y=0.985)
 
-    gs = GridSpec(2, 2, figure=fig, width_ratios=[1.55, 1.0], height_ratios=[1.15, 1.0], wspace=0.24, hspace=0.34)
-    ax_map = fig.add_subplot(gs[:, 0])
+    gs = GridSpec(
+        3,
+        2,
+        figure=fig,
+        width_ratios=[1.55, 1.0],
+        height_ratios=[1.12, 1.0, 0.72],
+        wspace=0.24,
+        hspace=0.35,
+    )
+    ax_map = fig.add_subplot(gs[0:2, 0])
     ax_dist = fig.add_subplot(gs[0, 1])
     ax_coh = fig.add_subplot(gs[1, 1])
+    ax_dossier = fig.add_subplot(gs[2, :])
 
     palette = [
         "#2563eb", "#059669", "#d97706", "#7c3aed",
@@ -1308,7 +1583,7 @@ def render_trajectory_paths_dashboard(
             end_pt[1] + 0.015,
             short_names[i],
             fontsize=8.0,
-            fontweight="bold" if is_ortho else "medium",
+            fontweight="bold" if is_ortho else "normal",
             color="#991b1b" if is_ortho else "#0f172a",
             zorder=8,
         )
@@ -1342,6 +1617,27 @@ def render_trajectory_paths_dashboard(
             zorder=9,
         )
 
+    badge_offsets = [(-0.042, 0.045), (0.042, -0.045), (-0.042, -0.045), (0.042, 0.045), (0.0, 0.055)]
+    for ev_idx, ev in enumerate(inflection_events):
+        is_div = ev["event_type"] == "Divergence"
+        b_bg = "#fef2f2" if is_div else "#ecfdf5"
+        b_edge = "#dc2626" if is_div else "#059669"
+        b_fg = "#991b1b" if is_div else "#065f46"
+        dx, dy = badge_offsets[ev_idx % len(badge_offsets)]
+        ax_map.annotate(
+            f"#{ev['badge_id']}",
+            xy=(ev["x"], ev["y"]),
+            xytext=(ev["x"] + dx, ev["y"] + dy),
+            fontsize=7.8,
+            fontweight="bold",
+            color=b_fg,
+            ha="center",
+            va="center",
+            bbox=dict(boxstyle="circle,pad=0.22", facecolor=b_bg, edgecolor=b_edge, linewidth=1.35, alpha=0.96),
+            arrowprops=dict(arrowstyle="-", color=b_edge, lw=1.0, alpha=0.75, shrinkA=2, shrinkB=4),
+            zorder=11,
+        )
+
     valid_pts = Z_display_2d[has_spoken_mask]
     if len(valid_pts) == 0:
         valid_pts = Z_2d.reshape(-1, 2)
@@ -1357,9 +1653,6 @@ def render_trajectory_paths_dashboard(
     ax_map.grid(True, linestyle=":", alpha=0.55)
     ax_map.legend(loc="best", fontsize=7.5, framealpha=0.92, frameon=True)
 
-    # ------------------------------------------------------------------
-    # TOP-RIGHT PANEL: Distance to Consensus Centroid Over Rounds
-    # ------------------------------------------------------------------
     ax_dist.set_facecolor("#f8fafc")
     round_x = np.array(resolved_rounds, dtype=float)
     end_annotations: List[Tuple[float, float, str, str]] = []
@@ -1394,7 +1687,6 @@ def render_trajectory_paths_dashboard(
         )
         end_annotations.append((float(ys[-1]), float(xs[-1]), short_names[i], col))
 
-    # De-collide right-side labels vertically
     end_annotations.sort(key=lambda item: item[0])
     y_vals = [item[0] for item in end_annotations]
     y_span = (max(y_vals) - min(y_vals)) if len(y_vals) >= 2 else 1.0
@@ -1415,9 +1707,6 @@ def render_trajectory_paths_dashboard(
     ax_dist.set_ylabel("Distance to Active Center")
     ax_dist.grid(True, linestyle=":", alpha=0.55)
 
-    # ------------------------------------------------------------------
-    # BOTTOM-RIGHT PANEL: Group Clustering vs. Divergence Timeline
-    # ------------------------------------------------------------------
     ax_coh.set_facecolor("#f8fafc")
     l1 = ax_coh.plot(
         resolved_rounds,
@@ -1429,11 +1718,29 @@ def render_trajectory_paths_dashboard(
         label="Effective Channels K*(t) (↓ clustering)",
     )
     ax_coh.set_xticks(resolved_rounds)
-    ax_coh.set_ylim(bottom=0.8, top=max(float(N) + 0.4, max(k_star_series) + 0.5))
+    ax_coh.set_ylim(bottom=0.8, top=max(float(N) + 0.6, max(k_star_series) + 0.7))
     ax_coh.set_xlabel("Debate Round")
     ax_coh.set_ylabel("Effective Channels K*(t)", color="#2563eb")
     ax_coh.tick_params(axis="y", labelcolor="#2563eb")
     ax_coh.grid(True, linestyle=":", alpha=0.55)
+
+    badges_by_round: dict[int, List[str]] = {}
+    for ev in inflection_events:
+        badges_by_round.setdefault(ev["round_idx"], []).append(f"#{ev['badge_id']}")
+    for r_idx, b_tags in badges_by_round.items():
+        if 0 <= r_idx < len(resolved_rounds):
+            ax_coh.text(
+                resolved_rounds[r_idx],
+                k_star_series[r_idx] + 0.16,
+                " ".join(b_tags),
+                fontsize=7.2,
+                fontweight="bold",
+                color="#1e293b",
+                ha="center",
+                va="bottom",
+                bbox=dict(boxstyle="round,pad=0.14", facecolor="#f8fafc", edgecolor="#94a3b8", alpha=0.9),
+                zorder=8,
+            )
 
     ax_sim = ax_coh.twinx()
     l2 = ax_sim.plot(
@@ -1457,7 +1764,59 @@ def render_trajectory_paths_dashboard(
     labels = [ln.get_label() for ln in lines]
     ax_coh.legend(lines, labels, loc="upper left", fontsize=7.5, framealpha=0.92)
 
-    fig.subplots_adjust(top=0.90, bottom=0.09, left=0.06, right=0.94)
+    ax_dossier.set_facecolor("#ffffff")
+    ax_dossier.set_xlim(0, 1)
+    ax_dossier.set_ylim(0, 1)
+    ax_dossier.axis("off")
+    ax_dossier.set_title(
+        "D. Collection & Divergence Inflection Dossier (Contrastive Wedge Concepts, Shared Terms & Verbatim Medoid Claims)",
+        fontsize=10.5,
+        fontweight="bold",
+        loc="left",
+        pad=6,
+    )
+
+    n_cards = max(1, len(inflection_events))
+    gap = 0.014
+    card_w = (1.0 - gap * (n_cards - 1)) / n_cards
+    wrap_chars = max(28, int(155 / n_cards))
+
+    for c_idx, ev in enumerate(inflection_events):
+        x0 = c_idx * (card_w + gap)
+        is_div = ev["event_type"] == "Divergence"
+        border_col = "#dc2626" if is_div else "#059669"
+        bg_col = "#fff5f5" if is_div else "#f0fdf4"
+        head_col = "#991b1b" if is_div else "#065f46"
+
+        ax_dossier.add_patch(
+            FancyBboxPatch(
+                (x0 + 0.008, 0.06),
+                card_w - 0.016,
+                0.84,
+                boxstyle="round,pad=0.006,rounding_size=0.016",
+                facecolor=bg_col,
+                edgecolor=border_col,
+                linewidth=1.25,
+            )
+        )
+
+        header_txt = f"#{ev['badge_id']} • R{ev['round']} {ev['event_type'].upper()} ({len(ev['members'])})"
+        ax_dossier.text(x0 + 0.015, 0.84, header_txt, fontsize=8.0, fontweight="bold", color=head_col, va="top")
+
+        mem_line = textwrap.shorten(f"{ev['topic']} | {ev['short_members']}", width=wrap_chars + 4, placeholder="...")
+        ax_dossier.text(x0 + 0.015, 0.69, mem_line, fontsize=7.4, fontweight="bold", color="#1e293b", va="top")
+
+        wedge_str = ", ".join(ev["wedge_terms"][:3]) if ev["wedge_terms"] else "n/a"
+        shared_str = ", ".join(ev["shared_terms"][:3]) if ev["shared_terms"] else "n/a"
+        ax_dossier.text(x0 + 0.015, 0.55, f"▲ Wedge: {wedge_str}", fontsize=7.1, color=head_col, fontweight="bold", va="top")
+        ax_dossier.text(x0 + 0.015, 0.43, f"● Shared: {shared_str}", fontsize=7.1, color="#334155", va="top")
+
+        raw_claim = ev["medoid_claim"] or "Active vector position recorded."
+        short_claim = textwrap.shorten(raw_claim, width=wrap_chars * 2 - 4, placeholder="...")
+        wrapped_claim = textwrap.fill(f"\"{short_claim}\" ({ev['medoid_short_speaker']})", width=wrap_chars)
+        ax_dossier.text(x0 + 0.015, 0.29, wrapped_claim, fontsize=6.9, color="#475569", style="italic", va="top")
+
+    fig.subplots_adjust(top=0.91, bottom=0.04, left=0.05, right=0.95)
 
     if output_path:
         os.makedirs(os.path.dirname(os.path.abspath(output_path)), exist_ok=True)
@@ -1467,6 +1826,330 @@ def render_trajectory_paths_dashboard(
         plt.show()
 
     return fig
+
+
+def render_concept_flow_dashboard(
+    source: Union[LiveTranscriptStreamProcessor, np.ndarray],
+    speakers: Optional[Sequence[str]] = None,
+    rounds: Optional[Sequence[int]] = None,
+    output_path: Optional[str] = None,
+    show: bool = False,
+    title: str = "Alluvial Faction-Flow: Collection & Divergence Concepts, Wedge Terms & Medoid Claims",
+    dpi: int = 220,
+):
+    plt = _ensure_matplotlib(show=show)
+    from matplotlib.gridspec import GridSpec
+
+    Z, resolved_speakers, resolved_rounds, feature_names = _resolve_source_data(source, speakers, rounds)
+    T, N, _ = Z.shape
+
+    _, rogue_idx = detect_orthogonal_from_states(Z, resolved_speakers)
+    _, Z_display_2d, _, active_mask, has_spoken_mask = _project_silence_aware_pca(Z)
+    short_names = _short_speaker_labels(resolved_speakers, max_len=13)
+    short_map = dict(zip(resolved_speakers, short_names))
+    round_claims = _extract_round_claims(source, resolved_speakers, resolved_rounds)
+    round_clusters, inflection_events = _extract_cluster_events_and_flow(
+        source=source,
+        Z=Z,
+        Z_display_2d=Z_display_2d,
+        active_mask=active_mask,
+        has_spoken_mask=has_spoken_mask,
+        speakers=resolved_speakers,
+        rounds=resolved_rounds,
+        feature_names=feature_names,
+        rogue_idx=rogue_idx,
+        round_claims=round_claims,
+        max_inflections=6,
+    )
+    synth = source.latest_metrics.topic_synthesis if (hasattr(source, "latest_metrics") and source.latest_metrics) else None
+
+    k_star_series: List[float] = []
+    mean_sim_series: List[float] = []
+    for t in range(T):
+        k_star_series.append(compute_effective_channels_k_star(Z[t]))
+        act_t = np.where(active_mask[t])[0]
+        if len(act_t) >= 2:
+            sim_mat = cosine_similarity(Z[t, act_t])
+            triu = sim_mat[np.triu_indices(len(act_t), k=1)]
+            mean_sim_series.append(float(np.mean(triu)))
+        else:
+            mean_sim_series.append(1.0)
+
+    plt.rcParams["font.sans-serif"] = "DejaVu Sans"
+    plt.rcParams["font.size"] = 9.0
+    fig = plt.figure(figsize=(17.5, 10.8), dpi=dpi)
+    fig.patch.set_facecolor("#ffffff")
+    if synth and synth.center_of_disagreement:
+        fig.suptitle(title, fontsize=13.5, fontweight="bold", y=0.982)
+        fig.text(
+            0.5,
+            0.946,
+            f"Center of Disagreement: {synth.center_of_disagreement}",
+            ha="center",
+            fontsize=10.0,
+            color="#475569",
+            style="italic",
+        )
+    else:
+        fig.suptitle(title, fontsize=13.5, fontweight="bold", y=0.982)
+
+    gs = GridSpec(2, 1, figure=fig, height_ratios=[2.65, 0.85], hspace=0.22)
+    ax_flow = fig.add_subplot(gs[0, 0])
+    ax_coh = fig.add_subplot(gs[1, 0])
+
+    palette = [
+        "#2563eb", "#059669", "#d97706", "#7c3aed",
+        "#db2777", "#0891b2", "#475569", "#ea580c",
+    ]
+    spk_color = {
+        spk: ("#dc2626" if idx == rogue_idx else palette[idx % len(palette)])
+        for idx, spk in enumerate(resolved_speakers)
+    }
+
+    ax_flow.set_facecolor("#f8fafc")
+    block_half_w = min(0.32, 0.27 if T <= 4 else 0.24)
+    y_min_band, y_max_band = 0.06, 0.90
+    total_band = y_max_band - y_min_band
+
+    slot_coords: List[dict[str, Tuple[float, float]]] = []
+    block_boxes: List[List[Tuple[dict, float, float]]] = []
+
+    for t in range(T):
+        c_list = round_clusters[t]
+        n_clust = len(c_list)
+        total_members = sum(len(c["members"]) for c in c_list)
+        if n_clust == 0 or total_members == 0:
+            slot_coords.append({})
+            block_boxes.append([])
+            continue
+
+        gap = min(0.055, 0.16 / max(1, n_clust)) if n_clust > 1 else 0.0
+        usable_h = total_band - gap * (n_clust - 1)
+        y_cursor = y_max_band
+        slots_t: dict[str, Tuple[float, float]] = {}
+        boxes_t: List[Tuple[dict, float, float]] = []
+
+        for c in c_list:
+            m_count = len(c["members"])
+            c_h = max(0.11, usable_h * (m_count / total_members))
+            y_top = y_cursor
+            y_bot = y_top - c_h
+            boxes_t.append((c, y_bot, y_top))
+
+            sub_h = c_h / max(1, m_count)
+            for m_idx, m_spk in enumerate(c["members"]):
+                s_top = y_top - m_idx * sub_h
+                s_bot = s_top - sub_h
+                slots_t[m_spk] = (s_bot, s_top)
+
+            y_cursor = y_bot - gap
+
+        slot_coords.append(slots_t)
+        block_boxes.append(boxes_t)
+
+    for t in range(T - 1):
+        x0 = float(t) + block_half_w
+        x1 = float(t + 1) - block_half_w
+        xm = 0.5 * (x0 + x1)
+        slots_curr = slot_coords[t]
+        slots_next = slot_coords[t + 1]
+
+        for spk in resolved_speakers:
+            if spk not in slots_curr or spk not in slots_next:
+                continue
+            b0, t0 = slots_curr[spk]
+            b1, t1 = slots_next[spk]
+            is_ortho = (rogue_idx is not None and spk == resolved_speakers[rogue_idx])
+            verts = [
+                (x0, t0),
+                (xm, t0),
+                (xm, t1),
+                (x1, t1),
+                (x1, b1),
+                (xm, b1),
+                (xm, b0),
+                (x0, b0),
+                (x0, t0),
+            ]
+            codes = [
+                MplPath.MOVETO,
+                MplPath.CURVE4,
+                MplPath.CURVE4,
+                MplPath.CURVE4,
+                MplPath.LINETO,
+                MplPath.CURVE4,
+                MplPath.CURVE4,
+                MplPath.CURVE4,
+                MplPath.CLOSEPOLY,
+            ]
+            patch = PathPatch(
+                MplPath(verts, codes),
+                facecolor=spk_color[spk],
+                edgecolor=spk_color[spk],
+                lw=0.6 if not is_ortho else 1.2,
+                alpha=0.34 if not is_ortho else 0.52,
+                zorder=2 if not is_ortho else 3,
+            )
+            ax_flow.add_patch(patch)
+
+    wrap_w = max(24, int(115 / max(1, T)))
+    for t in range(T):
+        x_center = float(t)
+        ax_flow.text(
+            x_center,
+            0.955,
+            f"Round {resolved_rounds[t]}  (K* = {k_star_series[t]:.2f})",
+            ha="center",
+            va="center",
+            fontsize=9.5,
+            fontweight="bold",
+            color="#0f172a",
+            bbox=dict(boxstyle="round,pad=0.22", facecolor="#e2e8f0", edgecolor="#94a3b8", lw=0.9),
+            zorder=6,
+        )
+
+        for c, y_bot, y_top in block_boxes[t]:
+            c_h = y_top - y_bot
+            is_div = c["event_type"] == "Divergence"
+            edge_col = "#dc2626" if c["is_orthogonal"] else ("#d97706" if is_div else "#059669")
+            bg_col = "#fff5f5" if c["is_orthogonal"] else ("#fffbeb" if is_div else "#f0fdf4")
+            head_col = "#991b1b" if c["is_orthogonal"] else ("#92400e" if is_div else "#065f46")
+
+            ax_flow.add_patch(
+                FancyBboxPatch(
+                    (x_center - block_half_w, y_bot),
+                    2 * block_half_w,
+                    c_h,
+                    boxstyle="round,pad=0.008,rounding_size=0.016",
+                    facecolor=bg_col,
+                    edgecolor=edge_col,
+                    linewidth=1.4 if c["badge_id"] else 1.0,
+                    alpha=0.95,
+                    zorder=4,
+                )
+            )
+
+            badge_prefix = f"[#{c['badge_id']}] " if c["badge_id"] else ""
+            header_line = f"{badge_prefix}{c['event_type'].upper()} ({len(c['members'])}): {c['short_members']}"
+            header_line = textwrap.shorten(header_line, width=wrap_w + 6, placeholder="...")
+
+            wedge_txt = ", ".join(c["wedge_terms"][:3]) if c["wedge_terms"] else c["topic"]
+            shared_txt = ", ".join(c["shared_terms"][:3]) if c["shared_terms"] else ""
+
+            lines_to_draw = [header_line]
+            if wedge_txt:
+                lines_to_draw.append(textwrap.shorten(f"▲ Wedge: {wedge_txt}", width=wrap_w + 4, placeholder="..."))
+            if shared_txt and c_h >= 0.17:
+                lines_to_draw.append(textwrap.shorten(f"● Shared: {shared_txt}", width=wrap_w + 4, placeholder="..."))
+            if c["medoid_claim"] and c_h >= 0.14:
+                max_claim_len = wrap_w * (2 if c_h >= 0.24 else 1)
+                c_snip = textwrap.shorten(c["medoid_claim"], width=max_claim_len, placeholder="...")
+                lines_to_draw.append(textwrap.fill(f"\"{c_snip}\" ({c['medoid_short_speaker']})", width=wrap_w + 2))
+
+            ax_flow.text(
+                x_center,
+                0.5 * (y_top + y_bot),
+                "\n".join(lines_to_draw),
+                ha="center",
+                va="center",
+                fontsize=7.1 if T <= 4 else 6.6,
+                color=head_col if len(lines_to_draw) == 1 else "#1e293b",
+                linespacing=1.22,
+                zorder=6,
+            )
+
+    legend_handles = []
+    for spk in resolved_speakers:
+        legend_handles.append(
+            plt.Line2D([0], [0], color=spk_color[spk], lw=4, alpha=0.75, label=short_map[spk])
+        )
+    ax_flow.legend(
+        handles=legend_handles,
+        loc="lower center",
+        bbox_to_anchor=(0.5, -0.02),
+        ncol=min(len(resolved_speakers), 8),
+        fontsize=7.8,
+        framealpha=0.92,
+    )
+    ax_flow.set_xlim(-0.42, float(T - 1) + 0.42)
+    ax_flow.set_ylim(-0.02, 1.01)
+    ax_flow.axis("off")
+    ax_flow.set_title(
+        "A. Alluvial Faction-Flow Timeline: Participant Merges (Collection), Splits (Divergence), Wedge Concepts & Medoid Claims",
+        fontsize=10.8,
+        fontweight="bold",
+        pad=6,
+    )
+
+    ax_coh.set_facecolor("#f8fafc")
+    x_positions = list(range(T))
+    l1 = ax_coh.plot(
+        x_positions,
+        k_star_series,
+        "o-",
+        color="#2563eb",
+        linewidth=2.2,
+        markersize=6.5,
+        label="Effective Channels K*(t) (↓ collection)",
+    )
+    for t in range(T):
+        b_tags = [f"#{ev['badge_id']}" for ev in inflection_events if ev["round_idx"] == t]
+        tag_str = f"K*={k_star_series[t]:.2f}" + (f" ({' '.join(b_tags)})" if b_tags else "")
+        ax_coh.text(
+            x_positions[t],
+            k_star_series[t] + 0.14,
+            tag_str,
+            ha="center",
+            va="bottom",
+            fontsize=7.4,
+            fontweight="bold",
+            color="#1e293b",
+        )
+
+    ax_coh.set_xlim(-0.42, float(T - 1) + 0.42)
+    ax_coh.set_xticks(x_positions)
+    ax_coh.set_xticklabels([f"Round {r}" for r in resolved_rounds])
+    ax_coh.set_ylim(bottom=0.8, top=max(float(N) + 0.6, max(k_star_series) + 0.7))
+    ax_coh.set_ylabel("Effective Channels K*(t)", color="#2563eb")
+    ax_coh.tick_params(axis="y", labelcolor="#2563eb")
+    ax_coh.grid(True, linestyle=":", alpha=0.55)
+
+    ax_sim = ax_coh.twinx()
+    l2 = ax_sim.plot(
+        x_positions,
+        mean_sim_series,
+        "s--",
+        color="#059669",
+        linewidth=2.0,
+        markersize=5.5,
+        label="Mean Pairwise Cosine Similarity (↑ collection)",
+    )
+    ax_sim.set_ylim(-0.05, 1.05)
+    ax_sim.set_ylabel("Mean Active Cosine Similarity", color="#059669")
+    ax_sim.tick_params(axis="y", labelcolor="#059669")
+
+    net_k = k_star_series[-1] - k_star_series[0]
+    trend_tag = "Net Collection" if net_k < -0.15 else ("Net Divergence" if net_k > 0.15 else "Metastable Faction Split")
+    ax_coh.set_title(
+        f"B. Synchronized Spectral Channel Contraction & Similarity ({trend_tag}: K* {k_star_series[0]:.2f} → {k_star_series[-1]:.2f})",
+        fontsize=10.5,
+        fontweight="bold",
+        pad=6,
+    )
+    lines = l1 + l2
+    ax_coh.legend(lines, [ln.get_label() for ln in lines], loc="upper right", fontsize=7.8, framealpha=0.92)
+
+    fig.subplots_adjust(top=0.90, bottom=0.06, left=0.05, right=0.95)
+
+    if output_path:
+        os.makedirs(os.path.dirname(os.path.abspath(output_path)), exist_ok=True)
+        fig.savefig(output_path, bbox_inches="tight")
+
+    if show:
+        plt.show()
+
+    return fig
+
 
 
 def export_interactive_timeline_html(
@@ -1490,6 +2173,19 @@ def export_interactive_timeline_html(
     Z_mean = Z.mean(axis=1)
     poles, concept_pins = _extract_semantic_biplot(Z, active_mask, Z_2d, feature_names, top_k_pins=8)
     round_claims = _extract_round_claims(source, resolved_speakers, resolved_rounds)
+    round_clusters, inflection_events = _extract_cluster_events_and_flow(
+        source=source,
+        Z=Z,
+        Z_display_2d=Z_display_2d,
+        active_mask=active_mask,
+        has_spoken_mask=has_spoken_mask,
+        speakers=resolved_speakers,
+        rounds=resolved_rounds,
+        feature_names=feature_names,
+        rogue_idx=rogue_idx,
+        round_claims=round_claims,
+        max_inflections=6,
+    )
     synth = source.latest_metrics.topic_synthesis if (hasattr(source, "latest_metrics") and source.latest_metrics) else None
 
     speaker_meta: dict[str, dict] = {}
@@ -1558,6 +2254,7 @@ def export_interactive_timeline_html(
             "k_star": compute_effective_channels_k_star(Z[t]),
             "agents": agent_positions,
             "factions": fac_payload,
+            "clusters": round_clusters[t],
         })
 
     json_payload = json.dumps({
@@ -1568,6 +2265,7 @@ def export_interactive_timeline_html(
         "bounds": {"min_x": min_x, "max_x": max_x, "min_y": min_y, "max_y": max_y},
         "poles": poles,
         "concept_pins": concept_pins,
+        "inflection_events": inflection_events,
         "synthesis": {
             "center_of_disagreement": synth.center_of_disagreement if synth else "",
             "centroid_concept": synth.centroid_concept if synth else "",
@@ -1738,6 +2436,66 @@ def export_interactive_timeline_html(
     line-height: 1.4;
     color: #cbd5e1;
   }}
+  .inflection-strip {{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }}
+  .inflection-pill {{
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    border: 1px solid #059669;
+    background: rgba(5, 150, 105, 0.16);
+    color: #6ee7b7;
+  }}
+  .inflection-pill.div {{
+    border-color: #ef4444;
+    background: rgba(239, 68, 68, 0.16);
+    color: #fca5a5;
+  }}
+  .inflection-pill.active {{
+    outline: 2px solid #eab308;
+  }}
+  .cluster-lens {{
+    background: #131c2e;
+    border: 1px solid #eab308;
+    border-radius: 7px;
+    padding: 10px 12px;
+    font-size: 11.8px;
+  }}
+  .term-chip {{
+    display: inline-block;
+    font-size: 10.5px;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin: 2px 4px 2px 0;
+  }}
+  .term-wedge {{
+    background: rgba(245, 158, 11, 0.22);
+    border: 1px solid #f59e0b;
+    color: #fde68a;
+  }}
+  .term-shared {{
+    background: rgba(56, 189, 248, 0.18);
+    border: 1px solid #38bdf8;
+    color: #bae6fd;
+  }}
+  mark.hl-wedge {{
+    background: rgba(245, 158, 11, 0.32);
+    color: #fef3c7;
+    padding: 0 3px;
+    border-radius: 3px;
+  }}
+  mark.hl-shared {{
+    background: rgba(56, 189, 248, 0.28);
+    color: #e0f2fe;
+    padding: 0 3px;
+    border-radius: 3px;
+  }}
   .legend {{
     display: flex;
     flex-wrap: wrap;
@@ -1758,7 +2516,7 @@ def export_interactive_timeline_html(
   }}
   .tooltip {{
     position: absolute;
-    max-width: 300px;
+    max-width: 310px;
     background: rgba(15, 23, 42, 0.96);
     border: 1px solid #475569;
     color: #f8fafc;
@@ -1776,11 +2534,13 @@ def export_interactive_timeline_html(
 <body>
 <div class="container">
   <h1>{title}</h1>
-  <div class="subtitle">2D Semantic Opinion Paths • Click any participant to isolate their path • Hover nodes for verbatim round claims</div>
+  <div class="subtitle">2D Semantic Opinion Paths & Alluvial Faction-Flow • Click any cluster, inflection badge (#1..#K), or participant to inspect wedge concepts & claims</div>
 
   <div class="controls">
     <button id="playBtn">Play Timeline</button>
-    <button id="clearFocusBtn" class="secondary" style="display:none;">Show All</button>
+    <button id="modeMapBtn">2D Spatial Map</button>
+    <button id="modeFlowBtn" class="secondary">Alluvial Faction-Flow</button>
+    <button id="clearFocusBtn" class="secondary" style="display:none;">Reset Lens</button>
     <div class="slider-wrapper">
       <span style="font-size: 12px; color: #94a3b8;">Round:</span>
       <input type="range" id="roundSlider" min="0" max="{T - 1}" value="0" step="1">
@@ -1800,7 +2560,8 @@ def export_interactive_timeline_html(
   <div class="legend">
     <div class="legend-item"><div class="legend-color" style="background: #ffffff; border: 1.5px solid #38bdf8; transform: rotate(45deg);"></div><span>Start Position (◇)</span></div>
     <div class="legend-item"><div class="legend-color" style="background: #eab308; clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);"></div><span>Consensus Centroid z̄(t)</span></div>
-    <div class="legend-item"><div class="legend-color" style="background: #ef4444;"></div><span>Orthogonal Agent</span></div>
+    <div class="legend-item"><div class="legend-color" style="background: #10b981; border-radius: 50%;"></div><span>#N Collection Inflection</span></div>
+    <div class="legend-item"><div class="legend-color" style="background: #ef4444; border-radius: 50%;"></div><span>#N Divergence Inflection</span></div>
     <div class="legend-item"><div class="legend-color" style="background: #38bdf8;"></div><span>Active Agent</span></div>
     <div class="legend-item"><div class="legend-color" style="background: transparent; border: 1.5px solid #38bdf8; border-radius: 50%;"></div><span>Silent (Carried Forward)</span></div>
     <div class="legend-item"><div class="legend-color" style="background: #64748b; transform: rotate(45deg);"></div><span>Concept Pin</span></div>
@@ -1815,6 +2576,8 @@ const slider = document.getElementById("roundSlider");
 const label = document.getElementById("roundLabel");
 const stats = document.getElementById("statsCard");
 const playBtn = document.getElementById("playBtn");
+const modeMapBtn = document.getElementById("modeMapBtn");
+const modeFlowBtn = document.getElementById("modeFlowBtn");
 const clearFocusBtn = document.getElementById("clearFocusBtn");
 const claimsPanel = document.getElementById("claimsPanel");
 const tooltip = document.getElementById("tooltip");
@@ -1826,8 +2589,11 @@ let animProgress = 1.0;
 let isPlaying = false;
 let playTimer = null;
 let animRaf = null;
+let viewMode = "map";
 let focusedSpeaker = null;
+let focusedClusterId = null;
 let lastDrawnNodes = [];
+let lastDrawnClusters = [];
 
 const bounds = DATA.bounds;
 const W = canvas.width;
@@ -1840,6 +2606,21 @@ function escapeHtml(str) {{
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;");
+}}
+
+function highlightClaimTerms(rawText, wedgeTerms, sharedTerms) {{
+  let safe = escapeHtml(rawText);
+  const wList = (wedgeTerms || []).filter(t => t && t.length > 2);
+  const sList = (sharedTerms || []).filter(t => t && t.length > 2 && !wList.includes(t));
+  wList.forEach(term => {{
+    const esc = term.replace(/[.*+?^${{}}()|[\\]\\\\]/g, "\\\\$&");
+    safe = safe.replace(new RegExp(`\\\\b(${{esc}}\\\\w*)\\\\b`, "gi"), '<mark class="hl-wedge">$1</mark>');
+  }});
+  sList.forEach(term => {{
+    const esc = term.replace(/[.*+?^${{}}()|[\\]\\\\]/g, "\\\\$&");
+    safe = safe.replace(new RegExp(`\\\\b(${{esc}}\\\\w*)\\\\b`, "gi"), '<mark class="hl-shared">$1</mark>');
+  }});
+  return safe;
 }}
 
 function mapX(x) {{
@@ -1857,19 +2638,77 @@ function easeInOut(t) {{
 
 const palette = ["#38bdf8", "#34d399", "#fbbf24", "#a78bfa", "#f472b6", "#2dd4bf", "#cbd5e1"];
 
+function updateResetButton() {{
+  clearFocusBtn.style.display = (focusedSpeaker || focusedClusterId) ? "inline-block" : "none";
+}}
+
 function setFocusedSpeaker(spk) {{
   focusedSpeaker = (focusedSpeaker === spk) ? null : spk;
-  clearFocusBtn.style.display = focusedSpeaker ? "inline-block" : "none";
+  focusedClusterId = null;
+  updateResetButton();
   renderClaimsPanel();
   renderCanvas();
+}}
+
+function setFocusedCluster(clusterId, targetRoundIdx) {{
+  if (focusedClusterId === clusterId && (targetRoundIdx === undefined || targetRoundIdx === currentRoundIdx)) {{
+    focusedClusterId = null;
+  }} else {{
+    focusedClusterId = clusterId;
+    focusedSpeaker = null;
+    if (targetRoundIdx !== undefined && targetRoundIdx !== currentRoundIdx) {{
+      transitionToRound(targetRoundIdx);
+      updateResetButton();
+      return;
+    }}
+  }}
+  updateResetButton();
+  renderClaimsPanel();
+  renderCanvas();
+}}
+
+function getActiveCluster() {{
+  if (!focusedClusterId) return null;
+  for (const r of DATA.rounds) {{
+    const hit = (r.clusters || []).find(c => c.cluster_id === focusedClusterId);
+    if (hit) return hit;
+  }}
+  return null;
 }}
 
 function renderClaimsPanel() {{
   const rData = DATA.rounds[currentRoundIdx];
   const syn = DATA.synthesis || {{}};
+  const activeCluster = getActiveCluster();
   let html = "";
 
-  if (syn.center_of_disagreement || syn.centroid_concept) {{
+  if (DATA.inflection_events && DATA.inflection_events.length > 0) {{
+    html += `<div class="summary-box"><div class="summary-label">Collection & Divergence Inflections</div><div class="inflection-strip">`;
+    DATA.inflection_events.forEach(ev => {{
+      const isDiv = ev.event_type === "Divergence";
+      const isAct = focusedClusterId === ev.cluster_id;
+      html += `<span class="inflection-pill ${{isDiv ? "div" : ""}} ${{isAct ? "active" : ""}}" data-cid="${{escapeHtml(ev.cluster_id)}}" data-ridx="${{ev.round_idx}}">
+        #${{ev.badge_id}} R${{ev.round}} ${{escapeHtml(ev.event_type)}} (${{ev.members.length}})
+      </span>`;
+    }});
+    html += `</div></div>`;
+  }}
+
+  if (activeCluster) {{
+    const isDiv = activeCluster.event_type === "Divergence";
+    const wedgeChips = (activeCluster.wedge_terms || []).map(t => `<span class="term-chip term-wedge">▲ ${{escapeHtml(t)}}</span>`).join("");
+    const sharedChips = (activeCluster.shared_terms || []).map(t => `<span class="term-chip term-shared">● ${{escapeHtml(t)}}</span>`).join("");
+    const medoidHighlighted = highlightClaimTerms(activeCluster.medoid_claim || "", activeCluster.wedge_terms, activeCluster.shared_terms);
+    html += `<div class="cluster-lens">
+      <div class="summary-label" style="color:${{isDiv ? "#fca5a5" : "#6ee7b7"}};">
+        Cluster Lens • ${{activeCluster.badge_id ? `#${{activeCluster.badge_id}} ` : ""}}R${{activeCluster.round}} ${{escapeHtml(activeCluster.event_type)}} (${{activeCluster.members.length}} members)
+      </div>
+      <div style="font-weight:700; margin-bottom:4px;">${{escapeHtml(activeCluster.topic)}} • ${{escapeHtml(activeCluster.short_members)}}</div>
+      ${{wedgeChips ? `<div style="margin-top:4px;"><span style="color:#94a3b8; font-size:10.5px;">Wedge Concepts:</span> ${{wedgeChips}}</div>` : ""}}
+      ${{sharedChips ? `<div style="margin-top:3px;"><span style="color:#94a3b8; font-size:10.5px;">Shared Concepts:</span> ${{sharedChips}}</div>` : ""}}
+      ${{medoidHighlighted ? `<div style="margin-top:6px; padding-top:6px; border-top:1px solid #334155; color:#e2e8f0;"><strong>Medoid Claim (${{escapeHtml(activeCluster.medoid_short_speaker)}}):</strong> "${{medoidHighlighted}}"</div>` : ""}}
+    </div>`;
+  }} else if (syn.center_of_disagreement || syn.centroid_concept) {{
     html += `<div class="summary-box">`;
     if (syn.center_of_disagreement) {{
       html += `<div class="summary-label">Center of Disagreement</div><div>${{escapeHtml(syn.center_of_disagreement)}}</div>`;
@@ -1883,13 +2722,29 @@ function renderClaimsPanel() {{
     html += `</div>`;
   }}
 
+  if (rData.clusters && rData.clusters.length > 0 && !activeCluster) {{
+    html += `<div class="summary-box"><div class="summary-label">Round ${{rData.round}} Clusters (Click for Cluster Lens)</div>`;
+    rData.clusters.forEach(c => {{
+      const isDiv = c.event_type === "Divergence";
+      const wStr = (c.wedge_terms || []).slice(0, 3).join(", ");
+      html += `<div style="padding:5px 0; border-bottom:1px solid #1e293b; cursor:pointer;" class="round-cluster-row" data-cid="${{escapeHtml(c.cluster_id)}}">
+        <div style="display:flex; justify-content:space-between; font-weight:700; color:${{isDiv ? "#fca5a5" : "#6ee7b7"}};">
+          <span>${{c.badge_id ? `#${{c.badge_id}} ` : ""}}${{escapeHtml(c.event_type)}}: ${{escapeHtml(c.short_members)}}</span>
+          <span>${{c.members.length}}p</span>
+        </div>
+        ${{wStr ? `<div style="font-size:11px; color:#fde68a;">▲ Wedge: ${{escapeHtml(wStr)}}</div>` : ""}}
+      </div>`;
+    }});
+    html += `</div>`;
+  }}
+
   const sortedAgents = [...rData.agents]
-    .filter(a => a.has_spoken)
+    .filter(a => a.has_spoken && (!activeCluster || activeCluster.members.includes(a.speaker)))
     .sort((a, b) => (b.active - a.active) || ((b.weight || 0) - (a.weight || 0)));
 
   sortedAgents.forEach(a => {{
     const isOrtho = Boolean(a.is_orthogonal || a.is_rogue);
-    const isFocused = focusedSpeaker === a.speaker;
+    const isFocused = focusedSpeaker === a.speaker || (activeCluster && activeCluster.members.includes(a.speaker));
     const cls = ["claim-card"];
     if (isOrtho) cls.push("ortho");
     if (!a.active) cls.push("silent");
@@ -1901,8 +2756,9 @@ function renderClaimsPanel() {{
     const topicLine = a.topic
       ? `<div class="claim-topic">${{escapeHtml(a.topic)}}${{a.sin_theta ? ` • sin(θ)=${{a.sin_theta.toFixed(2)}}` : ""}}</div>`
       : "";
-    const claimBody = a.claim
-      ? `"${{escapeHtml(a.claim)}}"`
+    const rawClaim = a.claim;
+    const claimBody = rawClaim
+      ? `"${{activeCluster ? highlightClaimTerms(rawClaim, activeCluster.wedge_terms, activeCluster.shared_terms) : escapeHtml(rawClaim)}}"`
       : (a.active ? "Active turn recorded." : "Silent in this round (position carried forward).");
 
     html += `<div class="${{cls.join(" ")}}" data-speaker="${{escapeHtml(a.speaker)}}">
@@ -1919,16 +2775,159 @@ function renderClaimsPanel() {{
   claimsPanel.querySelectorAll(".claim-card").forEach(el => {{
     el.addEventListener("click", () => setFocusedSpeaker(el.getAttribute("data-speaker")));
   }});
+  claimsPanel.querySelectorAll(".inflection-pill").forEach(el => {{
+    el.addEventListener("click", () => {{
+      setFocusedCluster(el.getAttribute("data-cid"), parseInt(el.getAttribute("data-ridx"), 10));
+    }});
+  }});
+  claimsPanel.querySelectorAll(".round-cluster-row").forEach(el => {{
+    el.addEventListener("click", () => setFocusedCluster(el.getAttribute("data-cid"), currentRoundIdx));
+  }});
+}}
+
+function renderFlowCanvas(rTo) {{
+  const T = DATA.rounds.length;
+  const colW = (W - 2 * PAD) / Math.max(1, T - 1);
+  const blockHalfW = Math.min(82, Math.max(46, colW * 0.34));
+  const yTopBand = 58;
+  const yBotBand = H - 36;
+  const bandH = yBotBand - yTopBand;
+
+  const slotCoords = [];
+  const blockBoxes = [];
+
+  for (let t = 0; t < T; t++) {{
+    const cList = DATA.rounds[t].clusters || [];
+    const totalMem = cList.reduce((acc, c) => acc + c.members.length, 0);
+    if (cList.length === 0 || totalMem === 0) {{
+      slotCoords.push({{}});
+      blockBoxes.push([]);
+      continue;
+    }}
+    const gap = cList.length > 1 ? Math.min(20, 75 / cList.length) : 0;
+    const usableH = bandH - gap * (cList.length - 1);
+    let yCursor = yTopBand;
+    const slotsT = {{}};
+    const boxesT = [];
+
+    cList.forEach(c => {{
+      const cH = Math.max(46, usableH * (c.members.length / totalMem));
+      const y0 = yCursor;
+      const y1 = y0 + cH;
+      boxesT.push({{cluster: c, y0, y1, xCenter: (T === 1 ? W / 2 : PAD + t * colW)}});
+      const subH = cH / Math.max(1, c.members.length);
+      c.members.forEach((mSpk, mIdx) => {{
+        slotsT[mSpk] = {{y0: y0 + mIdx * subH, y1: y0 + (mIdx + 1) * subH}};
+      }});
+      yCursor = y1 + gap;
+    }});
+    slotCoords.push(slotsT);
+    blockBoxes.push(boxesT);
+  }}
+
+  for (let t = 0; t < T - 1; t++) {{
+    const x0 = PAD + t * colW + blockHalfW;
+    const x1 = PAD + (t + 1) * colW - blockHalfW;
+    const xm = 0.5 * (x0 + x1);
+    DATA.speakers.forEach((spk, sIdx) => {{
+      const s0 = slotCoords[t][spk];
+      const s1 = slotCoords[t + 1][spk];
+      if (!s0 || !s1) return;
+      const isOrtho = (spk === DATA.orthogonal_speaker || spk === DATA.rogue_speaker);
+      const col = isOrtho ? "#ef4444" : palette[sIdx % palette.length];
+      const dimmed = (focusedSpeaker && focusedSpeaker !== spk);
+      ctx.save();
+      ctx.fillStyle = col;
+      ctx.globalAlpha = dimmed ? 0.08 : (isOrtho ? 0.45 : 0.28);
+      ctx.beginPath();
+      ctx.moveTo(x0, s0.y0);
+      ctx.bezierCurveTo(xm, s0.y0, xm, s1.y0, x1, s1.y0);
+      ctx.lineTo(x1, s1.y1);
+      ctx.bezierCurveTo(xm, s1.y1, xm, s0.y1, x0, s0.y1);
+      ctx.closePath();
+      ctx.fill();
+      ctx.restore();
+    }});
+  }}
+
+  for (let t = 0; t < T; t++) {{
+    const rObj = DATA.rounds[t];
+    const xCenter = T === 1 ? W / 2 : PAD + t * colW;
+    const isCurrRound = (t === currentRoundIdx);
+    ctx.fillStyle = isCurrRound ? "#38bdf8" : "#cbd5e1";
+    ctx.font = isCurrRound ? "bold 12px sans-serif" : "bold 11px sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText(`Round ${{rObj.round}} (K*=${{(rObj.k_star || 0).toFixed(2)}})`, xCenter, 26);
+
+    blockBoxes[t].forEach(b => {{
+      const c = b.cluster;
+      const isDiv = c.event_type === "Divergence";
+      const isSelected = focusedClusterId === c.cluster_id;
+      const bx = b.xCenter - blockHalfW;
+      const bw = 2 * blockHalfW;
+      const bh = b.y1 - b.y0;
+
+      ctx.save();
+      ctx.fillStyle = isDiv ? "rgba(127, 29, 29, 0.72)" : "rgba(6, 78, 59, 0.72)";
+      ctx.strokeStyle = isSelected ? "#eab308" : (isDiv ? "#ef4444" : "#10b981");
+      ctx.lineWidth = isSelected ? 2.6 : (c.badge_id ? 1.8 : 1.1);
+      ctx.beginPath();
+      ctx.roundRect(bx, b.y0, bw, bh, 7);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = isDiv ? "#fecaca" : "#a7f3d0";
+      ctx.font = "bold 10px sans-serif";
+      const head = `${{c.badge_id ? `#${{c.badge_id}} ` : ""}}${{c.event_type.toUpperCase()}} (${{c.members.length}})`;
+      ctx.fillText(head.slice(0, 24), b.xCenter, b.y0 + 14);
+
+      ctx.fillStyle = "#f8fafc";
+      ctx.font = "9.5px sans-serif";
+      ctx.fillText(c.short_members.slice(0, 24), b.xCenter, b.y0 + 27);
+
+      if (c.wedge_terms && c.wedge_terms.length > 0 && bh >= 42) {{
+        ctx.fillStyle = "#fde68a";
+        ctx.font = "italic 9px sans-serif";
+        ctx.fillText(`▲ ${{c.wedge_terms.slice(0, 2).join(", ")}}`.slice(0, 25), b.xCenter, b.y0 + 40);
+      }}
+      if (c.medoid_claim && bh >= 58) {{
+        ctx.fillStyle = "#cbd5e1";
+        ctx.font = "9px sans-serif";
+        ctx.fillText(`"${{c.medoid_claim.slice(0, 24)}}..."`, b.xCenter, b.y0 + 53);
+      }}
+      ctx.restore();
+
+      lastDrawnClusters.push({{
+        cluster: c,
+        roundIdx: t,
+        shape: "rect",
+        x0: bx,
+        y0: b.y0,
+        x1: bx + bw,
+        y1: b.y1,
+      }});
+    }});
+  }}
+  ctx.textAlign = "left";
 }}
 
 function renderCanvas() {{
   ctx.clearRect(0, 0, W, H);
   lastDrawnNodes = [];
+  lastDrawnClusters = [];
   const p = easeInOut(animProgress);
   const rFrom = DATA.rounds[animFromIdx];
   const rTo = DATA.rounds[animToIdx];
+  const activeCluster = getActiveCluster();
 
-  // Grid lines
+  if (viewMode === "flow") {{
+    renderFlowCanvas(rTo);
+    label.innerText = `Round ${{rTo.round}}`;
+    const kStr = (rTo.k_star !== undefined) ? `K*: ${{rTo.k_star.toFixed(2)}} | ` : "";
+    stats.innerText = `${{kStr}}Dispersion: ${{rTo.dispersion.toFixed(3)}}`;
+    return;
+  }}
+
   ctx.strokeStyle = "rgba(51, 65, 85, 0.35)";
   ctx.lineWidth = 1;
   ctx.setLineDash([4, 4]);
@@ -1940,7 +2939,6 @@ function renderCanvas() {{
   }}
   ctx.setLineDash([]);
 
-  // Semantic axis pole labels along canvas borders
   if (DATA.poles) {{
     ctx.fillStyle = "#94a3b8";
     ctx.font = "11px sans-serif";
@@ -1954,7 +2952,6 @@ function renderCanvas() {{
     ctx.textAlign = "left";
   }}
 
-  // Concept pins in semantic space
   if (DATA.concept_pins) {{
     DATA.concept_pins.forEach(pin => {{
       const px = mapX(pin.x);
@@ -1971,51 +2968,63 @@ function renderCanvas() {{
     }});
   }}
 
-  // 1. Faction Density Envelopes at target round (active agents only)
-  if (rTo.factions) {{
-    rTo.factions.forEach((f, fIdx) => {{
-      if (f.members.length >= 2) {{
-        const pts = [];
-        rTo.agents.forEach((a, idx) => {{
-          if (a.active && f.members.includes(a.speaker)) {{
-            const aFrom = rFrom.agents[idx];
-            pts.push({{x: mapX(lerp(aFrom.x, a.x, p)), y: mapY(lerp(aFrom.y, a.y, p))}});
-          }}
-        }});
-        if (pts.length >= 2) {{
-          const c = palette[fIdx % palette.length];
-          const cx = pts.reduce((acc, pt) => acc + pt.x, 0) / pts.length;
-          const cy = pts.reduce((acc, pt) => acc + pt.y, 0) / pts.length;
-          let maxR = 0;
-          pts.forEach(pt => {{ maxR = Math.max(maxR, Math.hypot(pt.x - cx, pt.y - cy)); }});
-          ctx.beginPath();
-          ctx.arc(cx, cy, maxR + 26, 0, Math.PI * 2);
-          ctx.fillStyle = c;
-          ctx.globalAlpha = 0.08;
-          ctx.fill();
-          ctx.strokeStyle = c;
-          ctx.globalAlpha = 0.45;
-          ctx.setLineDash([4, 4]);
-          ctx.stroke();
-          ctx.setLineDash([]);
-          ctx.globalAlpha = 1.0;
-          if (f.topic) {{
-            ctx.fillStyle = c;
-            ctx.font = "bold 10px sans-serif";
-            ctx.textAlign = "center";
-            ctx.fillText(f.topic.slice(0, 32), cx, cy - maxR - 30);
-            ctx.textAlign = "left";
-          }}
+  if (rTo.clusters) {{
+    rTo.clusters.forEach((c, cIdx) => {{
+      const pts = [];
+      rTo.agents.forEach((a, idx) => {{
+        if (a.has_spoken && c.members.includes(a.speaker)) {{
+          const aFrom = rFrom.agents[idx];
+          pts.push({{
+            x: mapX(aFrom.has_spoken ? lerp(aFrom.x, a.x, p) : a.x),
+            y: mapY(aFrom.has_spoken ? lerp(aFrom.y, a.y, p) : a.y),
+          }});
         }}
+      }});
+      if (pts.length >= 2) {{
+        const isSelected = focusedClusterId === c.cluster_id;
+        const col = isSelected ? "#eab308" : palette[cIdx % palette.length];
+        const cx = pts.reduce((acc, pt) => acc + pt.x, 0) / pts.length;
+        const cy = pts.reduce((acc, pt) => acc + pt.y, 0) / pts.length;
+        let maxR = 0;
+        pts.forEach(pt => {{ maxR = Math.max(maxR, Math.hypot(pt.x - cx, pt.y - cy)); }});
+        const rad = maxR + 26;
+        ctx.beginPath();
+        ctx.arc(cx, cy, rad, 0, Math.PI * 2);
+        ctx.fillStyle = col;
+        ctx.globalAlpha = isSelected ? 0.16 : 0.08;
+        ctx.fill();
+        ctx.strokeStyle = col;
+        ctx.lineWidth = isSelected ? 2.2 : 1.2;
+        ctx.globalAlpha = isSelected ? 0.85 : 0.45;
+        ctx.setLineDash([4, 4]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.globalAlpha = 1.0;
+
+        const wTerms = (c.wedge_terms || []).slice(0, 2).join(", ");
+        const headerTxt = wTerms ? `${{c.topic.slice(0, 22)}} (▲ ${{wTerms}})` : c.topic.slice(0, 32);
+        ctx.fillStyle = col;
+        ctx.font = "bold 10px sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText(headerTxt, cx, cy - rad - 6);
+        ctx.textAlign = "left";
+
+        lastDrawnClusters.push({{
+          cluster: c,
+          roundIdx: animToIdx,
+          shape: "circle",
+          cx,
+          cy,
+          r: rad,
+        }});
       }}
     }});
   }}
 
-  // 2. Motion Trails & Starting Diamonds
   for (let spkIdx = 0; spkIdx < DATA.speakers.length; spkIdx++) {{
     const spk = DATA.speakers[spkIdx];
     const isOrtho = (spk === DATA.orthogonal_speaker || spk === DATA.rogue_speaker);
-    const dimmed = focusedSpeaker && focusedSpeaker !== spk;
+    const dimmed = (focusedSpeaker && focusedSpeaker !== spk) || (activeCluster && !activeCluster.members.includes(spk));
     const baseColor = isOrtho ? "#ef4444" : palette[spkIdx % palette.length];
 
     const activePts = [];
@@ -2039,7 +3048,6 @@ function renderCanvas() {{
         activePts.forEach((pt, idx) => idx === 0 ? ctx.moveTo(pt.x, pt.y) : ctx.lineTo(pt.x, pt.y));
         ctx.stroke();
       }}
-      // Start position diamond
       const sPt = activePts[0];
       ctx.save();
       ctx.translate(sPt.x, sPt.y);
@@ -2054,7 +3062,6 @@ function renderCanvas() {{
     }}
   }}
 
-  // 3. Centroid Trail & Interpolated Marker
   ctx.strokeStyle = "#eab308";
   ctx.lineWidth = 2.4;
   ctx.beginPath();
@@ -2076,7 +3083,6 @@ function renderCanvas() {{
   ctx.lineWidth = 2;
   ctx.stroke();
 
-  // 4. Interpolated Agent Nodes
   rTo.agents.forEach((a, idx) => {{
     if (!a.has_spoken) return;
     const aFrom = rFrom.agents[idx];
@@ -2086,7 +3092,7 @@ function renderCanvas() {{
     const ay = mapY(yVal);
     const isOrtho = Boolean(a.is_orthogonal || a.is_rogue);
     const col = isOrtho ? "#ef4444" : palette[idx % palette.length];
-    const dimmed = focusedSpeaker && focusedSpeaker !== a.speaker;
+    const dimmed = (focusedSpeaker && focusedSpeaker !== a.speaker) || (activeCluster && !activeCluster.members.includes(a.speaker));
 
     ctx.globalAlpha = dimmed ? 0.18 : 1.0;
     if (a.active) {{
@@ -2094,8 +3100,8 @@ function renderCanvas() {{
       ctx.beginPath();
       ctx.arc(ax, ay, isOrtho ? 7.5 : 5.5, 0, Math.PI * 2);
       ctx.fill();
-      ctx.strokeStyle = focusedSpeaker === a.speaker ? "#eab308" : "#0f172a";
-      ctx.lineWidth = focusedSpeaker === a.speaker ? 2.4 : 1.5;
+      ctx.strokeStyle = (focusedSpeaker === a.speaker) ? "#eab308" : "#0f172a";
+      ctx.lineWidth = (focusedSpeaker === a.speaker) ? 2.4 : 1.5;
       ctx.stroke();
     }} else {{
       ctx.beginPath();
@@ -2112,6 +3118,47 @@ function renderCanvas() {{
     lastDrawnNodes.push({{agent: a, x: ax, y: ay}});
   }});
 
+  if (DATA.inflection_events) {{
+    DATA.inflection_events.forEach((ev, evIdx) => {{
+      if (ev.round_idx > animToIdx) return;
+      const bx = mapX(ev.x) + (evIdx % 2 === 0 ? -18 : 18);
+      const by = mapY(ev.y) + (evIdx % 3 === 0 ? -18 : 18);
+      const isDiv = ev.event_type === "Divergence";
+      const isSel = focusedClusterId === ev.cluster_id;
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(mapX(ev.x), mapY(ev.y));
+      ctx.lineTo(bx, by);
+      ctx.strokeStyle = isDiv ? "#ef4444" : "#10b981";
+      ctx.lineWidth = 1.1;
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.arc(bx, by, 10, 0, Math.PI * 2);
+      ctx.fillStyle = isDiv ? "#7f1d1d" : "#064e3b";
+      ctx.fill();
+      ctx.strokeStyle = isSel ? "#eab308" : (isDiv ? "#ef4444" : "#10b981");
+      ctx.lineWidth = isSel ? 2.4 : 1.5;
+      ctx.stroke();
+
+      ctx.fillStyle = "#ffffff";
+      ctx.font = "bold 9.5px sans-serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(`#${{ev.badge_id}}`, bx, by);
+      ctx.restore();
+
+      lastDrawnClusters.unshift({{
+        cluster: ev,
+        roundIdx: ev.round_idx,
+        shape: "circle",
+        cx: bx,
+        cy: by,
+        r: 12,
+      }});
+    }});
+  }}
+
   label.innerText = `Round ${{rTo.round}}`;
   const kStr = (rTo.k_star !== undefined) ? `K*: ${{rTo.k_star.toFixed(2)}} | ` : "";
   stats.innerText = `${{kStr}}Dispersion: ${{rTo.dispersion.toFixed(3)}}`;
@@ -2125,7 +3172,7 @@ function transitionToRound(targetIdx) {{
   slider.value = currentRoundIdx;
   renderClaimsPanel();
 
-  if (animFromIdx === animToIdx) {{
+  if (animFromIdx === animToIdx || viewMode === "flow") {{
     animProgress = 1.0;
     renderCanvas();
     return;
@@ -2152,32 +3199,84 @@ slider.addEventListener("input", (e) => {{
   renderCanvas();
 }});
 
-clearFocusBtn.addEventListener("click", () => setFocusedSpeaker(focusedSpeaker));
+modeMapBtn.addEventListener("click", () => {{
+  viewMode = "map";
+  modeMapBtn.classList.remove("secondary");
+  modeFlowBtn.classList.add("secondary");
+  renderCanvas();
+}});
+
+modeFlowBtn.addEventListener("click", () => {{
+  viewMode = "flow";
+  modeFlowBtn.classList.remove("secondary");
+  modeMapBtn.classList.add("secondary");
+  renderCanvas();
+}});
+
+clearFocusBtn.addEventListener("click", () => {{
+  focusedSpeaker = null;
+  focusedClusterId = null;
+  updateResetButton();
+  renderClaimsPanel();
+  renderCanvas();
+}});
+
+function findClusterHit(mx, my) {{
+  return lastDrawnClusters.find(item => {{
+    if (item.shape === "rect") {{
+      return mx >= item.x0 && mx <= item.x1 && my >= item.y0 && my <= item.y1;
+    }}
+    return Math.hypot(item.cx - mx, item.cy - my) <= item.r;
+  }});
+}}
 
 canvas.addEventListener("click", (e) => {{
   const rect = canvas.getBoundingClientRect();
   const mx = (e.clientX - rect.left) * (W / rect.width);
   const my = (e.clientY - rect.top) * (H / rect.height);
-  const hit = lastDrawnNodes.find(n => Math.hypot(n.x - mx, n.y - my) <= 14);
-  if (hit) setFocusedSpeaker(hit.agent.speaker);
+  const hitNode = lastDrawnNodes.find(n => Math.hypot(n.x - mx, n.y - my) <= 13);
+  if (hitNode) {{
+    setFocusedSpeaker(hitNode.agent.speaker);
+    return;
+  }}
+  const hitCluster = findClusterHit(mx, my);
+  if (hitCluster) {{
+    setFocusedCluster(hitCluster.cluster.cluster_id, hitCluster.roundIdx);
+  }}
 }});
 
 canvas.addEventListener("mousemove", (e) => {{
   const rect = canvas.getBoundingClientRect();
   const mx = (e.clientX - rect.left) * (W / rect.width);
   const my = (e.clientY - rect.top) * (H / rect.height);
-  const hit = lastDrawnNodes.find(n => Math.hypot(n.x - mx, n.y - my) <= 14);
-  if (!hit) {{
-    tooltip.style.display = "none";
+  const hitNode = lastDrawnNodes.find(n => Math.hypot(n.x - mx, n.y - my) <= 13);
+  if (hitNode) {{
+    const a = hitNode.agent;
+    const roleLine = a.role ? `<div><span style="color:#38bdf8;">${{escapeHtml(a.role)}}</span> (${{(a.weight || 0).toFixed(0)}}%)</div>` : "";
+    const claimLine = a.claim ? `<div style="margin-top:4px; color:#cbd5e1;">"${{escapeHtml(a.claim)}}"</div>` : "";
+    tooltip.innerHTML = `<strong>${{escapeHtml(a.speaker)}}</strong>${{roleLine}}${{claimLine}}`;
+    tooltip.style.left = `${{Math.min(rect.width - 290, Math.max(8, e.clientX - rect.left + 12))}}px`;
+    tooltip.style.top = `${{Math.max(8, e.clientY - rect.top - 12)}}px`;
+    tooltip.style.display = "block";
     return;
   }}
-  const a = hit.agent;
-  const roleLine = a.role ? `<div><span style="color:#38bdf8;">${{escapeHtml(a.role)}}</span> (${{(a.weight || 0).toFixed(0)}}%)</div>` : "";
-  const claimLine = a.claim ? `<div style="margin-top:4px; color:#cbd5e1;">"${{escapeHtml(a.claim)}}"</div>` : "";
-  tooltip.innerHTML = `<strong>${{escapeHtml(a.speaker)}}</strong>${{roleLine}}${{claimLine}}`;
-  tooltip.style.left = `${{Math.min(rect.width - 280, Math.max(8, e.clientX - rect.left + 12))}}px`;
-  tooltip.style.top = `${{Math.max(8, e.clientY - rect.top - 12)}}px`;
-  tooltip.style.display = "block";
+  const hitCluster = findClusterHit(mx, my);
+  if (hitCluster) {{
+    const c = hitCluster.cluster;
+    const wStr = (c.wedge_terms || []).slice(0, 3).join(", ");
+    const sStr = (c.shared_terms || []).slice(0, 3).join(", ");
+    const claimLine = c.medoid_claim ? `<div style="margin-top:4px; color:#cbd5e1;">"${{escapeHtml(c.medoid_claim)}}" (${{escapeHtml(c.medoid_short_speaker || "")}})</div>` : "";
+    tooltip.innerHTML = `<strong>${{c.badge_id ? `#${{c.badge_id}} ` : ""}}R${{c.round}} ${{escapeHtml(c.event_type)}} (${{c.members.length}})</strong>
+      <div style="color:#93c5fd;">${{escapeHtml(c.short_members)}}</div>
+      ${{wStr ? `<div style="color:#fde68a;">▲ Wedge: ${{escapeHtml(wStr)}}</div>` : ""}}
+      ${{sStr ? `<div style="color:#bae6fd;">● Shared: ${{escapeHtml(sStr)}}</div>` : ""}}
+      ${{claimLine}}`;
+    tooltip.style.left = `${{Math.min(rect.width - 290, Math.max(8, e.clientX - rect.left + 12))}}px`;
+    tooltip.style.top = `${{Math.max(8, e.clientY - rect.top - 12)}}px`;
+    tooltip.style.display = "block";
+    return;
+  }}
+  tooltip.style.display = "none";
 }});
 
 canvas.addEventListener("mouseleave", () => {{

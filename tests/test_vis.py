@@ -135,6 +135,22 @@ def test_render_trajectory_paths_dashboard():
         assert "claimsPanel" in html_txt
         assert "Center of Disagreement" in html_txt
         assert "AI must not touch clinical decisions" in html_txt
+        assert "inflection_events" in html_txt
+        assert "wedge_terms" in html_txt
+        assert "Cluster Lens" in html_txt
+        assert "Alluvial Faction-Flow" in html_txt
+        assert "highlightClaimTerms" in html_txt
+
+
+def test_render_concept_flow_dashboard():
+    sample_file = os.path.join(SAMPLES_DIR, "clinical_slm_debate.json")
+    with tempfile.TemporaryDirectory() as tmpdir:
+        out_png = os.path.join(tmpdir, "clinical_flow.png")
+        ret = main(["plot", sample_file, "--style", "flow", "--output", out_png])
+        assert ret == 0
+        assert os.path.exists(out_png)
+        assert os.path.getsize(out_png) > 10000
+
 
 
 

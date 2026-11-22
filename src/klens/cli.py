@@ -357,9 +357,9 @@ def main(argv: Optional[List[str]] = None) -> int:
     )
     run_parser.add_argument(
         "--style",
-        choices=["telemetry", "diagnostic", "evolution", "shortcut", "paths"],
+        choices=["telemetry", "diagnostic", "evolution", "shortcut", "paths", "flow"],
         default="telemetry",
-        help="Plot style: telemetry, diagnostic, evolution, shortcut, or paths (default: telemetry)",
+        help="Plot style: telemetry, diagnostic, evolution, shortcut, paths, or flow (default: telemetry)",
     )
     run_parser.add_argument(
         "--html",
@@ -385,9 +385,9 @@ def main(argv: Optional[List[str]] = None) -> int:
     )
     plot_parser.add_argument(
         "--style",
-        choices=["telemetry", "diagnostic", "evolution", "shortcut", "paths"],
+        choices=["telemetry", "diagnostic", "evolution", "shortcut", "paths", "flow"],
         default="telemetry",
-        help="Plot style: telemetry, diagnostic, evolution, shortcut, or paths (default: telemetry)",
+        help="Plot style: telemetry, diagnostic, evolution, shortcut, paths, or flow (default: telemetry)",
     )
     plot_parser.add_argument(
         "--html",
@@ -466,6 +466,8 @@ def main(argv: Optional[List[str]] = None) -> int:
                 suffix = "_evolution.png"
             elif args.style == "paths":
                 suffix = "_paths.png"
+            elif args.style == "flow":
+                suffix = "_flow.png"
             else:
                 suffix = "_telemetry.png"
             plot_target = os.path.join("out", f"{base}{suffix}")
