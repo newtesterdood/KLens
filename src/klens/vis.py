@@ -15,6 +15,7 @@ from klens.spectral import (
     cluster_factions,
     compute_effective_channels_k_star,
     compute_koopman_metrics,
+    compute_nnls_subspace_orthogonality,
     detect_orthogonal_from_states,
     detect_rogue_from_states,
     extract_centroid_keywords,
@@ -487,6 +488,377 @@ def _extract_cluster_events_and_flow(
     return round_clusters, inflection_events
 
 
+def _extract_narrative_dynamics(
+    source: Union[LiveTranscriptStreamProcessor, np.ndarray],
+    Z: np.ndarray,
+    active_mask: np.ndarray,
+    has_spoken_mask: np.ndarray,
+    speakers: Sequence[str],
+    rounds: Sequence[int],
+    feature_names: Sequence[str],
+    rogue_idx: Optional[int],
+    round_clusters: List[List[dict]],
+    round_claims: Optional[dict[int, dict[str, str]]] = None,
+) -> dict:
+    T, N, d = Z.shape
+    claims_by_round = round_claims if round_claims is not None else _extract_round_claims(source, speakers, rounds)
+    has_real_terms = (
+        d > 0
+        and len(feature_names) == d
+        and not all(str(f).startswith("feat_") for f in feature_names)
+    )
+    short_names = _short_speaker_labels(speakers, max_len=13)
+    short_map = dict(zip(speakers, short_names))
+
+    def _top_terms(vec: np.ndarray, k: int = 3) -> List[str]:
+        if not has_real_terms:
+            return []
+        order = np.argsort(vec)[::-1]
+        out: List[str] = []
+        for idx in order:
+            if float(vec[idx]) <= 1e-5:
+                break
+            tok = str(feature_names[idx]).strip()
+            if len(tok) > 1 and not tok.startswith("feat_"):
+                out.append(tok)
+            if len(out) >= k:
+                break
+        return out
+
+    Z_carried = np.array(Z, copy=True, dtype=float)
+    for i in range(N):
+        last_vec = None
+        for t in range(T):
+            if active_mask[t, i]:
+                last_vec = Z[t, i]
+            elif last_vec is not None:
+                Z_carried[t, i] = last_vec
+
+    centroids = np.zeros((T, d), dtype=float)
+    for t in range(T):
+        act_t = np.where(active_mask[t])[0]
+        spk_t = np.where(has_spoken_mask[t])[0]
+        if len(act_t) > 0:
+            centroids[t] = Z[t, act_t].mean(axis=0)
+        elif len(spk_t) > 0:
+            centroids[t] = Z_carried[t, spk_t].mean(axis=0)
+        else:
+            centroids[t] = Z[t].mean(axis=0)
+
+    terminal_centroid = centroids[-1]
+    term_norm = float(np.linalg.norm(terminal_centroid))
+
+    concept_transfers: List[dict] = []
+    outgoing_adoption = np.zeros(N, dtype=float)
+    for t in range(1, T):
+        r_id = int(rounds[t])
+        for i in range(N):
+            if not active_mask[t, i]:
+                continue
+            prior_i = np.max(Z[:t, i, :], axis=0)
+            curr_i = Z[t, i, :]
+            for j in range(N):
+                if i == j or not has_spoken_mask[t - 1, j]:
+                    continue
+                prev_j = Z_carried[t - 1, j, :]
+                adopted_mask = (prev_j > 0.12) & (prior_i < 0.04) & (curr_i > 0.12)
+                if not np.any(adopted_mask):
+                    continue
+                weights = prev_j * curr_i * adopted_mask
+                score = float(weights.sum())
+                if score <= 0.02:
+                    continue
+                adopted_terms = _top_terms(weights, k=3)
+                outgoing_adoption[j] += score
+                concept_transfers.append({
+                    "round": r_id,
+                    "round_idx": t,
+                    "from_speaker": speakers[j],
+                    "to_speaker": speakers[i],
+                    "from_short": short_map[speakers[j]],
+                    "to_short": short_map[speakers[i]],
+                    "terms": adopted_terms,
+                    "score": round(score, 4),
+                })
+
+    concept_transfers.sort(key=lambda item: item["score"], reverse=True)
+    dedup_transfers: List[dict] = []
+    seen_pairs: set = set()
+    for tr in concept_transfers:
+        pair_key = (tr["from_speaker"], tr["to_speaker"])
+        if pair_key in seen_pairs:
+            continue
+        seen_pairs.add(pair_key)
+        dedup_transfers.append(tr)
+        if len(dedup_transfers) >= 6:
+            break
+
+    terminal_states = Z_carried[-1]
+    spoken_final = [i for i in range(N) if has_spoken_mask[-1, i]]
+    nnls_weights = np.zeros(N, dtype=float)
+    sin_thetas = np.zeros(N, dtype=float)
+    if len(spoken_final) >= 2:
+        from scipy.optimize import nnls
+        sub_states = terminal_states[spoken_final]
+        sub_sin = compute_nnls_subspace_orthogonality(sub_states)
+        sub_w, _ = nnls(sub_states.T, terminal_centroid)
+        w_sum = float(sub_w.sum())
+        if w_sum > 1e-9:
+            sub_w = sub_w / w_sum
+        for loc_idx, spk_idx in enumerate(spoken_final):
+            nnls_weights[spk_idx] = float(sub_w[loc_idx])
+            sin_thetas[spk_idx] = float(sub_sin[loc_idx])
+
+    top_room_mask = terminal_centroid > 0.05
+    raw_concession = np.zeros(N, dtype=float)
+    raw_influence = np.zeros(N, dtype=float)
+    vocab_overlaps = np.zeros(N, dtype=float)
+    sig_terms_by_spk: List[List[str]] = []
+
+    for i in range(N):
+        act_t = np.where(active_mask[:, i])[0]
+        if len(act_t) >= 2:
+            path_len = sum(
+                float(np.linalg.norm(Z[act_t[k], i] - Z[act_t[k - 1], i]))
+                for k in range(1, len(act_t))
+            )
+            raw_concession[i] = path_len
+        else:
+            raw_concession[i] = 0.0
+
+        init_vec = Z[act_t[0], i] if len(act_t) > 0 else np.zeros(d, dtype=float)
+        init_norm = float(np.linalg.norm(init_vec))
+        anchor_pull = (
+            float(np.dot(init_vec, terminal_centroid) / (init_norm * term_norm))
+            if (init_norm > 1e-9 and term_norm > 1e-9)
+            else 0.0
+        )
+        adopt_norm = float(outgoing_adoption[i] / (outgoing_adoption.max() + 1e-9)) if outgoing_adoption.max() > 0 else 0.0
+        raw_influence[i] = 0.55 * nnls_weights[i] + 0.30 * max(0.0, anchor_pull) + 0.15 * adopt_norm
+
+        fin_vec = terminal_states[i]
+        if np.any(top_room_mask) and np.linalg.norm(fin_vec) > 1e-9:
+            fin_bin = (fin_vec > 0.05).astype(float)
+            room_bin = top_room_mask.astype(float)
+            denom = float(np.linalg.norm(fin_bin) * np.linalg.norm(room_bin))
+            vocab_overlaps[i] = float(np.dot(fin_bin, room_bin) / denom) if denom > 1e-9 else 0.0
+        else:
+            vocab_overlaps[i] = 0.0
+
+        sig_terms_by_spk.append(_top_terms(fin_vec, k=3))
+
+    inf_sum = float(raw_influence.sum())
+    influence_pct = (raw_influence / inf_sum * 100.0) if inf_sum > 1e-9 else np.zeros(N, dtype=float)
+    med_conc = float(np.median(raw_concession)) if N > 0 else 0.0
+    med_inf = float(np.median(influence_pct)) if N > 0 else 0.0
+
+    speaker_profiles: List[dict] = []
+    for i, spk in enumerate(speakers):
+        is_ortho = bool(rogue_idx is not None and i == rogue_idx)
+        conc = float(raw_concession[i])
+        inf_p = float(influence_pct[i])
+        if is_ortho:
+            role = "Unreconciled Dissenter"
+        elif inf_p >= med_inf and conc <= med_conc:
+            role = "Framing Anchor"
+        elif inf_p >= med_inf and conc > med_conc:
+            role = "Synthesizing Broker"
+        elif inf_p < med_inf and conc > med_conc:
+            role = "Co-opted Conceder"
+        else:
+            role = "Peripheral Holdout"
+
+        false_consensus_flag = bool(vocab_overlaps[i] >= 0.45 and sin_thetas[i] >= 0.80)
+        speaker_profiles.append({
+            "speaker": spk,
+            "short_speaker": short_map[spk],
+            "concession": round(conc, 3),
+            "influence_pct": round(inf_p, 1),
+            "nnls_weight_pct": round(float(nnls_weights[i] * 100.0), 1),
+            "vocab_overlap_pct": round(float(vocab_overlaps[i] * 100.0), 1),
+            "sin_theta_pct": round(float(sin_thetas[i] * 100.0), 1),
+            "is_orthogonal": is_ortho,
+            "false_consensus": false_consensus_flag,
+            "archetype": role,
+            "signature_terms": sig_terms_by_spk[i],
+        })
+
+    phase_rounds: List[dict] = []
+    k_star_vals: List[float] = []
+    vel_vals: List[float] = []
+    shift_vecs: List[np.ndarray] = []
+
+    for t in range(T):
+        k_val = compute_effective_channels_k_star(Z[t])
+        k_star_vals.append(k_val)
+        if t == 0:
+            act_t = np.where(active_mask[0])[0]
+            disp = float(np.mean([np.linalg.norm(Z[0, i] - centroids[0]) for i in act_t])) if len(act_t) > 0 else 0.0
+            vel = disp * 0.5
+            shift = np.zeros(d, dtype=float)
+        else:
+            shift = centroids[t] - centroids[t - 1]
+            vel = float(np.linalg.norm(shift))
+        vel_vals.append(vel)
+        shift_vecs.append(shift)
+
+    mid_k = float(np.median(k_star_vals)) if k_star_vals else 2.0
+    mid_v = float(np.median(vel_vals)) if vel_vals else 0.3
+
+    for t in range(T):
+        r_id = int(rounds[t])
+        rot_deg = 0.0
+        if t >= 2:
+            v_prev = shift_vecs[t - 1]
+            v_curr = shift_vecs[t]
+            n1 = float(np.linalg.norm(v_prev))
+            n2 = float(np.linalg.norm(v_curr))
+            if n1 > 1e-9 and n2 > 1e-9:
+                cos_a = float(np.clip(np.dot(v_prev, v_curr) / (n1 * n2), -1.0, 1.0))
+                rot_deg = float(np.degrees(np.arccos(cos_a)))
+
+        dom_terms = _top_terms(centroids[t], k=2)
+        surge_terms = _top_terms(np.maximum(0.0, centroids[t] - centroids[t - 1]), k=2) if t > 0 else dom_terms
+        k_val = k_star_vals[t]
+        vel = vel_vals[t]
+        if k_val >= mid_k and vel >= mid_v:
+            regime = "Broad Exploration"
+        elif k_val >= mid_k and vel < mid_v:
+            regime = "Entrenched Standoff"
+        elif k_val < mid_k and vel >= mid_v:
+            regime = "Active Synthesis"
+        else:
+            regime = "Premature Lock-in" if t == 0 else "Settled Consensus"
+
+        phase_rounds.append({
+            "round": r_id,
+            "round_idx": t,
+            "k_star": round(k_val, 2),
+            "delta_k_star": round(k_val - k_star_vals[t - 1], 2) if t > 0 else 0.0,
+            "velocity": round(vel, 3),
+            "rotation_deg": round(rot_deg, 1),
+            "is_pivot": bool(rot_deg >= 45.0),
+            "regime": regime,
+            "dominant_terms": dom_terms,
+            "surge_terms": surge_terms,
+        })
+
+    catalyst_candidates: List[Tuple[float, dict]] = []
+    for t in range(1, T):
+        r_id = int(rounds[t])
+        delta_k = k_star_vals[t] - k_star_vals[t - 1]
+        rot_deg = phase_rounds[t]["rotation_deg"]
+        prev_clusters = round_clusters[t - 1] if t - 1 < len(round_clusters) else []
+
+        prev_vecs: List[Tuple[dict, np.ndarray]] = []
+        for pc in prev_clusters:
+            idxs = [speakers.index(m) for m in pc["members"] if m in speakers]
+            if idxs:
+                prev_vecs.append((pc, Z_carried[t - 1, idxs, :].mean(axis=0)))
+
+        for i in range(N):
+            if not active_mask[t, i]:
+                continue
+            v = Z[t, i]
+            v_norm = float(np.linalg.norm(v))
+            if v_norm <= 1e-9:
+                continue
+
+            best_bridge = 0.0
+            camp_a, camp_b = None, None
+            bridge_terms: List[str] = []
+            if len(prev_vecs) >= 2:
+                for a_idx in range(len(prev_vecs)):
+                    for b_idx in range(a_idx + 1, len(prev_vecs)):
+                        ca, va = prev_vecs[a_idx]
+                        cb, vb = prev_vecs[b_idx]
+                        na, nb = float(np.linalg.norm(va)), float(np.linalg.norm(vb))
+                        if na <= 1e-9 or nb <= 1e-9:
+                            continue
+                        sa = max(0.0, float(np.dot(v, va) / (v_norm * na)))
+                        sb = max(0.0, float(np.dot(v, vb) / (v_norm * nb)))
+                        b_score = sa * sb
+                        if b_score > best_bridge:
+                            best_bridge = b_score
+                            camp_a, camp_b = ca, cb
+                            comb_vec = v * (va + vb)
+                            bridge_terms = _top_terms(comb_vec, k=3)
+
+            if not bridge_terms:
+                bridge_terms = _top_terms(v, k=3)
+
+            contraction_bonus = max(0.0, -delta_k)
+            pivot_bonus = (rot_deg / 90.0) if rot_deg >= 45.0 else 0.0
+            align_to_final = (
+                max(0.0, float(np.dot(v, terminal_centroid) / (v_norm * term_norm)))
+                if term_norm > 1e-9
+                else 0.0
+            )
+            total_score = best_bridge * 3.0 + contraction_bonus * 0.65 + pivot_bonus * 0.8 + align_to_final * 0.6
+
+            if contraction_bonus >= 0.4 and align_to_final >= 0.45:
+                cat_type = "Synthesis Catalyst"
+            elif rot_deg >= 45.0 and pivot_bonus >= best_bridge * 2.0:
+                cat_type = "Agenda Pivot"
+            else:
+                cat_type = "Coalition Bridge"
+
+            bridged_label = (
+                f"{camp_a['topic'][:18]} ↔ {camp_b['topic'][:18]}"
+                if (camp_a and camp_b)
+                else f"Round {r_id} Frame Shift"
+            )
+            claim_txt = claims_by_round.get(r_id, {}).get(speakers[i], "")
+            catalyst_candidates.append((
+                total_score,
+                {
+                    "round": r_id,
+                    "round_idx": t,
+                    "speaker": speakers[i],
+                    "short_speaker": short_map[speakers[i]],
+                    "catalyst_type": cat_type,
+                    "delta_k_star": round(delta_k, 2),
+                    "rotation_deg": round(rot_deg, 1),
+                    "bridged_camps": bridged_label,
+                    "bridge_terms": bridge_terms,
+                    "claim": claim_txt,
+                    "score": round(total_score, 3),
+                },
+            ))
+
+    catalyst_candidates.sort(key=lambda item: item[0], reverse=True)
+    catalyst_events: List[dict] = []
+    seen_rounds_spk: set = set()
+    used_rounds: set = set()
+    for _, cand in catalyst_candidates:
+        key = (cand["round_idx"], cand["speaker"])
+        if key in seen_rounds_spk:
+            continue
+        if cand["round_idx"] in used_rounds and len(catalyst_events) < 3 and T >= 4:
+            continue
+        seen_rounds_spk.add(key)
+        used_rounds.add(cand["round_idx"])
+        catalyst_events.append(cand)
+        if len(catalyst_events) >= 4:
+            break
+
+    catalyst_events.sort(key=lambda c: (c["round_idx"], -c["score"]))
+    for c_idx, ce in enumerate(catalyst_events, start=1):
+        ce["catalyst_id"] = c_idx
+
+    return {
+        "speaker_profiles": speaker_profiles,
+        "med_concession": round(med_conc, 3),
+        "med_influence": round(med_inf, 1),
+        "concept_transfers": dedup_transfers,
+        "phase_rounds": phase_rounds,
+        "mid_k_star": round(mid_k, 2),
+        "mid_velocity": round(mid_v, 3),
+        "catalyst_events": catalyst_events,
+    }
+
+
+
 
 def render_faction_rogue_dashboard(
     source: Union[LiveTranscriptStreamProcessor, np.ndarray],
@@ -782,6 +1154,8 @@ def render_faction_rogue_dashboard(
     return fig
 
 
+
+
 def render_shortcut_comparison(
     source: Union[LiveTranscriptStreamProcessor, np.ndarray],
     shortcut_round: int = 8,
@@ -849,6 +1223,8 @@ def render_shortcut_comparison(
     return fig
 
 
+
+
 def render_spectral_dashboard(
     source: Union[LiveTranscriptStreamProcessor, np.ndarray],
     speakers: Optional[Sequence[str]] = None,
@@ -911,6 +1287,16 @@ def render_spectral_dashboard(
             output_path=output_path,
             show=show,
             title=title or "Alluvial Faction-Flow: Collection & Divergence Concepts, Wedge Terms & Medoid Claims",
+            dpi=dpi,
+        )
+    elif style == "narrative":
+        return render_narrative_dashboard(
+            source=source,
+            speakers=speakers,
+            rounds=rounds,
+            output_path=output_path,
+            show=show,
+            title=title or "Deliberation Narrative: Influence, Concept Transfers, Phase Regimes & Catalyst Turns",
             dpi=dpi,
         )
 
@@ -1079,6 +1465,8 @@ def render_spectral_dashboard(
         plt.show()
 
     return fig
+
+
 
 
 def plot_from_transcript_file(
@@ -1307,6 +1695,8 @@ def render_temporal_evolution_grid(
         plt.show()
 
     return fig
+
+
 
 
 def render_trajectory_paths_dashboard(
@@ -1828,6 +2218,8 @@ def render_trajectory_paths_dashboard(
     return fig
 
 
+
+
 def render_concept_flow_dashboard(
     source: Union[LiveTranscriptStreamProcessor, np.ndarray],
     speakers: Optional[Sequence[str]] = None,
@@ -2151,6 +2543,334 @@ def render_concept_flow_dashboard(
     return fig
 
 
+def render_narrative_dashboard(
+    source: Union[LiveTranscriptStreamProcessor, np.ndarray],
+    speakers: Optional[Sequence[str]] = None,
+    rounds: Optional[Sequence[int]] = None,
+    output_path: Optional[str] = None,
+    show: bool = False,
+    title: str = "Deliberation Narrative: Influence, Concept Transfers, Phase Regimes & Catalyst Turns",
+    dpi: int = 220,
+):
+    plt = _ensure_matplotlib(show=show)
+    from matplotlib.gridspec import GridSpec
+
+    Z, resolved_speakers, resolved_rounds, feature_names = _resolve_source_data(source, speakers, rounds)
+    T, N, _ = Z.shape
+
+    _, rogue_idx = detect_orthogonal_from_states(Z, resolved_speakers)
+    _, Z_display_2d, _, active_mask, has_spoken_mask = _project_silence_aware_pca(Z)
+    round_claims = _extract_round_claims(source, resolved_speakers, resolved_rounds)
+    round_clusters, _ = _extract_cluster_events_and_flow(
+        source=source,
+        Z=Z,
+        Z_display_2d=Z_display_2d,
+        active_mask=active_mask,
+        has_spoken_mask=has_spoken_mask,
+        speakers=resolved_speakers,
+        rounds=resolved_rounds,
+        feature_names=feature_names,
+        rogue_idx=rogue_idx,
+        round_claims=round_claims,
+        max_inflections=5,
+    )
+    nar = _extract_narrative_dynamics(
+        source=source,
+        Z=Z,
+        active_mask=active_mask,
+        has_spoken_mask=has_spoken_mask,
+        speakers=resolved_speakers,
+        rounds=resolved_rounds,
+        feature_names=feature_names,
+        rogue_idx=rogue_idx,
+        round_clusters=round_clusters,
+        round_claims=round_claims,
+    )
+    synth = source.latest_metrics.topic_synthesis if (hasattr(source, "latest_metrics") and source.latest_metrics) else None
+
+    plt.rcParams["font.sans-serif"] = "DejaVu Sans"
+    plt.rcParams["font.size"] = 9.2
+    fig = plt.figure(figsize=(17.5, 11.8), dpi=dpi)
+    fig.patch.set_facecolor("#ffffff")
+    if synth and synth.center_of_disagreement:
+        fig.suptitle(title, fontsize=13.5, fontweight="bold", y=0.985)
+        fig.text(
+            0.5,
+            0.952,
+            f"Center of Disagreement: {synth.center_of_disagreement}",
+            ha="center",
+            fontsize=10.0,
+            color="#475569",
+            style="italic",
+        )
+    else:
+        fig.suptitle(title, fontsize=13.5, fontweight="bold", y=0.985)
+
+    gs = GridSpec(
+        3,
+        2,
+        figure=fig,
+        width_ratios=[1.22, 1.15],
+        height_ratios=[1.12, 0.98, 0.72],
+        wspace=0.25,
+        hspace=0.38,
+    )
+    ax_quad = fig.add_subplot(gs[0:2, 0])
+    ax_phase = fig.add_subplot(gs[0, 1])
+    ax_false = fig.add_subplot(gs[1, 1])
+    ax_cat = fig.add_subplot(gs[2, :])
+
+    profiles = nar["speaker_profiles"]
+    med_c = nar["med_concession"]
+    med_i = nar["med_influence"]
+    max_c = max([p["concession"] for p in profiles] + [med_c * 1.4, 0.5]) * 1.18
+    max_i = max([p["influence_pct"] for p in profiles] + [med_i * 1.4, 20.0]) * 1.22
+
+    ax_quad.set_facecolor("#f8fafc")
+    ax_quad.axvspan(-0.08 * max_c, med_c, ymin=med_i / max_i, ymax=1.0, color="#ecfdf5", alpha=0.55, zorder=0)
+    ax_quad.axvspan(med_c, max_c, ymin=med_i / max_i, ymax=1.0, color="#eff6ff", alpha=0.55, zorder=0)
+    ax_quad.axvspan(-0.08 * max_c, med_c, ymin=0.0, ymax=med_i / max_i, color="#fef2f2", alpha=0.45, zorder=0)
+    ax_quad.axvspan(med_c, max_c, ymin=0.0, ymax=med_i / max_i, color="#fffbeb", alpha=0.50, zorder=0)
+    ax_quad.axvline(med_c, color="#64748b", linestyle="--", linewidth=1.1, alpha=0.7, zorder=1)
+    ax_quad.axhline(med_i, color="#64748b", linestyle="--", linewidth=1.1, alpha=0.7, zorder=1)
+
+    ax_quad.text(0.02, 0.97, "FRAMING ANCHORS\n(Low movement, high pull)", transform=ax_quad.transAxes, fontsize=7.6, fontweight="bold", color="#065f46", va="top")
+    ax_quad.text(0.98, 0.97, "SYNTHESIZING BROKERS\n(Moved & shaped consensus)", transform=ax_quad.transAxes, fontsize=7.6, fontweight="bold", color="#1d4ed8", va="top", ha="right")
+    ax_quad.text(0.02, 0.03, "ISOLATED / ORTHOGONAL\n(Held ground, low pull)", transform=ax_quad.transAxes, fontsize=7.6, fontweight="bold", color="#991b1b", va="bottom")
+    ax_quad.text(0.98, 0.03, "CO-OPTED CONCEDERS\n(Moved toward room frame)", transform=ax_quad.transAxes, fontsize=7.6, fontweight="bold", color="#92400e", va="bottom", ha="right")
+
+    role_colors = {
+        "Framing Anchor": "#059669",
+        "Synthesizing Broker": "#2563eb",
+        "Co-opted Conceder": "#d97706",
+        "Unreconciled Dissenter": "#dc2626",
+        "Peripheral Holdout": "#64748b",
+    }
+    pos_by_spk = {p["speaker"]: (p["concession"], p["influence_pct"]) for p in profiles}
+
+    for tr_idx, tr in enumerate(nar["concept_transfers"][:4]):
+        p0 = pos_by_spk.get(tr["from_speaker"])
+        p1 = pos_by_spk.get(tr["to_speaker"])
+        if not p0 or not p1:
+            continue
+        rad = 0.18 if tr_idx % 2 == 0 else -0.18
+        ax_quad.annotate(
+            "",
+            xy=p1,
+            xytext=p0,
+            arrowprops=dict(
+                arrowstyle="-|>,head_length=0.55,head_width=0.28",
+                color="#7c3aed",
+                lw=1.35,
+                alpha=0.55,
+                connectionstyle=f"arc3,rad={rad}",
+                shrinkA=9,
+                shrinkB=9,
+            ),
+            zorder=3,
+        )
+        mx = 0.5 * (p0[0] + p1[0])
+        my = 0.5 * (p0[1] + p1[1]) + (0.035 * max_i if rad > 0 else -0.045 * max_i)
+        term_str = ", ".join(tr["terms"][:2]) if tr["terms"] else "adopted"
+        ax_quad.text(
+            mx,
+            my,
+            f"R{tr['round']}: {term_str}",
+            fontsize=6.9,
+            color="#5b21b6",
+            ha="center",
+            va="center",
+            bbox=dict(boxstyle="round,pad=0.14", facecolor="#f5f3ff", edgecolor="#c4b5fd", alpha=0.88, lw=0.7),
+            zorder=5,
+        )
+
+    for p in profiles:
+        col = role_colors.get(p["archetype"], "#475569")
+        sz = 95 + p["nnls_weight_pct"] * 4.0
+        marker = "X" if p["is_orthogonal"] else "o"
+        ax_quad.scatter(
+            p["concession"],
+            p["influence_pct"],
+            s=sz,
+            color=col,
+            marker=marker,
+            edgecolors="#0f172a",
+            linewidths=1.3,
+            zorder=6,
+        )
+        sig_str = f" ({', '.join(p['signature_terms'][:2])})" if p["signature_terms"] else ""
+        ax_quad.text(
+            p["concession"] + 0.018 * max_c,
+            p["influence_pct"] + 0.014 * max_i,
+            f"{p['short_speaker']}{sig_str}",
+            fontsize=7.6,
+            fontweight="bold" if p["is_orthogonal"] or p["archetype"] in ("Framing Anchor", "Synthesizing Broker") else "normal",
+            color="#991b1b" if p["is_orthogonal"] else "#0f172a",
+            zorder=7,
+        )
+
+    ax_quad.set_xlim(-0.08 * max_c, max_c)
+    ax_quad.set_ylim(0, max_i)
+    ax_quad.set_title("A. Asymmetric Influence vs. Concession Quadrant & Concept-Transfer Arcs", fontsize=10.6, fontweight="bold", pad=8)
+    ax_quad.set_xlabel("Speaker Concession / Total Semantic Path Traveled ||Δz_i||")
+    ax_quad.set_ylabel("Room Pull & Consensus Influence (%)")
+    ax_quad.grid(True, linestyle=":", alpha=0.55)
+
+    phase_rounds = nar["phase_rounds"]
+    mid_k = nar["mid_k_star"]
+    mid_v = nar["mid_velocity"]
+    vs = [pr["velocity"] for pr in phase_rounds]
+    ks = [pr["k_star"] for pr in phase_rounds]
+    v_max = max(vs + [mid_v * 1.5, 0.3]) * 1.25
+    k_max = max(ks + [float(N) * 0.8, mid_k * 1.3, 2.0]) + 0.65
+
+    ax_phase.set_facecolor("#f8fafc")
+    ax_phase.axvline(mid_v, color="#64748b", linestyle="--", lw=1.0, alpha=0.65)
+    ax_phase.axhline(mid_k, color="#64748b", linestyle="--", lw=1.0, alpha=0.65)
+    ax_phase.text(0.98, 0.96, "BROAD EXPLORATION", transform=ax_phase.transAxes, fontsize=7.0, fontweight="bold", color="#2563eb", ha="right", va="top")
+    ax_phase.text(0.02, 0.96, "ENTRENCHED STANDOFF", transform=ax_phase.transAxes, fontsize=7.0, fontweight="bold", color="#dc2626", ha="left", va="top")
+    ax_phase.text(0.98, 0.04, "ACTIVE SYNTHESIS", transform=ax_phase.transAxes, fontsize=7.0, fontweight="bold", color="#059669", ha="right", va="bottom")
+    ax_phase.text(0.02, 0.04, "SETTLED / LOCK-IN", transform=ax_phase.transAxes, fontsize=7.0, fontweight="bold", color="#475569", ha="left", va="bottom")
+
+    for t in range(len(phase_rounds) - 1):
+        p0 = (phase_rounds[t]["velocity"], phase_rounds[t]["k_star"])
+        p1 = (phase_rounds[t + 1]["velocity"], phase_rounds[t + 1]["k_star"])
+        ax_phase.annotate(
+            "",
+            xy=p1,
+            xytext=p0,
+            arrowprops=dict(arrowstyle="-|>,head_length=0.55,head_width=0.28", color="#2563eb", lw=1.8, alpha=0.78, shrinkA=5, shrinkB=6),
+            zorder=4,
+        )
+
+    for pr in phase_rounds:
+        is_piv = pr["is_pivot"]
+        col = "#d97706" if is_piv else ("#059669" if pr["round_idx"] == T - 1 else "#2563eb")
+        ax_phase.scatter(pr["velocity"], pr["k_star"], s=78 if is_piv else 58, color=col, edgecolors="#0f172a", linewidths=1.2, zorder=6)
+        tag = f"R{pr['round']}"
+        if is_piv:
+            tag += f" (↻{pr['rotation_deg']:.0f}°)"
+        if pr["surge_terms"]:
+            tag += f"\n{', '.join(pr['surge_terms'][:2])}"
+        ax_phase.text(
+            pr["velocity"] + 0.018 * v_max,
+            pr["k_star"] + 0.08,
+            tag,
+            fontsize=7.0,
+            fontweight="bold" if is_piv else "normal",
+            color="#92400e" if is_piv else "#1e293b",
+            va="bottom",
+            zorder=7,
+        )
+
+    ax_phase.set_xlim(-0.04 * v_max, v_max)
+    ax_phase.set_ylim(0.8, k_max)
+    ax_phase.set_title("B. Deliberation Phase Portrait & Agenda Pivots (K*(t) vs. Centroid Velocity)", fontsize=10.3, fontweight="bold", pad=8)
+    ax_phase.set_xlabel("Centroid Velocity ||z̄(t) - z̄(t-1)||")
+    ax_phase.set_ylabel("Effective Channels K*(t)")
+    ax_phase.grid(True, linestyle=":", alpha=0.55)
+
+    ax_false.set_facecolor("#f8fafc")
+    sorted_prof = sorted(profiles, key=lambda p: (p["sin_theta_pct"], -p["vocab_overlap_pct"]), reverse=True)
+    y_idx = np.arange(len(sorted_prof))
+    bar_h = 0.36
+    ax_false.barh(
+        y_idx - bar_h / 2,
+        [p["vocab_overlap_pct"] for p in sorted_prof],
+        height=bar_h,
+        color="#0284c7",
+        alpha=0.82,
+        label="Shared Topic Vocab (%)",
+    )
+    ax_false.barh(
+        y_idx + bar_h / 2,
+        [p["sin_theta_pct"] for p in sorted_prof],
+        height=bar_h,
+        color=["#dc2626" if (p["is_orthogonal"] or p["false_consensus"]) else "#f59e0b" for p in sorted_prof],
+        alpha=0.85,
+        label="Subspace Orthogonality sin(θ) (%)",
+    )
+    for row_i, p in enumerate(sorted_prof):
+        if p["false_consensus"]:
+            ax_false.text(102, row_i, "⚠ False Consensus", fontsize=7.0, fontweight="bold", color="#b45309", va="center")
+        elif p["is_orthogonal"]:
+            ax_false.text(102, row_i, "✕ Orthogonal", fontsize=7.0, fontweight="bold", color="#dc2626", va="center")
+
+    ax_false.set_yticks(y_idx)
+    ax_false.set_yticklabels([p["short_speaker"] for p in sorted_prof], fontsize=8.0)
+    ax_false.set_xlim(0, 128)
+    ax_false.set_xlabel("Percentage (%)")
+    ax_false.set_title("C. Lexical Topic Overlap vs. Subspace Orthogonality sin(θ)", fontsize=10.3, fontweight="bold", pad=26)
+    ax_false.grid(True, axis="x", linestyle=":", alpha=0.55)
+    ax_false.legend(loc="upper center", bbox_to_anchor=(0.5, 1.12), ncol=2, fontsize=7.3, framealpha=0.92)
+
+    ax_cat.set_facecolor("#ffffff")
+    ax_cat.set_xlim(0, 1)
+    ax_cat.set_ylim(0, 1)
+    ax_cat.axis("off")
+    ax_cat.set_title(
+        "D. Catalyst & Bridge-Term Dossier (Turns That Bridged Factions, Contracted K*, or Rotated the Debate Axis)",
+        fontsize=10.5,
+        fontweight="bold",
+        loc="left",
+        pad=6,
+    )
+
+    catalysts = nar["catalyst_events"]
+    n_cards = max(1, len(catalysts))
+    gap = 0.014
+    card_w = (1.0 - gap * (n_cards - 1)) / n_cards
+    wrap_chars = max(30, int(158 / n_cards))
+
+    cat_styles = {
+        "Synthesis Catalyst": ("#059669", "#f0fdf4", "#065f46"),
+        "Coalition Bridge": ("#2563eb", "#eff6ff", "#1d4ed8"),
+        "Agenda Pivot": ("#d97706", "#fffbeb", "#92400e"),
+    }
+
+    for c_idx, ce in enumerate(catalysts):
+        x0 = c_idx * (card_w + gap)
+        border_col, bg_col, head_col = cat_styles.get(ce["catalyst_type"], ("#475569", "#f8fafc", "#1e293b"))
+        ax_cat.add_patch(
+            FancyBboxPatch(
+                (x0 + 0.008, 0.06),
+                card_w - 0.016,
+                0.84,
+                boxstyle="round,pad=0.006,rounding_size=0.016",
+                facecolor=bg_col,
+                edgecolor=border_col,
+                linewidth=1.25,
+            )
+        )
+        dk_sign = "+" if ce["delta_k_star"] > 0 else ""
+        head_txt = f"C{ce['catalyst_id']} • R{ce['round']} {ce['catalyst_type'].upper()} (ΔK* {dk_sign}{ce['delta_k_star']:.2f})"
+        ax_cat.text(x0 + 0.015, 0.84, head_txt, fontsize=7.9, fontweight="bold", color=head_col, va="top")
+
+        sub_line = textwrap.shorten(f"{ce['short_speaker']} | {ce['bridged_camps']}", width=wrap_chars + 6, placeholder="...")
+        ax_cat.text(x0 + 0.015, 0.68, sub_line, fontsize=7.4, fontweight="bold", color="#1e293b", va="top")
+
+        b_str = ", ".join(ce["bridge_terms"][:3]) if ce["bridge_terms"] else "n/a"
+        rot_tag = f"  •  ↻ {ce['rotation_deg']:.0f}°" if ce["rotation_deg"] >= 45.0 else ""
+        ax_cat.text(x0 + 0.015, 0.53, f"▲ Bridge Terms: {b_str}{rot_tag}", fontsize=7.1, fontweight="bold", color=head_col, va="top")
+
+        raw_claim = ce["claim"] or "Active catalyst turn recorded."
+        short_claim = textwrap.shorten(raw_claim, width=wrap_chars * 2 - 2, placeholder="...")
+        wrapped_claim = textwrap.fill(f"\"{short_claim}\"", width=wrap_chars)
+        ax_cat.text(x0 + 0.015, 0.37, wrapped_claim, fontsize=6.9, color="#475569", style="italic", va="top")
+
+    fig.subplots_adjust(top=0.91, bottom=0.04, left=0.05, right=0.96)
+
+    if output_path:
+        os.makedirs(os.path.dirname(os.path.abspath(output_path)), exist_ok=True)
+        fig.savefig(output_path, bbox_inches="tight")
+
+    if show:
+        plt.show()
+
+    return fig
+
+
+
 
 def export_interactive_timeline_html(
     source: Union[LiveTranscriptStreamProcessor, np.ndarray],
@@ -2185,6 +2905,18 @@ def export_interactive_timeline_html(
         rogue_idx=rogue_idx,
         round_claims=round_claims,
         max_inflections=6,
+    )
+    narrative_data = _extract_narrative_dynamics(
+        source=source,
+        Z=Z,
+        active_mask=active_mask,
+        has_spoken_mask=has_spoken_mask,
+        speakers=resolved_speakers,
+        rounds=resolved_rounds,
+        feature_names=feature_names,
+        rogue_idx=rogue_idx,
+        round_clusters=round_clusters,
+        round_claims=round_claims,
     )
     synth = source.latest_metrics.topic_synthesis if (hasattr(source, "latest_metrics") and source.latest_metrics) else None
 
@@ -2266,6 +2998,7 @@ def export_interactive_timeline_html(
         "poles": poles,
         "concept_pins": concept_pins,
         "inflection_events": inflection_events,
+        "narrative": narrative_data,
         "synthesis": {
             "center_of_disagreement": synth.center_of_disagreement if synth else "",
             "centroid_concept": synth.centroid_concept if synth else "",
@@ -2540,6 +3273,7 @@ def export_interactive_timeline_html(
     <button id="playBtn">Play Timeline</button>
     <button id="modeMapBtn">2D Spatial Map</button>
     <button id="modeFlowBtn" class="secondary">Alluvial Faction-Flow</button>
+    <button id="modeNarrativeBtn" class="secondary">Narrative Insights</button>
     <button id="clearFocusBtn" class="secondary" style="display:none;">Reset Lens</button>
     <div class="slider-wrapper">
       <span style="font-size: 12px; color: #94a3b8;">Round:</span>
@@ -2578,6 +3312,7 @@ const stats = document.getElementById("statsCard");
 const playBtn = document.getElementById("playBtn");
 const modeMapBtn = document.getElementById("modeMapBtn");
 const modeFlowBtn = document.getElementById("modeFlowBtn");
+const modeNarrativeBtn = document.getElementById("modeNarrativeBtn");
 const clearFocusBtn = document.getElementById("clearFocusBtn");
 const claimsPanel = document.getElementById("claimsPanel");
 const tooltip = document.getElementById("tooltip");
@@ -2676,7 +3411,70 @@ function getActiveCluster() {{
   return null;
 }}
 
+function renderNarrativePanel() {{
+  const nar = DATA.narrative || {{}};
+  const catalysts = nar.catalyst_events || [];
+  const transfers = nar.concept_transfers || [];
+  const profiles = nar.speaker_profiles || [];
+  let html = "";
+
+  if (catalysts.length > 0) {{
+    html += `<div class="summary-box"><div class="summary-label">Catalyst & Bridge Turns</div>`;
+    catalysts.forEach(ce => {{
+      const dk = ce.delta_k_star > 0 ? `+${{ce.delta_k_star.toFixed(2)}}` : ce.delta_k_star.toFixed(2);
+      const bTerms = (ce.bridge_terms || []).map(t => `<span class="term-chip term-wedge">▲ ${{escapeHtml(t)}}</span>`).join("");
+      const claimHtml = ce.claim ? `<div class="claim-text" style="margin-top:4px;">"${{highlightClaimTerms(ce.claim, ce.bridge_terms, [])}}"</div>` : "";
+      html += `<div class="claim-card" data-round-jump="${{ce.round_idx}}" style="margin-top:6px;">
+        <div class="claim-header">
+          <span>C${{ce.catalyst_id}} • R${{ce.round}} ${{escapeHtml(ce.short_speaker)}}</span>
+          <span class="claim-badge">${{escapeHtml(ce.catalyst_type)}} | ΔK* ${{dk}}</span>
+        </div>
+        <div class="claim-topic">${{escapeHtml(ce.bridged_camps)}}</div>
+        ${{bTerms ? `<div>${{bTerms}}</div>` : ""}}
+        ${{claimHtml}}
+      </div>`;
+    }});
+    html += `</div>`;
+  }}
+
+  if (transfers.length > 0) {{
+    html += `<div class="summary-box"><div class="summary-label">Concept Adoption (Lagged Transfers)</div>`;
+    transfers.slice(0, 5).forEach(tr => {{
+      html += `<div style="font-size:11.5px; padding:4px 0; border-bottom:1px solid #1e293b;">
+        <strong style="color:#a78bfa;">${{escapeHtml(tr.from_short)}} → ${{escapeHtml(tr.to_short)}}</strong>
+        <span style="color:#94a3b8;"> (R${{tr.round}})</span>
+        <div style="color:#fde68a; font-size:11px;">Adopted: ${{escapeHtml((tr.terms || []).join(", "))}}</div>
+      </div>`;
+    }});
+    html += `</div>`;
+  }}
+
+  if (profiles.length > 0) {{
+    html += `<div class="summary-box"><div class="summary-label">Speaker Roles & False-Consensus Audit</div>`;
+    profiles.forEach(p => {{
+      const flag = p.false_consensus ? " ⚠ False Consensus" : (p.is_orthogonal ? " ✕ Orthogonal" : "");
+      html += `<div style="font-size:11.2px; padding:4px 0; border-bottom:1px solid #1e293b;">
+        <div style="display:flex; justify-content:space-between;">
+          <strong>${{escapeHtml(p.short_speaker)}}</strong>
+          <span style="color:#38bdf8;">${{escapeHtml(p.archetype)}}${{flag}}</span>
+        </div>
+        <div style="color:#94a3b8; font-size:10.5px;">Pull: ${{p.influence_pct}}% | Concession: ${{p.concession}} | Vocab: ${{p.vocab_overlap_pct}}% | sin(θ): ${{p.sin_theta_pct}}%</div>
+      </div>`;
+    }});
+    html += `</div>`;
+  }}
+
+  claimsPanel.innerHTML = html;
+  claimsPanel.querySelectorAll("[data-round-jump]").forEach(el => {{
+    el.addEventListener("click", () => transitionToRound(parseInt(el.getAttribute("data-round-jump"), 10)));
+  }});
+}}
+
 function renderClaimsPanel() {{
+  if (viewMode === "narrative") {{
+    renderNarrativePanel();
+    return;
+  }}
   const rData = DATA.rounds[currentRoundIdx];
   const syn = DATA.synthesis || {{}};
   const activeCluster = getActiveCluster();
@@ -2911,6 +3709,124 @@ function renderFlowCanvas(rTo) {{
   ctx.textAlign = "left";
 }}
 
+function renderNarrativeCanvas() {{
+  const nar = DATA.narrative || {{}};
+  const profiles = nar.speaker_profiles || [];
+  const transfers = nar.concept_transfers || [];
+  const phases = nar.phase_rounds || [];
+  const splitX = Math.floor(W * 0.56);
+
+  const qL = 54, qR = splitX - 24, qT = 50, qB = H - 52;
+  const qW = qR - qL, qH = qB - qT;
+  const maxC = Math.max(0.5, ...(profiles.map(p => p.concession)), (nar.med_concession || 0.2) * 1.4) * 1.18;
+  const maxI = Math.max(20, ...(profiles.map(p => p.influence_pct)), (nar.med_influence || 15) * 1.4) * 1.22;
+  const mapQX = v => qL + (v / maxC) * qW;
+  const mapQY = v => qB - (v / maxI) * qH;
+
+  const medX = mapQX(nar.med_concession || 0);
+  const medY = mapQY(nar.med_influence || 0);
+  ctx.fillStyle = "rgba(16, 185, 129, 0.08)"; ctx.fillRect(qL, qT, medX - qL, medY - qT);
+  ctx.fillStyle = "rgba(59, 130, 246, 0.08)"; ctx.fillRect(medX, qT, qR - medX, medY - qT);
+  ctx.fillStyle = "rgba(239, 68, 68, 0.08)"; ctx.fillRect(qL, medY, medX - qL, qB - medY);
+  ctx.fillStyle = "rgba(245, 158, 11, 0.08)"; ctx.fillRect(medX, medY, qR - medX, qB - medY);
+
+  ctx.strokeStyle = "#475569"; ctx.lineWidth = 1; ctx.setLineDash([4, 4]);
+  ctx.beginPath(); ctx.moveTo(medX, qT); ctx.lineTo(medX, qB); ctx.moveTo(qL, medY); ctx.lineTo(qR, medY); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.strokeStyle = "#334155"; ctx.strokeRect(qL, qT, qW, qH);
+
+  ctx.fillStyle = "#f1f5f9"; ctx.font = "bold 12px sans-serif";
+  ctx.fillText("Influence vs. Concession & Concept Transfers", qL, 28);
+  ctx.font = "bold 9.5px sans-serif";
+  ctx.fillStyle = "#6ee7b7"; ctx.fillText("FRAMING ANCHORS", qL + 6, qT + 14);
+  ctx.fillStyle = "#93c5fd"; ctx.textAlign = "right"; ctx.fillText("SYNTHESIZING BROKERS", qR - 6, qT + 14);
+  ctx.fillStyle = "#fca5a5"; ctx.textAlign = "left"; ctx.fillText("ORTHOGONAL / DISSENT", qL + 6, qB - 8);
+  ctx.fillStyle = "#fde68a"; ctx.textAlign = "right"; ctx.fillText("CO-OPTED CONCEDERS", qR - 6, qB - 8);
+  ctx.textAlign = "left";
+  ctx.fillStyle = "#94a3b8"; ctx.font = "10.5px sans-serif";
+  ctx.fillText("Concession (Semantic Path Traveled) →", qL + qW * 0.25, H - 18);
+
+  const posMap = {{}};
+  profiles.forEach(p => {{ posMap[p.speaker] = {{x: mapQX(p.concession), y: mapQY(p.influence_pct)}}; }});
+
+  transfers.slice(0, 4).forEach((tr, idx) => {{
+    const p0 = posMap[tr.from_speaker];
+    const p1 = posMap[tr.to_speaker];
+    if (!p0 || !p1) return;
+    const cx = 0.5 * (p0.x + p1.x);
+    const cy = 0.5 * (p0.y + p1.y) + (idx % 2 === 0 ? -24 : 24);
+    ctx.strokeStyle = "rgba(167, 139, 250, 0.72)";
+    ctx.lineWidth = 1.6;
+    ctx.beginPath(); ctx.moveTo(p0.x, p0.y); ctx.quadraticCurveTo(cx, cy, p1.x, p1.y); ctx.stroke();
+    ctx.fillStyle = "#ddd6fe"; ctx.font = "9.5px sans-serif"; ctx.textAlign = "center";
+    ctx.fillText(`R${{tr.round}}: ${{(tr.terms || []).slice(0, 2).join(", ")}}`, cx, cy);
+    ctx.textAlign = "left";
+  }});
+
+  const roleCols = {{
+    "Framing Anchor": "#10b981",
+    "Synthesizing Broker": "#38bdf8",
+    "Co-opted Conceder": "#f59e0b",
+    "Unreconciled Dissenter": "#ef4444",
+    "Peripheral Holdout": "#94a3b8",
+  }};
+  profiles.forEach(p => {{
+    const pt = posMap[p.speaker];
+    const col = roleCols[p.archetype] || "#94a3b8";
+    const rad = 6 + Math.min(8, (p.nnls_weight_pct || 0) * 0.12);
+    ctx.fillStyle = col;
+    ctx.beginPath(); ctx.arc(pt.x, pt.y, rad, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = "#0f172a"; ctx.lineWidth = 1.5; ctx.stroke();
+    ctx.fillStyle = "#f8fafc"; ctx.font = "bold 10.5px sans-serif";
+    ctx.fillText(p.short_speaker, pt.x + rad + 4, pt.y + 3);
+  }});
+
+  const pL = splitX + 34, pR = W - 26, pT = 50, pB = H - 52;
+  const pW = pR - pL, pH = pB - pT;
+  const maxV = Math.max(0.3, ...(phases.map(pr => pr.velocity)), (nar.mid_velocity || 0.2) * 1.4) * 1.25;
+  const maxK = Math.max(2.0, ...(phases.map(pr => pr.k_star)), (nar.mid_k_star || 2.0) * 1.3) + 0.6;
+  const mapPX = v => pL + (v / maxV) * pW;
+  const mapPY = k => pB - ((k - 0.8) / (maxK - 0.8)) * pH;
+
+  ctx.strokeStyle = "#334155"; ctx.strokeRect(pL, pT, pW, pH);
+  const midPX = mapPX(nar.mid_velocity || 0.2);
+  const midPY = mapPY(nar.mid_k_star || 2.0);
+  ctx.strokeStyle = "#475569"; ctx.setLineDash([4, 4]);
+  ctx.beginPath(); ctx.moveTo(midPX, pT); ctx.lineTo(midPX, pB); ctx.moveTo(pL, midPY); ctx.lineTo(pR, midPY); ctx.stroke();
+  ctx.setLineDash([]);
+
+  ctx.fillStyle = "#f1f5f9"; ctx.font = "bold 12px sans-serif";
+  ctx.fillText("Phase Portrait & Agenda Pivots", pL, 28);
+  ctx.font = "bold 9px sans-serif";
+  ctx.fillStyle = "#93c5fd"; ctx.textAlign = "right"; ctx.fillText("EXPLORATION", pR - 6, pT + 14);
+  ctx.fillStyle = "#6ee7b7"; ctx.fillText("ACTIVE SYNTHESIS", pR - 6, pB - 8);
+  ctx.fillStyle = "#fca5a5"; ctx.textAlign = "left"; ctx.fillText("STANDOFF", pL + 6, pT + 14);
+  ctx.fillStyle = "#94a3b8"; ctx.fillText("SETTLED / LOCK-IN", pL + 6, pB - 8);
+  ctx.fillText("Centroid Velocity ||Δz̄(t)|| →", pL + pW * 0.22, H - 18);
+
+  ctx.strokeStyle = "#38bdf8"; ctx.lineWidth = 2.0; ctx.beginPath();
+  phases.forEach((pr, idx) => {{
+    const x = mapPX(pr.velocity), y = mapPY(pr.k_star);
+    idx === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  }});
+  ctx.stroke();
+
+  phases.forEach(pr => {{
+    const x = mapPX(pr.velocity), y = mapPY(pr.k_star);
+    ctx.fillStyle = pr.is_pivot ? "#f59e0b" : (pr.round_idx === currentRoundIdx ? "#eab308" : "#38bdf8");
+    ctx.beginPath(); ctx.arc(x, y, pr.is_pivot ? 7 : 5.5, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = "#0f172a"; ctx.lineWidth = 1.4; ctx.stroke();
+    ctx.fillStyle = pr.is_pivot ? "#fde68a" : "#e2e8f0";
+    ctx.font = "bold 10px sans-serif";
+    const lbl = `R${{pr.round}}${{pr.is_pivot ? ` ↻${{pr.rotation_deg.toFixed(0)}}°` : ""}}`;
+    ctx.fillText(lbl, x + 8, y - 3);
+    if (pr.surge_terms && pr.surge_terms.length > 0) {{
+      ctx.fillStyle = "#94a3b8"; ctx.font = "9px sans-serif";
+      ctx.fillText(pr.surge_terms.slice(0, 2).join(", "), x + 8, y + 9);
+    }}
+  }});
+}}
+
 function renderCanvas() {{
   ctx.clearRect(0, 0, W, H);
   lastDrawnNodes = [];
@@ -2920,8 +3836,9 @@ function renderCanvas() {{
   const rTo = DATA.rounds[animToIdx];
   const activeCluster = getActiveCluster();
 
-  if (viewMode === "flow") {{
-    renderFlowCanvas(rTo);
+  if (viewMode === "flow" || viewMode === "narrative") {{
+    if (viewMode === "flow") renderFlowCanvas(rTo);
+    else renderNarrativeCanvas();
     label.innerText = `Round ${{rTo.round}}`;
     const kStr = (rTo.k_star !== undefined) ? `K*: ${{rTo.k_star.toFixed(2)}} | ` : "";
     stats.innerText = `${{kStr}}Dispersion: ${{rTo.dispersion.toFixed(3)}}`;
@@ -3199,19 +4116,18 @@ slider.addEventListener("input", (e) => {{
   renderCanvas();
 }});
 
-modeMapBtn.addEventListener("click", () => {{
-  viewMode = "map";
-  modeMapBtn.classList.remove("secondary");
-  modeFlowBtn.classList.add("secondary");
+function setViewMode(mode) {{
+  viewMode = mode;
+  modeMapBtn.classList.toggle("secondary", mode !== "map");
+  modeFlowBtn.classList.toggle("secondary", mode !== "flow");
+  modeNarrativeBtn.classList.toggle("secondary", mode !== "narrative");
+  renderClaimsPanel();
   renderCanvas();
-}});
+}}
 
-modeFlowBtn.addEventListener("click", () => {{
-  viewMode = "flow";
-  modeFlowBtn.classList.remove("secondary");
-  modeMapBtn.classList.add("secondary");
-  renderCanvas();
-}});
+modeMapBtn.addEventListener("click", () => setViewMode("map"));
+modeFlowBtn.addEventListener("click", () => setViewMode("flow"));
+modeNarrativeBtn.addEventListener("click", () => setViewMode("narrative"));
 
 clearFocusBtn.addEventListener("click", () => {{
   focusedSpeaker = null;

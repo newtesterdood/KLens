@@ -35,6 +35,7 @@ from klens.stream import LiveTranscriptStreamProcessor
 from klens.vis import (
     plot_from_transcript_file,
     render_concept_flow_dashboard,
+    render_narrative_dashboard,
     render_spectral_dashboard,
     render_trajectory_paths_dashboard,
 )
@@ -71,6 +72,7 @@ __all__ = [
     "plot_from_transcript_file",
     "predict_agent_trajectories",
     "render_concept_flow_dashboard",
+    "render_narrative_dashboard",
     "render_spectral_dashboard",
     "render_trajectory_paths_dashboard",
     "synthesize_deliberation_topics",

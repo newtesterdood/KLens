@@ -152,6 +152,26 @@ def test_render_concept_flow_dashboard():
         assert os.path.getsize(out_png) > 10000
 
 
+def test_render_narrative_dashboard_and_html():
+    sample_file = os.path.join(SAMPLES_DIR, "clinical_slm_debate.json")
+    with tempfile.TemporaryDirectory() as tmpdir:
+        out_png = os.path.join(tmpdir, "clinical_narrative.png")
+        out_html = os.path.join(tmpdir, "clinical_narrative.html")
+        ret = main(["plot", sample_file, "--style", "narrative", "--output", out_png, "--html", out_html])
+        assert ret == 0
+        assert os.path.exists(out_png)
+        assert os.path.getsize(out_png) > 10000
+        assert os.path.exists(out_html)
+        with open(out_html, "r", encoding="utf-8") as f:
+            html_txt = f.read()
+        assert "Narrative Insights" in html_txt
+        assert "catalyst_events" in html_txt
+        assert "concept_transfers" in html_txt
+        assert "phase_rounds" in html_txt
+        assert "renderNarrativeCanvas" in html_txt
+
+
+
 
 
 
