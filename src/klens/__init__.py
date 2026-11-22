@@ -32,7 +32,11 @@ from klens.spectral import (
 )
 
 from klens.stream import LiveTranscriptStreamProcessor
-from klens.vis import plot_from_transcript_file, render_spectral_dashboard
+from klens.vis import (
+    plot_from_transcript_file,
+    render_spectral_dashboard,
+    render_trajectory_paths_dashboard,
+)
 
 __version__ = "0.2.0"
 
@@ -66,6 +70,7 @@ __all__ = [
     "plot_from_transcript_file",
     "predict_agent_trajectories",
     "render_spectral_dashboard",
+    "render_trajectory_paths_dashboard",
     "synthesize_deliberation_topics",
     "validate_koopman_walk_forward",
 ]

@@ -357,9 +357,9 @@ def main(argv: Optional[List[str]] = None) -> int:
     )
     run_parser.add_argument(
         "--style",
-        choices=["telemetry", "diagnostic", "evolution", "shortcut"],
+        choices=["telemetry", "diagnostic", "evolution", "shortcut", "paths"],
         default="telemetry",
-        help="Plot style: telemetry, diagnostic, evolution, or shortcut (default: telemetry)",
+        help="Plot style: telemetry, diagnostic, evolution, shortcut, or paths (default: telemetry)",
     )
     run_parser.add_argument(
         "--html",
@@ -385,9 +385,9 @@ def main(argv: Optional[List[str]] = None) -> int:
     )
     plot_parser.add_argument(
         "--style",
-        choices=["telemetry", "diagnostic", "evolution", "shortcut"],
+        choices=["telemetry", "diagnostic", "evolution", "shortcut", "paths"],
         default="telemetry",
-        help="Plot style: telemetry, diagnostic, evolution, or shortcut (default: telemetry)",
+        help="Plot style: telemetry, diagnostic, evolution, shortcut, or paths (default: telemetry)",
     )
     plot_parser.add_argument(
         "--html",
@@ -462,7 +462,12 @@ def main(argv: Optional[List[str]] = None) -> int:
         plot_target = args.output
         if not plot_target and not args.show and args.html is None:
             base = os.path.splitext(os.path.basename(args.transcript))[0]
-            suffix = "_evolution.png" if args.style == "evolution" else "_telemetry.png"
+            if args.style == "evolution":
+                suffix = "_evolution.png"
+            elif args.style == "paths":
+                suffix = "_paths.png"
+            else:
+                suffix = "_telemetry.png"
             plot_target = os.path.join("out", f"{base}{suffix}")
         ret = run_file(
             args.transcript,

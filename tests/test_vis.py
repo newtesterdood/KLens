@@ -5,7 +5,12 @@ import pytest
 
 from klens import LiveTranscriptStreamProcessor
 from klens.cli import main
-from klens.vis import plot_from_transcript_file, render_spectral_dashboard
+from klens.vis import (
+    _project_silence_aware_pca,
+    export_interactive_timeline_html,
+    plot_from_transcript_file,
+    render_spectral_dashboard,
+)
 
 SAMPLES_DIR = os.path.join(os.path.dirname(__file__), "..", "samples")
 
@@ -92,4 +97,45 @@ def test_render_temporal_evolution_grid_and_html():
         assert os.path.getsize(out_png) > 10000
         assert os.path.exists(out_html)
         assert os.path.getsize(out_html) > 5000
+
+
+def test_silence_aware_pca_and_html_flags():
+    Z = np.array([
+        [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 0.0]],
+        [[1.0, 0.2, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 1.0]],
+    ])
+    Z_2d, Z_display_2d, _, active_mask, has_spoken_mask = _project_silence_aware_pca(Z)
+    assert active_mask.tolist() == [[True, True, False], [True, False, True]]
+    assert has_spoken_mask.tolist() == [[True, True, False], [True, True, True]]
+    assert np.allclose(Z_display_2d[1, 1], Z_2d[0, 1])
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        out_html = os.path.join(tmpdir, "silent_check.html")
+        export_interactive_timeline_html(Z, speakers=["Active", "EarlySilent", "LateJoin"], output_path=out_html)
+        with open(out_html, "r", encoding="utf-8") as f:
+            html_txt = f.read()
+        assert "Silent (Carried Forward)" in html_txt
+        assert '"active": false' in html_txt
+        assert '"has_spoken": false' in html_txt
+
+
+def test_render_trajectory_paths_dashboard():
+    sample_file = os.path.join(SAMPLES_DIR, "clinical_slm_debate.json")
+    with tempfile.TemporaryDirectory() as tmpdir:
+        out_png = os.path.join(tmpdir, "clinical_paths.png")
+        out_html = os.path.join(tmpdir, "clinical_paths.html")
+        ret = main(["plot", sample_file, "--style", "paths", "--output", out_png, "--html", out_html])
+        assert ret == 0
+        assert os.path.exists(out_png)
+        assert os.path.getsize(out_png) > 10000
+        assert os.path.exists(out_html)
+        with open(out_html, "r", encoding="utf-8") as f:
+            html_txt = f.read()
+        assert "concept_pins" in html_txt
+        assert "claimsPanel" in html_txt
+        assert "Center of Disagreement" in html_txt
+        assert "AI must not touch clinical decisions" in html_txt
+
+
+
 
