@@ -15,6 +15,7 @@ from klens.spectral import (
     detect_orthogonal_from_states,
     detect_rogue_from_states,
     extract_centroid_keywords,
+    extract_last_active_states,
     lift_state,
     predict_agent_trajectories,
 )
@@ -67,6 +68,56 @@ def _resolve_source_data(
     return Z, resolved_speakers, resolved_rounds, feature_names
 
 
+def _short_speaker_labels(speakers: Sequence[str], max_len: int = 12) -> List[str]:
+    suffixes = {"jr", "sr", "ii", "iii", "iv"}
+    last_tokens: List[str] = []
+    cleaned_names: List[str] = []
+
+    for spk in speakers:
+        cleaned = " ".join(str(spk).split())
+        cleaned_names.append(cleaned)
+        tokens = cleaned.split()
+        if len(tokens) >= 2 and tokens[-1].rstrip(".,").lower() in suffixes:
+            tok = tokens[-2]
+        elif tokens:
+            tok = tokens[-1]
+        else:
+            tok = ""
+        last_tokens.append(tok)
+
+    token_counts: dict[str, int] = {}
+    for tok in last_tokens:
+        token_counts[tok] = token_counts.get(tok, 0) + 1
+
+    candidates: List[str] = []
+    for cleaned, tok in zip(cleaned_names, last_tokens):
+        if tok and token_counts[tok] == 1 and len(tok) <= max_len:
+            candidates.append(tok)
+        elif cleaned:
+            candidates.append(cleaned[:max_len].rstrip())
+        else:
+            candidates.append("Agent")
+
+    used: set[str] = set()
+    unique_labels: List[str] = []
+    for idx, label in enumerate(candidates):
+        if label not in used:
+            used.add(label)
+            unique_labels.append(label)
+            continue
+        suffix = f"_{idx + 1}"
+        base = label[: max(1, max_len - len(suffix))].rstrip()
+        dedup = f"{base}{suffix}"
+        while dedup in used:
+            suffix = f"_{idx + 1}_{len(used)}"
+            base = label[: max(1, max_len - len(suffix))].rstrip()
+            dedup = f"{base}{suffix}"
+        used.add(dedup)
+        unique_labels.append(dedup)
+
+    return unique_labels
+
+
 def render_faction_rogue_dashboard(
     source: Union[LiveTranscriptStreamProcessor, np.ndarray],
     speakers: Optional[Sequence[str]] = None,
@@ -87,6 +138,7 @@ def render_faction_rogue_dashboard(
     Z, resolved_speakers, resolved_rounds, feature_names = _resolve_source_data(source, speakers, rounds)
 
     T, N, d = Z.shape
+    last_active_states, active_terminal_mask = extract_last_active_states(Z)
     Z_mean = Z.mean(axis=1) # (T, d)
     Delta = Z - Z_mean[:, np.newaxis, :] # (T, N, d)
 
@@ -114,8 +166,7 @@ def render_faction_rogue_dashboard(
     else:
         l2_pruned, t_cert_pruned = l2_all, t_cert_all
 
-    # 4. Pairwise Cosine Similarity matrix on final disagreement states
-    delta_final = Delta[-1] # (N, d)
+    delta_final = last_active_states - last_active_states.mean(axis=0)
     norms = np.linalg.norm(delta_final, axis=1, keepdims=True)
     norms[norms == 0] = 1e-12
     norm_delta = delta_final / norms
@@ -132,6 +183,7 @@ def render_faction_rogue_dashboard(
     for t in range(T):
         Z_2d[t] = pca.transform(Z[t])
     Z_mean_2d = pca.transform(Z_mean)
+    Z_last_2d = pca.transform(last_active_states)
 
     # 7. Construct Figure
     plt.rcParams["font.sans-serif"] = "DejaVu Sans"
@@ -152,26 +204,47 @@ def render_faction_rogue_dashboard(
     for i, spk in enumerate(resolved_speakers):
         col = "#dc2626" if i == rogue_idx else palette[i % len(palette)]
         mkr = "X" if i == rogue_idx else markers[i % len(markers)]
-        traj = Z_2d[:, i, :]
+        active_t = [t for t in range(T) if np.linalg.norm(Z[t, i]) > 1e-12]
+        if active_t:
+            traj = Z_2d[active_t, i, :]
+            ax1.plot(traj[:, 0], traj[:, 1], linestyle="--", color=col, alpha=0.5, linewidth=1.2)
 
-        # Plot dashed path
-        ax1.plot(traj[:, 0], traj[:, 1], linestyle="--", color=col, alpha=0.5, linewidth=1.2)
-        # Final point marker
-        ax1.scatter(traj[-1, 0], traj[-1, 1], color=col, s=70, marker=mkr, edgecolors="#1e293b", linewidth=1.2, label=spk, zorder=5)
+        if active_terminal_mask[i]:
+            ax1.scatter(
+                Z_last_2d[i, 0],
+                Z_last_2d[i, 1],
+                color=col,
+                s=70,
+                marker=mkr,
+                edgecolors="#1e293b",
+                linewidth=1.2,
+                label=spk,
+                zorder=5,
+            )
+        else:
+            ax1.scatter(
+                Z_last_2d[i, 0],
+                Z_last_2d[i, 1],
+                facecolors="none",
+                edgecolors=col,
+                s=70,
+                marker=mkr,
+                linewidth=1.5,
+                label=f"{spk} (silent R{T})",
+                zorder=5,
+            )
 
-    # Highlight Centroid
     ax1.plot(Z_mean_2d[:, 0], Z_mean_2d[:, 1], "k:", alpha=0.6, linewidth=1.5)
     ax1.scatter(Z_mean_2d[-1, 0], Z_mean_2d[-1, 1], color="#000000", s=130, marker="*", edgecolors="#000000", label="Centroid (Consensus Landmark)", zorder=6)
 
-    # Highlight Orthogonal Agent with Red Oval and Callout Text
-    rogue_pt = Z_2d[-1, rogue_idx, :]
+    rogue_pt = Z_last_2d[rogue_idx, :]
     rogue_oval = Ellipse(rogue_pt, width=0.45, height=0.35, color="#dc2626", fill=False, linestyle="-", linewidth=2.0, zorder=7)
     ax1.add_patch(rogue_oval)
     ax1.text(rogue_pt[0] + 0.12, rogue_pt[1] + 0.08, "ORTHOGONAL DETECTED", color="#dc2626", fontsize=8, fontweight="bold", zorder=8)
 
     ax1.set_title("Agent Trajectories in Opinion Space (PCA Projection)", fontsize=10.5, fontweight="bold", pad=8)
-    ax1.set_xlabel("Dimension 1: Efficiency vs. Depth")
-    ax1.set_ylabel("Dimension 2: Coherence vs. Tangent")
+    ax1.set_xlabel("Principal Component 1 (Primary Contention Axis)")
+    ax1.set_ylabel("Principal Component 2 (Transverse Variance)")
     ax1.grid(True, linestyle=":", alpha=0.6)
     ax1.legend(loc="upper left", fontsize=7.2, framealpha=0.9, frameon=True)
 
@@ -206,11 +279,10 @@ def render_faction_rogue_dashboard(
     cax = ax3.imshow(sim_matrix, cmap="Blues", vmin=-1.0, vmax=1.0)
     fig.colorbar(cax, ax=ax3, fraction=0.046, pad=0.04)
 
-    # Short speaker labels for matrix
-    short_labels = [f"Agent {i+1}" for i in range(N)]
+    short_labels = _short_speaker_labels(resolved_speakers)
     ax3.set_xticks(np.arange(N))
     ax3.set_yticks(np.arange(N))
-    ax3.set_xticklabels(short_labels, fontsize=8)
+    ax3.set_xticklabels(short_labels, fontsize=8, rotation=25, ha="right")
     ax3.set_yticklabels(short_labels, fontsize=8)
 
     # Print numbers in cells
@@ -234,6 +306,8 @@ def render_faction_rogue_dashboard(
     if hasattr(source, "latest_metrics") and source.latest_metrics:
         synth = source.latest_metrics.topic_synthesis
 
+    inactive_factions = []
+    display_factions = []
     if synth:
         k_star_block = (
             f"• Effective Channels (K*): {synth.initial_k_star:.2f} -> {synth.effective_channels_k_star:.2f} "
@@ -245,16 +319,29 @@ def render_faction_rogue_dashboard(
         if len(centroid_summary_str) > 75:
             centroid_summary_str = centroid_summary_str[:72] + "..."
 
+        active_factions = [f for f in synth.factions if f.dynamical_role != "Inactive Panelist"]
+        inactive_factions = [f for f in synth.factions if f.dynamical_role == "Inactive Panelist"]
+        if not active_factions:
+            active_factions = list(synth.factions)
+        display_factions = sorted(active_factions, key=lambda f: (f.consensus_weight, -f.id), reverse=True)[:3]
+
         faction_lines = []
         letters = ["A", "B", "C", "D", "E"]
-        for idx, f in enumerate(synth.factions[:2]):
+        for idx, f in enumerate(display_factions):
             letter = letters[idx]
             members_str = ", ".join(f.members)
             pos_stmt = f.representative_statement
-            if len(pos_stmt) > 65:
-                pos_stmt = pos_stmt[:62] + "..."
-            role_weight = f" [{f.dynamical_role} | {f.consensus_weight * 100:.0f}% weight]"
+            if len(pos_stmt) > 58:
+                pos_stmt = pos_stmt[:55] + "..."
+            pct = max(0.0, f.consensus_weight * 100)
+            role_weight = f" [{f.dynamical_role} | {pct:.0f}% weight]"
             faction_lines.append(f"• Faction {letter} ({f.topic}){role_weight}: {members_str}\n  - Position: \"{pos_stmt}\"")
+        if inactive_factions:
+            inactive_names = [m for f in inactive_factions for m in f.members]
+            inactive_line = f"• Inactive at Round {T} (0%): {', '.join(inactive_names)}"
+            if len(inactive_line) > 65:
+                inactive_line = inactive_line[:62] + "..."
+            faction_lines.append(inactive_line)
         factions_block = "\n\n".join(faction_lines)
     else:
         k_star_block = ""
@@ -279,26 +366,40 @@ def render_faction_rogue_dashboard(
             faction_lines.append(f"• Faction {letter} ({label_str}): {members_str}\n  - Focus: {focus_str}")
         factions_block = "\n\n".join(faction_lines)
 
+    ortho_role_badge = ""
+    if synth and (synth.orthogonal_stance or synth.rogue_stance):
+        r = synth.orthogonal_stance or synth.rogue_stance
+        r_pct = max(0.0, r.consensus_weight * 100)
+        ortho_role_badge = f" [{r.dynamical_role} | {r_pct:.0f}% weight]"
+
+    if t_cert_pruned < t_cert_all:
+        t_cert_impact = f"(Accelerates T_cert from {t_cert_all} to {t_cert_pruned} rounds)."
+    elif t_cert_pruned > t_cert_all:
+        t_cert_impact = f"(Slows T_cert from {t_cert_all} to {t_cert_pruned} rounds)."
+    else:
+        t_cert_impact = f"(Leaves T_cert unchanged at {t_cert_all} rounds)."
+
     summary_text = (
         "SPECTRAL DIAGNOSTIC & SEMANTIC SUMMARY:\n"
         "---------------------------------------------------------------------------\n\n"
         f"{k_star_block}"
         f"{disagreement_block}"
         f"{factions_block}\n\n"
-        f"• Orthogonal Agent Detected: {rogue_speaker}\n"
+        f"• Orthogonal Agent Detected: {rogue_speaker}{ortho_role_badge}\n"
         f"  - Outlier / Decoupling Score: {outlier_score:.2f}x median threshold\n"
         f"  - Subdominant Mode: λ2 = {l2_all:.2f} (counterfactual without agent: {l2_pruned:.2f})\n"
-        f"            (Accelerates T_cert from {t_cert_all} to {t_cert_pruned} rounds).\n\n"
+        f"            {t_cert_impact}\n\n"
         f"• Centroid ({centroid_title}):\n"
         f"  \"{centroid_summary_str}\""
     )
 
+    panel4_fontsize = 7.4 if (len(display_factions) >= 3 or inactive_factions) else 8.0
     ax4.text(
         0.05,
         0.95,
         summary_text,
         transform=ax4.transAxes,
-        fontsize=8.0,
+        fontsize=panel4_fontsize,
         family="monospace",
         verticalalignment="top",
         bbox=dict(boxstyle="round,pad=1.0", facecolor="#f8fafc", edgecolor="#cbd5e1", linewidth=1.2),

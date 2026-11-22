@@ -345,9 +345,9 @@ Round  5 | Agents: 3 | λ2: 0.7062 | T_cert:   9 rounds | Orthogonal: Thomas J. 
 2. **Bifurcated Bilateral Contraction**: In Rounds 3–5, both candidates locked into fixed constitutional vocabulary (`popular sovereignty`, `Dred Scott`, `territories`), compressing spectral variance ($\lambda_2 = 0.6696 \to 0.4164 \to 0.7062$).
 3. **Procedural Moderator Isolation (`ORTHOGONAL_PERSISTENCE`)**: Chairman Thomas J. Turner was isolated across all four spectral rounds (`1.07x` median threshold). Counterfactual pruning increases $\lambda_2$ from $0.71 \to 0.83$ ($T_{\text{cert}}: 9 \to 17$ rounds) because removing the procedural bridge leaves two purely antipodal vectors.
 4. **Channel Attribution ($K^*: 2.51 \to 2.35$)**:
-   * **Faction 1** (`Abraham Lincoln`, `Territories No New`, `33%` conclusion weight): Non-extension of slavery into federal territories.
-   * **Faction 2** (`Stephen A. Douglas`, `Her People`, `32%` conclusion weight): Local police regulations under popular sovereignty.
-   * **Orthogonal** (`Thomas J. Turner`, `Dred Scott`, `35%` conclusion weight): Procedural synthesis.
+   * **Faction 1** (`Abraham Lincoln`, `Territories No New`, `33%` conclusion weight, `Synthesizing Compromiser`): Non-extension of slavery into federal territories.
+   * **Faction 2** (`Stephen A. Douglas`, `People Should Desire`, `32%` conclusion weight, `Conceding Coalition`): Local police regulations under popular sovereignty.
+   * **Orthogonal** (`Thomas J. Turner`, `Dred Scott`, `35%` conclusion weight, `Primary Attractor`): Procedural synthesis.
 
 ---
 
@@ -448,7 +448,7 @@ Round  4 | Agents: 3 | λ2: 0.5484 | T_cert:   5 rounds | Orthogonal: William F.
 
 ### Empirical Observations
 1. **Acute Early Rupture**: Round 2 spikes immediately to $\lambda_2 = 0.9805, T_{\text{cert}} = 153$ rounds as arguments over the Vietcong flag provocation in Grant Park divide the studio.
-2. **Sustained Personal Escalation (`ORTHOGONAL_PERSISTENCE`)**: William F. Buckley Jr. triggers `ORTHOGONAL_PERSISTENCE` across all 3 analyzed rounds (Rounds 2–4), culminating in the Round 4 breakdown (*Center of Disagreement*: *Crypto-nazi on National vs. Just Witnessed*).
+2. **Sustained Personal Escalation (`ORTHOGONAL_PERSISTENCE`)**: William F. Buckley Jr. triggers `ORTHOGONAL_PERSISTENCE` across all 3 analyzed rounds (Rounds 2–4), culminating in the Round 4 breakdown (*Center of Disagreement*: *Crypto-nazi on National vs. Chicago Where*) and classifying Buckley as **`[Unreconciled Dissent | 34% Conclusion Weight]`**.
 3. **Geometric Boundary in 3-Agent Broadcasts**: Removing Buckley raises counterfactual $\lambda_2$ ($0.55 \to 0.71, T_{\text{cert}}: 5 \to 9$) because Moderator Howard K. Smith (`37%`) and Gore Vidal (`29%`) remain diametrically opposed on broadcast decorum vs. police authoritarianism ($K^*: 2.59 \to 2.78$).
 
 ---
@@ -497,39 +497,39 @@ Round  5 | Agents: 7 | λ2: 0.8837 | T_cert:  25 rounds | Orthogonal: Ross Perot
 ```
 
 ### Empirical Observations
-1. **Textbook Substantive Transverse Dissenter (`Ross Perot`)**: Beginning in Round 4 and persisting through Round 5 and the Round 6 forecast, Independent candidate **Ross Perot** is isolated as orthogonal (`1.42x` median threshold) and is the **only** participant across all 7 historic debates classified as **`[Unreconciled Dissent | 21% Conclusion Weight]`** (`contributed_to_conclusion: washington, lobbyists, look`).
-2. **Why `Unreconciled Dissent` Fires Here**: In [`src/klens/semantic.py`](../src/klens/semantic.py), a channel is assigned `Unreconciled Dissent` when `is_dissent=True` and cosine similarity to the terminal mean $\cos(C_k(T), \bar{z}(T)) < 0.50$. While major-party opponents `Bill Clinton` (`27%`) and `George H.W. Bush` (`29%`) overlap around jobs, taxes, and post-Cold War growth, Perot's $4 trillion debt and anti-PAC/lobbyist vocabulary occupies a low-overlap orthogonal axis.
+1. **Textbook Substantive Transverse Dissenter (`Ross Perot`)**: Beginning in Round 4 and persisting through Round 5 and the Round 6 forecast, Independent candidate **Ross Perot** is isolated as orthogonal (`1.42x` median threshold) and classified as **`[Unreconciled Dissent | 21% Conclusion Weight]`** (`contributed_to_conclusion: washington, lobbyists, look`).
+2. **Why `Unreconciled Dissent` Fires Here**: In [`src/klens/semantic.py`](../src/klens/semantic.py), a channel is assigned `Unreconciled Dissent` when `is_dissent=True` and either terminal active centroid cosine $s_k < 0.50$ (`0.471` here) or leave-one-out active peer cosine $\text{peer\_cos}_k < 0.25$ (`0.029` here). While major-party opponents `George H.W. Bush` (`Primary Attractor | 29%`) and `Bill Clinton` (`Synthesizing Compromiser | 27%`) align more closely with active debate framing, Perot's $4 trillion debt and anti-PAC/lobbyist vocabulary occupies a low-overlap orthogonal axis, and Round-5 silent journalists (`Ann Compton`, `John Mashek`, `Sander Vanocur`) are separated as `Inactive Panelist | 0%`.
 3. **Counterfactual Stability Check**: Removing Perot moves $\lambda_2$ from $0.88 \to 0.91$ ($T_{\text{cert}}: 25 \to 33$ rounds), revealing that Perot is geometrically decoupled rather than the sole driver of bipartisan fiscal friction between Bush and Clinton.
 
 ---
 
-## 18. Pipeline Architecture Comparison: Baseline (`main`) vs. $K^*$ & Conclusion Attribution (`private/k-channels-attribution`)
+## 18. Pipeline Architecture Comparison: Baseline (`main`) vs. $K^*$ & Conclusion Attribution (`main` Updated)
 
-Every historic debate above was executed independently under both **Pipeline A** (`main`, commit `18fb06c`, dashboards in `assets/main/`) and **Pipeline B** (`private/k-channels-attribution`, commit `6af2e1d`, dashboards in `assets/k_channels/`) using `--style diagnostic`.
+Every historic debate above was executed independently under both **Pipeline A** (baseline commit `18fb06c`, dashboards in `assets/main/`) and **Pipeline B** (current `main` with $K^*$ effective channels, leave-one-out peer dissent attribution, inactive-speaker carry-forward, and CSV schema v2, dashboards in `assets/`) using `--style diagnostic`.
 
 ### Cross-Debate Comparative Summary
 
 | Historic Debate | $N$ Agents | Peak Friction ($\lambda_2, T_{\text{cert}}$) (Invariant A & B) | Final Round ($\lambda_2, T_{\text{cert}}$) (Invariant A & B) | Pipeline B $K^*$ ($K^*_0 \to K^*_T$) | Final Orthogonal Agent & Counterfactual ($\lambda_2 \to \lambda_2'$) | Pipeline B Unique Role Attribution Finding |
 | :--- | :---: | :--- | :--- | :---: | :--- | :--- |
-| **Lincoln–Douglas (1858)** | 3 | R2: `0.9776`, `133` | R5: `0.7062`, `9` | `2.51 -> 2.35` | `Thomas J. Turner` (`0.71 -> 0.83`) | 3-way split (`33%` / `32%` / `35%`); all `Conceding Coalition`; Turner `ORTHOGONAL_PERSISTENCE` (4 rounds) |
-| **Kennedy–Nixon (1960)** | 6 | R3: `0.9814`, `160` | R5: `0.8710`, `22` | `2.14 -> 2.69` | `Howard K. Smith` (`0.87 -> 0.80`) | Active closing channels (`33%` JFK, `29%` Nixon, `38%` Smith); 3 silent R5 panelists get `0%` weight |
-| **Baldwin–Buckley (1965)** | 5 | R2: `0.9467`, `55` | R5: `0.7020`, `9` | `1.95 -> 3.96` | `Mr. Burford` (`0.70 -> 0.72`) | Balanced 5-channel ethical/legal split (`18%–21%` each); high R5 semantic spread ($K^*=3.96$) |
-| **Scopes / Darrow–Bryan (1925)** | 5 | R2: `0.9547`, `65` | R5: `0.6703`, `8` | `3.04 -> 4.61` | `Judge John T. Raulston` (`0.67 -> 0.61`) | Highest channel dispersion ($K^*/N = 0.922$); `Raulston` judicial cutoff `23%` vs. 4 advocates (`16%–22%`) |
-| **Buckley–Vidal (1968)** | 3 | R2: `0.9805`, `153` | R4: `0.5484`, `5` | `2.59 -> 2.78` | `William F. Buckley Jr.` (`0.55 -> 0.71`) | Buckley `ORTHOGONAL_PERSISTENCE` (3 rounds, `34%`); Vidal `29%`, Smith `37%` |
-| **Chomsky–Foucault (1971)** | 3 | R2: `0.9812`, `158` | R5: `0.7168`, `9` | `1.84 -> 2.55` | `Noam Chomsky` (`0.72 -> 0.86`) | Alternating R2–R5 orthogonals (Chomsky vs. Foucault); balanced `32%` / `32%` / `36%` terminal weights |
-| **Bush–Clinton–Perot (1992)** | 7 | R2: `0.9453`, `54` | R5: `0.8837`, `25` | `3.15 -> 3.71` | `Ross Perot` (`0.88 -> 0.91`) | Only **`Unreconciled Dissent`** (`Ross Perot`, `21%`); Bush `29%`, Clinton `27%`, Lehrer `23%`; 3 R5-silent panelists `0%` |
+| **Lincoln–Douglas (1858)** | 3 | R2: `0.9776`, `133` | R5: `0.7062`, `9` | `2.51 -> 2.35` | `Thomas J. Turner` (`0.71 -> 0.83`) | 3-way split: Turner `Primary Attractor` (`35%`), Lincoln `Synthesizing Compromiser` (`33%`), Douglas `Conceding Coalition` (`32%`) |
+| **Kennedy–Nixon (1960)** | 6 | R3: `0.9814`, `160` | R5: `0.8710`, `22` | `2.14 -> 2.69` | `Howard K. Smith` (`0.87 -> 0.80`) | Smith `Primary Attractor` (`38%`) vs. JFK (`33%`) and Nixon (`29%`); 3 silent R5 panelists classified `Inactive Panelist` (`0%`) |
+| **Baldwin–Buckley (1965)** | 5 | R2: `0.9467`, `55` | R5: `0.7020`, `9` | `1.95 -> 3.96` | `Mr. Burford` (`0.70 -> 0.72`) | Balanced 5-channel split (`18%–21%`): Burford `Primary Attractor` (`21%`), President/Baldwin compromisers, Heycock/Buckley conceding |
+| **Scopes / Darrow–Bryan (1925)** | 5 | R2: `0.9547`, `65` | R5: `0.6703`, `8` | `3.04 -> 4.61` | `Judge John T. Raulston` (`0.67 -> 0.61`) | Highest channel dispersion ($K^*/N = 0.922$): Raulston `Primary Attractor` (`23%`), Hays/Malone compromisers, Darrow/Bryan conceding |
+| **Buckley–Vidal (1968)** | 3 | R2: `0.9805`, `153` | R4: `0.5484`, `5` | `2.59 -> 2.78` | `William F. Buckley Jr.` (`0.55 -> 0.71`) | Buckley `Unreconciled Dissent` (`34%`, `ORTHOGONAL_PERSISTENCE` R2–R4); Smith `Primary Attractor` (`37%`), Vidal conceding (`29%`) |
+| **Chomsky–Foucault (1971)** | 3 | R2: `0.9812`, `158` | R5: `0.7168`, `9` | `1.84 -> 2.55` | `Noam Chomsky` (`0.72 -> 0.86`) | Alternating R2–R5 orthogonals: Elders `Primary Attractor` (`36%`), Foucault & Chomsky `Conceding Coalition` (`32%` each) |
+| **Bush–Clinton–Perot (1992)** | 7 | R2: `0.9453`, `54` | R5: `0.8837`, `25` | `3.15 -> 3.71` | `Ross Perot` (`0.88 -> 0.91`) | Perot **`Unreconciled Dissent`** (`21%`); Bush `Primary Attractor` (`29%`), Clinton compromiser (`27%`), Lehrer (`23%`), 3 silent panelists `Inactive Panelist` (`0%`) |
 
 ### Key Architectural & Behavioral Findings (Pipeline A vs. Pipeline B)
 
-1. **Full Core Operator & CSV Invariance**:
-   * Across all 7 historic debates, every `out/runs_main/metrics_*.csv` file and `out/runs_k_channels/metrics_*.csv` file produced by `CSVLogExporter` is **byte-for-byte identical**. `K*` and channel attribution extend `SpectralMetrics`, `DeliberationSynthesis`, CLI logs, and Panel 4 (`--style diagnostic`) without altering $\hat{K}$ eigenvalues ($\lambda_2$), certified deadlines ($T_{\text{cert}}$), RFF lifting, K-Means faction partitioning, or local-residual orthogonal detection.
+1. **Core Operator Invariance & CSV Schema Extension**:
+   * Across all 7 historic debates, every shared column (`round` through `centroid_top_keywords`) in `CSVLogExporter` stays identical between Pipeline A and Pipeline B while Pipeline B appends `effective_channels_k_star` at column index 8. `K*`, leave-one-out dissent attribution, and `--style diagnostic` extensions do not alter $\hat{K}$ eigenvalues ($\lambda_2$), certified deadlines ($T_{\text{cert}}$), RFF lifting, K-Means faction partitioning, or local-residual orthogonal detection.
 2. **Dimensionality Compression via $K^*$ (`compute_effective_channels_k_star`)**:
    * Computed via the participation ratio of non-negative eigenvalues $\gamma_j = \max(0, \lambda_j(X X^T))$ on row-normalized terminal states $X$, $K^* = (\sum \gamma_j)^2 / \sum \gamma_j^2$ separates nominal participant count $N$ from genuine ideological dimensionality:
      * **Genuine Multi-Angle Spread**: When all $N=5$ speakers articulate distinct closing arguments (Darrow–Bryan, Baldwin–Buckley), $K^*$ expands strongly ($3.04 \to 4.61$ and $1.95 \to 3.96$).
      * **Panelist Sparsity Compression**: In moderated 6- and 7-speaker debates where journalist panelists ask questions in Rounds 2–4 and remain silent in Round 5 closing statements (Kennedy–Nixon, Bush–Clinton–Perot), their terminal state vectors $Z[-1, i] = 0$ produce zero Gram rows, compressing $K^*$ toward the active speakers ($K^* = 2.69$ out of $N=6$; $K^* = 3.71$ out of $N=7$).
-3. **Behavioral Edge Cases in `_compute_channel_dynamics_and_weights()`**:
-   * **High Sensitivity of `Unreconciled Dissent` vs. `Conceding Coalition`**: Only **Ross Perot** (`1992`) satisfies both `is_dissent=True` and $\cos(C_k(T), \bar{z}(T)) < 0.50$, cleanly isolating third-party anti-establishment dissent. In 3-speaker debates (`lincoln_douglas`, `buckley_vidal`, `chomsky_foucault`), averaging over $N=3$ non-negative TF-IDF unit vectors lifts the orthogonal speaker's cosine with $\bar{z}(T)$ above $0.50$, classifying them as `Conceding Coalition` despite persistent geometric divergence (`ORTHOGONAL_PERSISTENCE`).
-   * **Zero-Round-T Panelist Artifact (`Primary Attractor | 0% Conclusion Weight`)**: When a participant speaks neither in Round 1 nor in the terminal Round $T$ (e.g., panelists in `kennedy_nixon` and `bush_clinton_perot`), $C_k(0) = C_k(T) = 0 \implies d_{\text{self}} = 0$ and conclusion weight $= 0\%$, while $d_{\text{pull}} = \|\bar{z}(0)\| - \|\bar{z}(T)\| > 0.05$ triggers the `Primary Attractor` branch purely due to global mean-norm attenuation rather than centripetal pull toward an active speaker.
+3. **Active-Mask & Leave-One-Out Attribution Mechanics (`extract_last_active_states` & `_compute_channel_dynamics_and_weights`)**:
+   * **Silent-Speaker Separation (`Inactive Panelist`)**: Filtering zero-norm terminal rows at `norm(C_k(T)) <= 1e-12` assigns `Inactive Panelist` (`0%` weight) to Round-$T$ silent journalists while carrying forward each participant's last active round vector (`extract_last_active_states`) for topic extraction, Panel 1 trajectories, and Panel 3 similarity heatmaps.
+   * **Leave-One-Out Peer Dissent**: Evaluating dissenters against both $\cos(C_k(T), \bar{z}_{\text{active}}(T)) < 0.50$ and leave-one-out peer cosine $\text{peer\_cos}_k < 0.25$ removes the $1/\sqrt{N}$ self-inclusion floor in small debates, flagging both **Ross Perot** (`1992`, `peer_cos = 0.029`, `Unreconciled Dissent | 21%`) and **William F. Buckley Jr.** (`1968`, `peer_cos = 0.213`, `Unreconciled Dissent | 34%`) without false-positives on neutral moderators (`Smith` `0.397`, `Turner` `0.514`).
 
 ---
 

@@ -20,6 +20,7 @@ from klens.spectral import (
     compute_effective_channels_k_star,
     compute_koopman_metrics,
     compute_multi_cluster_residuals,
+    compute_orthogonal_significance,
     detect_cluster_migrations,
     detect_orthogonal_agent,
     detect_orthogonal_from_states,
@@ -27,6 +28,7 @@ from klens.spectral import (
     detect_rogue_from_states,
     extract_centroid_keywords,
     predict_agent_trajectories,
+    validate_koopman_walk_forward,
 )
 from klens.semantic import synthesize_deliberation_topics
 
@@ -135,8 +137,13 @@ class LiveTranscriptStreamProcessor:
                 solver=self.hierarchical_config.solver,
                 seed=self.hierarchical_config.seed,
             )
-            orthogonal_speaker, orthogonal_idx = detect_orthogonal_from_states(
+            orthogonal_speaker, orthogonal_idx, ortho_z, is_stat_ortho = compute_orthogonal_significance(
                 Z, speakers, seed=self.hierarchical_config.seed
+            )
+            wf_err, wf_conf = validate_koopman_walk_forward(
+                Z_macro,
+                seed=self.hierarchical_config.seed,
+                solver=self.hierarchical_config.solver,
             )
             is_hierarchical = True
         else:
@@ -146,8 +153,13 @@ class LiveTranscriptStreamProcessor:
                 seed=self.hierarchical_config.seed,
             )
 
-            orthogonal_speaker, orthogonal_idx = detect_orthogonal_from_states(
+            orthogonal_speaker, orthogonal_idx, ortho_z, is_stat_ortho = compute_orthogonal_significance(
                 Z, speakers, seed=self.hierarchical_config.seed
+            )
+            wf_err, wf_conf = validate_koopman_walk_forward(
+                Z,
+                seed=self.hierarchical_config.seed,
+                solver=self.hierarchical_config.solver,
             )
             final_states = Z[-1]
             factions = cluster_factions(
@@ -222,6 +234,10 @@ class LiveTranscriptStreamProcessor:
             agent_local_residuals=agent_residual_map,
             agent_migrations=migrations,
             effective_channels_k_star=k_star,
+            orthogonal_z_score=ortho_z,
+            is_statistically_orthogonal=is_stat_ortho,
+            koopman_walk_forward_error=wf_err,
+            koopman_fit_confidence=wf_conf,
         )
 
         new_alerts = self.alert_monitor.evaluate(metrics)

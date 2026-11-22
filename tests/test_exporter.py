@@ -22,6 +22,7 @@ def test_csv_log_exporter_format():
             faction_count=5,
             factions_summary="F1:(Agent_2) | F2:(Agent_3) | F3:(Agent_4) | F4:(Agent_5) | F5:(Agent_6)",
             centroid_top_keywords="judge;models;cost;auditing",
+            effective_channels_k_star=2.71828,
         )
 
         row = exporter.log_metrics(metrics)
@@ -33,10 +34,12 @@ def test_csv_log_exporter_format():
         assert row[5] == 5
         assert "Agent_2" in row[6]
         assert "judge;models;cost;auditing" == row[7]
+        assert row[8] == 2.7183
 
         with open(csv_file, "r", newline="", encoding="utf-8") as f:
             reader = list(csv.reader(f))
             assert reader[0] == DEFAULT_COLUMNS
+            assert len(reader[0]) == 9
             assert len(reader) == 2
             assert reader[1][0] == "2"
             assert reader[1][1] == "6"
@@ -46,3 +49,4 @@ def test_csv_log_exporter_format():
             assert reader[1][5] == "5"
             assert reader[1][6] == "F1:(Agent_2) | F2:(Agent_3) | F3:(Agent_4) | F4:(Agent_5) | F5:(Agent_6)"
             assert reader[1][7] == "judge;models;cost;auditing"
+            assert reader[1][8] == "2.7183"

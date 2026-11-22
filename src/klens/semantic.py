@@ -11,7 +11,11 @@ from klens.models import (
     FactionStance,
     TranscriptTurn,
 )
-from klens.spectral import compute_effective_channels_k_star
+from klens.spectral import (
+    compute_effective_channels_k_star,
+    compute_nnls_subspace_orthogonality,
+    extract_last_active_states,
+)
 
 COMMON_ACRONYMS: Set[str] = {
     "slm", "llm", "ai", "gpu", "cpu", "api", "apis", "ciso", "cfo", "dba",
@@ -28,6 +32,9 @@ STOP_WORDS: Set[str] = {
     "so", "as", "than", "more", "most", "some", "such", "only", "also", "then",
     "under", "per", "across", "upon", "within", "without", "between", "while",
     "during", "total", "each", "both", "one", "two", "three", "four", "five",
+    "mr", "mrs", "ms", "dr", "senator", "governor", "president", "colonel",
+    "judge", "gentlemen", "her", "his", "their", "my", "your", "me", "you",
+    "him", "them", "just", "very", "here", "there",
 }
 
 
@@ -169,77 +176,93 @@ def find_representative_statement(
     return best_statement, best_speaker
 
 
+def _positive_cosine(a: np.ndarray, b: np.ndarray) -> float:
+    norm_a = float(np.linalg.norm(a))
+    norm_b = float(np.linalg.norm(b))
+    if norm_a <= 1e-12 or norm_b <= 1e-12:
+        return 0.0
+    return max(0.0, float(np.dot(a, b) / (norm_a * norm_b)))
+
+
 def _compute_channel_dynamics_and_weights(
     Z: np.ndarray,
     speakers: Sequence[str],
     channel_member_lists: List[List[str]],
     is_dissent_flags: List[bool],
-) -> Tuple[List[float], List[str]]:
-    T, N, d = Z.shape
+) -> Tuple[List[float], List[str], List[float]]:
     K = len(channel_member_lists)
     if K == 0:
-        return [], []
+        return [], [], []
 
     speaker_to_idx = {s: i for i, s in enumerate(speakers)}
-    z_bar_0 = Z[0].mean(axis=0)
-    z_bar_T = Z[-1].mean(axis=0)
+    terminal_norms = np.linalg.norm(Z[-1], axis=1)
+    active_rows = terminal_norms > 1e-12
+    z_bar_T_active = (
+        Z[-1, active_rows].mean(axis=0) if np.any(active_rows) else Z[-1].mean(axis=0)
+    )
 
-    s_scores: List[float] = []
-    d_self_list: List[float] = []
-    d_pull_list: List[float] = []
-
+    channel_centroids: List[np.ndarray] = []
+    active_flags: List[bool] = []
     for k in range(K):
-        m_list = channel_member_lists[k]
-        m_idx = [speaker_to_idx[m] for m in m_list if m in speaker_to_idx]
-        if m_idx:
-            C_k_0 = Z[0, m_idx, :].mean(axis=0)
-            C_k_T = Z[-1, m_idx, :].mean(axis=0)
-        else:
-            C_k_0 = z_bar_0
-            C_k_T = z_bar_T
+        m_idx = [speaker_to_idx[m] for m in channel_member_lists[k] if m in speaker_to_idx]
+        C_k_T = Z[-1, m_idx, :].mean(axis=0) if m_idx else z_bar_T_active
+        channel_centroids.append(C_k_T)
+        active_flags.append(float(np.linalg.norm(C_k_T)) > 1e-12)
 
-        norm_C = float(np.linalg.norm(C_k_T))
-        norm_z = float(np.linalg.norm(z_bar_T))
-        if norm_C > 1e-12 and norm_z > 1e-12:
-            cos_sim = float(np.dot(C_k_T, z_bar_T) / (norm_C * norm_z))
-        else:
-            cos_sim = 0.0
-        s_k = max(0.0, cos_sim)
-        s_scores.append(s_k)
-
-        d_self = float(np.linalg.norm(C_k_T - C_k_0))
-        d_pull = float(np.linalg.norm(z_bar_0 - C_k_0) - np.linalg.norm(z_bar_T - C_k_0))
-        d_self_list.append(d_self)
-        d_pull_list.append(d_pull)
-
-    s_sum = sum(s_scores)
-    if s_sum > 1e-12:
-        alphas = [s / s_sum for s in s_scores]
-    else:
-        alphas = [1.0 / K for _ in range(K)]
-
-    roles: List[str] = []
+    s_scores: List[float] = [0.0] * K
+    peer_cos_scores: List[float] = [0.0] * K
     for k in range(K):
+        if not active_flags[k]:
+            continue
+        C_k_T = channel_centroids[k]
+        s_scores[k] = _positive_cosine(C_k_T, z_bar_T_active)
+        other_active = [channel_centroids[j] for j in range(K) if j != k and active_flags[j]]
+        peer_mean_k = np.mean(other_active, axis=0) if other_active else C_k_T
+        peer_cos_scores[k] = _positive_cosine(C_k_T, peer_mean_k)
+
+    active_indices = [k for k in range(K) if active_flags[k]]
+    weights = [0.0] * K
+    if active_indices:
+        s_sum = sum(s_scores[k] for k in active_indices)
+        if s_sum > 1e-12:
+            alphas = [s_scores[k] / s_sum if active_flags[k] else 0.0 for k in range(K)]
+        else:
+            equal_w = 1.0 / len(active_indices)
+            alphas = [equal_w if active_flags[k] else 0.0 for k in range(K)]
+
+        for k in active_indices:
+            weights[k] = round(float(alphas[k]), 4)
+        last_active_idx = active_indices[-1]
+        other_sum = sum(weights[k] for k in active_indices[:-1])
+        weights[last_active_idx] = max(0.0, round(1.0 - other_sum, 4))
+
+    roles: List[str] = [""] * K
+    remaining_indices: List[int] = []
+    for k in range(K):
+        if not active_flags[k]:
+            roles[k] = "Inactive Panelist"
+            continue
         is_dissent = is_dissent_flags[k] if k < len(is_dissent_flags) else False
-        s_k = s_scores[k]
-        d_self_k = d_self_list[k]
-        d_pull_k = d_pull_list[k]
-
-        if is_dissent and s_k < 0.50:
-            role = "Unreconciled Dissent"
-        elif d_pull_k > d_self_k + 0.05:
-            role = "Primary Attractor"
-        elif d_self_k > d_pull_k + 0.05:
-            role = "Conceding Coalition"
+        if is_dissent and (s_scores[k] < 0.50 or peer_cos_scores[k] < 0.25):
+            roles[k] = "Unreconciled Dissent"
         else:
-            role = "Synthesizing Compromiser"
-        roles.append(role)
+            remaining_indices.append(k)
 
-    weights = [round(float(a), 4) for a in alphas]
-    if len(weights) > 0:
-        weights[-1] = max(0.0, round(1.0 - sum(weights[:-1]), 4))
+    if remaining_indices:
+        rem_scores = [s_scores[k] for k in remaining_indices]
+        max_s = max(rem_scores)
+        mean_s = sum(rem_scores) / len(rem_scores)
+        for k in remaining_indices:
+            s_k = s_scores[k]
+            if abs(s_k - max_s) < 1e-9 and s_k >= mean_s + 0.03:
+                roles[k] = "Primary Attractor"
+            elif s_k >= mean_s:
+                roles[k] = "Synthesizing Compromiser"
+            else:
+                roles[k] = "Conceding Coalition"
 
-    return weights, roles
+    sin_thetas = compute_nnls_subspace_orthogonality(channel_centroids)
+    return weights, roles, sin_thetas
 
 
 def synthesize_deliberation_topics(
@@ -314,6 +337,7 @@ def synthesize_deliberation_topics(
     disagreement_keywords = (pole_a_kw + pole_b_kw)[:6]
 
     # 3. Channel Dynamics, Faction Topics, Keywords, and Positions
+    Z_last_active, _ = extract_last_active_states(Z)
     speaker_to_idx = {s: i for i, s in enumerate(speakers)}
     channel_member_lists: List[List[str]] = [list(f.members) for f in factions]
     is_dissent_flags: List[bool] = [False] * len(factions)
@@ -322,7 +346,7 @@ def synthesize_deliberation_topics(
         channel_member_lists.append([rogue_speaker])
         is_dissent_flags.append(True)
 
-    weights, roles = _compute_channel_dynamics_and_weights(
+    weights, roles, sin_thetas = _compute_channel_dynamics_and_weights(
         Z=Z,
         speakers=speakers,
         channel_member_lists=channel_member_lists,
@@ -385,6 +409,8 @@ def synthesize_deliberation_topics(
         member_indices = [speaker_to_idx[m] for m in f.members if m in speaker_to_idx]
         if member_indices:
             f_centroid = Z[-1, member_indices, :].mean(axis=0)
+            if float(np.linalg.norm(f_centroid)) <= 1e-12:
+                f_centroid = Z_last_active[member_indices].mean(axis=0)
             f_delta = f_centroid - final_centroid
         else:
             f_centroid = final_centroid
@@ -422,6 +448,7 @@ def synthesize_deliberation_topics(
 
         f_weight = weights[f_idx] if f_idx < len(weights) else 0.0
         f_role = roles[f_idx] if f_idx < len(roles) else "Synthesizing Compromiser"
+        f_sin_theta = sin_thetas[f_idx] if f_idx < len(sin_thetas) else 0.0
         f_contributed = _extract_contributed_terms(f_phrases, f_kw, f_topic)
 
         faction_stances.append(
@@ -435,6 +462,7 @@ def synthesize_deliberation_topics(
                 consensus_weight=f_weight,
                 dynamical_role=f_role,
                 contributed_terms=f_contributed,
+                orthogonality_sin_theta=f_sin_theta,
             )
         )
 
@@ -443,6 +471,8 @@ def synthesize_deliberation_topics(
     if has_rogue and rogue_speaker:
         r_idx = speaker_to_idx[rogue_speaker]
         r_state = Z[-1, r_idx, :]
+        if float(np.linalg.norm(r_state)) <= 1e-12:
+            r_state = Z_last_active[r_idx]
         r_delta = r_state - final_centroid
 
         r_distinctive_idx = np.argsort(r_delta)[::-1][:4]
@@ -475,6 +505,7 @@ def synthesize_deliberation_topics(
 
         r_weight = weights[-1] if weights else 0.0
         r_role = roles[-1] if roles else "Unreconciled Dissent"
+        r_sin_theta = sin_thetas[-1] if sin_thetas else 0.0
         r_contributed = _extract_contributed_terms(r_phrases, r_kw, r_topic)
 
         rogue_stance = FactionStance(
@@ -487,6 +518,7 @@ def synthesize_deliberation_topics(
             consensus_weight=r_weight,
             dynamical_role=r_role,
             contributed_terms=r_contributed,
+            orthogonality_sin_theta=r_sin_theta,
         )
 
     k_star_T = compute_effective_channels_k_star(Z[-1])

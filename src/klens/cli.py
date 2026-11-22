@@ -50,9 +50,16 @@ def format_semantic_synthesis_summary(m: SpectralMetrics) -> str:
     synth = m.topic_synthesis
     if not synth:
         return ""
+    wf_str = (
+        f"err={m.koopman_walk_forward_error:.3f}, conf={m.koopman_fit_confidence:.2f}"
+        if m.koopman_walk_forward_error is not None
+        else "n/a (<3 rounds)"
+    )
+    ortho_sig = "significant" if m.is_statistically_orthogonal else "nominal"
     lines = [
         "\n=== Deliberation Semantic Synthesis ===",
         f"• Effective Reasoning Channels (K*): {synth.initial_k_star:.2f} -> {synth.effective_channels_k_star:.2f} ({synth.total_channels_identified} channels identified)",
+        f"• Operator Validation: Walk-Forward {wf_str} | Orthogonal MAD Z={m.orthogonal_z_score:.2f} ({ortho_sig})",
         f"• Center of Disagreement: {synth.center_of_disagreement}",
         f"  \"{synth.center_of_disagreement_statement}\"",
         f"• Consensus Centroid Concept: {synth.centroid_concept}",
@@ -61,13 +68,17 @@ def format_semantic_synthesis_summary(m: SpectralMetrics) -> str:
     ]
     for f in synth.factions:
         pct = max(0.0, f.consensus_weight * 100)
-        lines.append(f"• Faction {f.id} [{f.dynamical_role} | {pct:.0f}% Conclusion Weight] ({len(f.members)} members): {f.topic}")
+        lines.append(
+            f"• Faction {f.id} [{f.dynamical_role} | {pct:.0f}% Conclusion Weight | sin(θ)={f.orthogonality_sin_theta:.2f}] ({len(f.members)} members): {f.topic}"
+        )
         lines.append(f"  Position: \"{f.representative_statement}\"")
         lines.append(f"  Contributed to Conclusion: {', '.join(f.contributed_terms)}")
     if synth.orthogonal_stance or synth.rogue_stance:
         r = synth.orthogonal_stance or synth.rogue_stance
         r_pct = max(0.0, r.consensus_weight * 100)
-        lines.append(f"\n--- Orthogonal / Dissent Position ({r.members[0]}) [{r.dynamical_role} | {r_pct:.0f}% Conclusion Weight] ---")
+        lines.append(
+            f"\n--- Orthogonal / Dissent Position ({r.members[0]}) [{r.dynamical_role} | {r_pct:.0f}% Conclusion Weight | sin(θ)={r.orthogonality_sin_theta:.2f}] ---"
+        )
         lines.append(f"• Stance: {r.topic}")
         lines.append(f"  Position: \"{r.representative_statement}\"")
         lines.append(f"  Contributed to Conclusion: {', '.join(r.contributed_terms)}")

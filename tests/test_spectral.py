@@ -7,6 +7,8 @@ from klens.spectral import (
     compute_effective_channels_k_star,
     compute_koopman_metrics,
     compute_multi_cluster_residuals,
+    compute_nnls_subspace_orthogonality,
+    compute_orthogonal_significance,
     detect_cluster_migrations,
     detect_orthogonal_agent,
     detect_orthogonal_from_states,
@@ -14,6 +16,7 @@ from klens.spectral import (
     detect_rogue_from_states,
     extract_centroid_keywords,
     lift_state,
+    validate_koopman_walk_forward,
 )
 
 
@@ -202,4 +205,55 @@ def test_compute_effective_channels_k_star():
     Z[0] = ortho_states
     Z[-1] = identical_states
     assert pytest.approx(1.0, abs=1e-3) == compute_effective_channels_k_star(Z)
+
+
+def test_compute_orthogonal_significance():
+    speakers = ["A", "B", "C", "D", "E"]
+    Z_unanimous = np.ones((3, 5, 4))
+    _, _, z_same, is_sig_same = compute_orthogonal_significance(Z_unanimous, speakers)
+    assert z_same == 0.0
+    assert is_sig_same is False
+
+    Z_outlier = np.zeros((4, 5, 4))
+    for t in range(4):
+        for i in range(4):
+            Z_outlier[t, i] = np.array([1.0 + 0.1 * t, 0.01 * i, 0.0, 0.0])
+        Z_outlier[t, 4] = np.array([0.0, 0.0, 2.5, 1.5 + 0.3 * t])
+    spk, idx, z_out, is_sig_out = compute_orthogonal_significance(Z_outlier, speakers)
+    assert spk == "E"
+    assert idx == 4
+    assert z_out >= 2.0
+    assert is_sig_out is True
+
+
+def test_compute_nnls_subspace_orthogonality():
+    v_a = np.array([1.0, 0.0, 0.0])
+    v_b = np.array([0.0, 1.0, 0.0])
+    v_mix = np.array([0.6, 0.8, 0.0])
+    v_ortho = np.array([0.0, 0.0, 1.0])
+    v_zero = np.array([0.0, 0.0, 0.0])
+
+    sins = compute_nnls_subspace_orthogonality([v_a, v_b, v_mix, v_ortho, v_zero])
+    assert sins[2] == pytest.approx(0.0, abs=1e-3)
+    assert sins[3] == pytest.approx(1.0, abs=1e-3)
+    assert sins[4] == 0.0
+
+
+def test_validate_koopman_walk_forward():
+    Z_short = np.ones((2, 3, 4))
+    err_short, conf_short = validate_koopman_walk_forward(Z_short)
+    assert err_short is None
+    assert conf_short == 0.0
+
+    rng = np.random.RandomState(7)
+    T, N, d = 6, 3, 4
+    Z_lin = np.zeros((T, N, d))
+    base = rng.randn(N, d)
+    for t in range(T):
+        Z_lin[t] = (0.5 ** t) * base
+    err_lin, conf_lin = validate_koopman_walk_forward(Z_lin, num_rff=16, ridge_rho=1e-5)
+    assert err_lin is not None
+    assert err_lin < 0.20
+    assert conf_lin > 0.80
+
 

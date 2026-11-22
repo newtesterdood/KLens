@@ -5,7 +5,7 @@ import pytest
 import numpy as np
 
 from klens.encoders import TfidfTextEncoder
-from klens.models import TranscriptTurn
+from klens.models import Faction, TranscriptTurn
 from klens.semantic import (
     clean_title_casing,
     extract_candidate_phrases,
@@ -13,7 +13,11 @@ from klens.semantic import (
     score_phrases_against_vector,
     synthesize_deliberation_topics,
 )
-from klens.spectral import cluster_factions, detect_rogue_agent
+from klens.spectral import (
+    cluster_factions,
+    detect_rogue_agent,
+    extract_last_active_states,
+)
 from klens.stream import LiveTranscriptStreamProcessor
 
 
@@ -133,12 +137,14 @@ def test_channel_incorporation_and_attribution():
         "Conceding Coalition",
         "Synthesizing Compromiser",
         "Unreconciled Dissent",
+        "Inactive Panelist",
     }
 
     all_stances = list(synth.factions)
     if synth.rogue_stance:
         all_stances.append(synth.rogue_stance)
 
+    assert len(all_stances) == synth.total_channels_identified
     total_weight = sum(s.consensus_weight for s in all_stances)
     assert pytest.approx(1.0, abs=1e-3) == total_weight
 
@@ -146,4 +152,105 @@ def test_channel_incorporation_and_attribution():
         assert stance.dynamical_role in valid_roles
         assert len(stance.contributed_terms) > 0
         assert stance.consensus_weight >= 0.0
+        assert not stance.topic.startswith("Faction ")
+
+    assert any(s.dynamical_role != "Inactive Panelist" and s.consensus_weight > 0.0 for s in all_stances)
+
+
+def test_channel_roles_distinguish_attractor_dissent_and_inactive():
+    speakers = ["Anchor_1", "Anchor_2", "Adapter", "Dissenter", "Absent"]
+    feature_names = ["elastic", "security", "dissent", "legacy"]
+    records = [
+        TranscriptTurn(round_id=1, speaker="Anchor_1", text="Elastic scaling requires unified architecture."),
+        TranscriptTurn(round_id=1, speaker="Anchor_2", text="Elastic scaling governs production stability."),
+        TranscriptTurn(round_id=1, speaker="Adapter", text="Security controls must guard elastic deployment."),
+        TranscriptTurn(round_id=1, speaker="Dissenter", text="Unilateral dissent blocks every proposal."),
+        TranscriptTurn(round_id=1, speaker="Absent", text="Legacy hardware governance remains essential."),
+        TranscriptTurn(round_id=2, speaker="Anchor_1", text="Elastic scaling remains our primary anchor."),
+        TranscriptTurn(round_id=2, speaker="Anchor_2", text="Elastic scaling anchors the final consensus."),
+        TranscriptTurn(round_id=2, speaker="Adapter", text="Security controls integrate with elastic scaling."),
+        TranscriptTurn(round_id=2, speaker="Dissenter", text="Unilateral dissent rejects compromise."),
+    ]
+    Z = np.array([
+        [
+            [1.0, 0.0, 0.0, 0.0],
+            [1.0, 0.0, 0.0, 0.0],
+            [0.3, 0.9, 0.0, 0.0],
+            [0.0, 0.0, 1.0, 0.0],
+            [0.0, 0.0, 0.0, 1.0],
+        ],
+        [
+            [1.0, 0.0, 0.0, 0.0],
+            [1.0, 0.0, 0.0, 0.0],
+            [0.4, 0.9, 0.0, 0.0],
+            [0.0, 0.0, 1.0, 0.0],
+            [0.0, 0.0, 0.0, 0.0],
+        ],
+    ])
+    factions = [
+        Faction(id=1, members=["Anchor_1", "Anchor_2"]),
+        Faction(id=2, members=["Adapter"]),
+        Faction(id=3, members=["Absent"]),
+    ]
+
+    synth = synthesize_deliberation_topics(
+        records=records,
+        Z=Z,
+        feature_names=feature_names,
+        speakers=speakers,
+        rounds=[1, 2],
+        factions=factions,
+        rogue_speaker="Dissenter",
+    )
+
+    by_id = {f.id: f for f in synth.factions}
+    assert by_id[1].dynamical_role == "Primary Attractor"
+    assert by_id[2].dynamical_role in {"Conceding Coalition", "Synthesizing Compromiser"}
+    assert by_id[3].dynamical_role == "Inactive Panelist"
+    assert by_id[3].consensus_weight == 0.0
+    assert "legacy" in by_id[3].keywords
+    assert not by_id[3].topic.startswith("Faction ")
+    assert synth.rogue_stance is not None
+    assert synth.rogue_stance.dynamical_role == "Unreconciled Dissent"
+
+    active_weight_sum = sum(
+        s.consensus_weight
+        for s in [*synth.factions, synth.rogue_stance]
+        if s.dynamical_role != "Inactive Panelist"
+    )
+    assert pytest.approx(1.0, abs=1e-4) == active_weight_sum
+
+
+def test_stop_words_and_last_active_states_edge_cases():
+    records = [
+        TranscriptTurn(
+            round_id=1,
+            speaker="Senator",
+            text="Mr. President, just very here there his her my your policy reform works.",
+        ),
+    ]
+    phrases = extract_candidate_phrases(records)
+    assert "Mr President" not in phrases
+    assert "your policy" not in phrases
+    assert "policy reform" in phrases
+
+    empty_states, empty_mask = extract_last_active_states(np.zeros((0, 3, 2)))
+    assert empty_states.shape == (3, 2)
+    assert empty_mask.shape == (3,)
+    assert not np.any(empty_mask)
+
+    two_d_states, two_d_mask = extract_last_active_states(np.array([[1.0, 0.0], [0.0, 0.0]]))
+    assert two_d_mask.tolist() == [True, False]
+    assert np.allclose(two_d_states[0], [1.0, 0.0])
+    assert np.allclose(two_d_states[1], [0.0, 0.0])
+
+    Z = np.array([
+        [[0.0, 2.0], [0.0, 0.0], [3.0, 0.0]],
+        [[0.0, 0.0], [0.0, 0.0], [4.0, 0.0]],
+    ])
+    last_states, terminal_mask = extract_last_active_states(Z)
+    assert terminal_mask.tolist() == [False, False, True]
+    assert np.allclose(last_states[0], [0.0, 2.0])
+    assert np.allclose(last_states[1], [0.0, 0.0])
+    assert np.allclose(last_states[2], [4.0, 0.0])
 

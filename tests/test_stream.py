@@ -2,8 +2,9 @@ import os
 import tempfile
 import pytest
 
-from klens.stream import LiveTranscriptStreamProcessor
+from klens.exporter import DEFAULT_COLUMNS
 from klens.models import SpectralMetrics
+from klens.stream import LiveTranscriptStreamProcessor
 
 
 def test_stream_processor_basic_flow():
@@ -35,15 +36,16 @@ def test_stream_processor_basic_flow():
         assert len(m2.agent_local_residuals) == 2
 
         # Compatibility checks (indexable and iterable like the reference tuple/list)
-        assert len(m2) == 8
+        assert len(m2) == len(DEFAULT_COLUMNS)
         assert m2[0] == 2
         assert m2[1] == 2
+        assert m2[8] == round(m2.effective_channels_k_star, 4)
 
         # CSV output exists and has headers + 1 row
         with open(csv_path, "r", encoding="utf-8") as f:
             lines = [l.strip() for l in f if l.strip()]
         assert len(lines) == 2
-        assert lines[0].startswith("round,active_agents_count,lambda_2_magnitude")
+        assert lines[0] == ",".join(DEFAULT_COLUMNS)
 
 
 def test_sliding_window_buffer():

@@ -3,6 +3,7 @@ from __future__ import annotations
 import math
 from typing import List, Optional, Sequence, Tuple
 import numpy as np
+from scipy.optimize import nnls
 from sklearn.cluster import KMeans
 from sklearn.metrics.pairwise import cosine_similarity
 
@@ -173,23 +174,24 @@ def detect_cluster_migrations(
     return migrations
 
 
-def detect_orthogonal_from_states(
+def compute_orthogonal_significance(
     Z: np.ndarray,
     speakers: Sequence[str],
     seed: int = 42,
-) -> Tuple[str, int]:
+    z_threshold: float = 2.0,
+) -> Tuple[str, int, float, bool]:
     """
-    Detects the primary Orthogonal Agent: an agent that is persistently distant from all
-    emergent cluster centroids AND whose trajectory is decoupled / transverse to collective drift.
+    Detects the primary Orthogonal Agent and evaluates statistical significance via
+    robust Modified Z-Score (0.6745 * (score - median) / MAD).
+    Returns (speaker, idx, modified_z_score, is_statistically_orthogonal).
     """
     T, N, d = Z.shape
     if N <= 1:
-        return speakers[0], 0
+        return speakers[0], 0, 0.0, False
 
     local_res, _, _ = compute_multi_cluster_residuals(Z, seed=seed)
     mean_residuals = local_res.mean(axis=0)
 
-    # Transverse decoupling factor relative to collective group drift
     if T >= 2:
         drift = Z.mean(axis=1)[-1] - Z.mean(axis=1)[0]
         drift_norm = float(np.linalg.norm(drift))
@@ -201,7 +203,6 @@ def detect_orthogonal_from_states(
                 if vel_norm > 1e-6:
                     cos_theta = float(np.dot(vel, drift) / (vel_norm * drift_norm))
                     cos_theta = float(np.clip(cos_theta, -1.0, 1.0))
-                    # High transverse score when orthogonal to collective drift (cos_theta ~ 0)
                     transverse_score = 1.0 - abs(cos_theta)
                     decoupling_factors[i] = 1.0 + 0.4 * transverse_score
         scores = mean_residuals * decoupling_factors
@@ -209,7 +210,29 @@ def detect_orthogonal_from_states(
         scores = mean_residuals
 
     ortho_idx = int(np.argmax(scores))
-    return speakers[ortho_idx], ortho_idx
+    med = float(np.median(scores))
+    mad = float(np.median(np.abs(scores - med)))
+    if mad > 1e-12:
+        mod_z = float(0.6745 * (scores[ortho_idx] - med) / mad)
+    else:
+        std = float(np.std(scores))
+        mod_z = float((scores[ortho_idx] - med) / std) if std > 1e-12 else 0.0
+
+    mod_z_rounded = round(mod_z, 4)
+    return speakers[ortho_idx], ortho_idx, mod_z_rounded, bool(mod_z >= z_threshold)
+
+
+def detect_orthogonal_from_states(
+    Z: np.ndarray,
+    speakers: Sequence[str],
+    seed: int = 42,
+) -> Tuple[str, int]:
+    """
+    Detects the primary Orthogonal Agent: an agent that is persistently distant from all
+    emergent cluster centroids AND whose trajectory is decoupled / transverse to collective drift.
+    """
+    speaker, idx, _, _ = compute_orthogonal_significance(Z, speakers, seed=seed)
+    return speaker, idx
 
 
 def detect_rogue_from_states(
@@ -459,3 +482,130 @@ def compute_effective_channels_k_star(states: np.ndarray) -> float:
     k_star = (s1 ** 2) / s2
     k_star_clipped = float(np.clip(k_star, 1.0, float(N)))
     return round(k_star_clipped, 4)
+
+
+def extract_last_active_states(Z: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
+    """
+    Returns each agent's last non-zero state vector across rounds and a boolean mask
+    indicating whether each agent was active at the terminal round.
+    """
+    if Z.ndim == 2:
+        Z = Z[np.newaxis, :, :]
+    elif Z.ndim != 3:
+        raise ValueError(f"Expected 2D or 3D state array, got shape {Z.shape}")
+
+    T, N, d = Z.shape
+    if T == 0:
+        return np.zeros((N, d), dtype=float), np.zeros((N,), dtype=bool)
+
+    active_terminal_mask = np.linalg.norm(Z[-1], axis=1) > 1e-12
+    last_active_states = np.zeros((N, d), dtype=float)
+
+    for i in range(N):
+        if active_terminal_mask[i]:
+            last_active_states[i] = Z[-1, i]
+            continue
+        for t in range(T - 2, -1, -1):
+            if np.linalg.norm(Z[t, i]) > 1e-12:
+                last_active_states[i] = Z[t, i]
+                break
+
+    return last_active_states, active_terminal_mask
+
+
+def compute_nnls_subspace_orthogonality(
+    channel_vectors: Sequence[np.ndarray],
+) -> List[float]:
+    """
+    Computes each active channel's exact non-negative conic orthogonal residual
+    sin(theta_k^+) = min_{w >= 0} ||P_{-k} w - c_hat_k||_2 via NNLS.
+    Returns 0.0 for zero-norm (inactive) channels.
+    """
+    K = len(channel_vectors)
+    if K == 0:
+        return []
+
+    norms = [float(np.linalg.norm(v)) for v in channel_vectors]
+    unit_vecs = [
+        (np.asarray(v, dtype=float) / n) if n > 1e-12 else None
+        for v, n in zip(channel_vectors, norms)
+    ]
+
+    sin_thetas: List[float] = []
+    for k in range(K):
+        t_hat = unit_vecs[k]
+        if t_hat is None:
+            sin_thetas.append(0.0)
+            continue
+        peers = [unit_vecs[j] for j in range(K) if j != k and unit_vecs[j] is not None]
+        if not peers:
+            sin_thetas.append(0.0)
+            continue
+        P = np.column_stack(peers)
+        _, residual = nnls(P, t_hat)
+        sin_thetas.append(round(float(np.clip(residual, 0.0, 1.0)), 4))
+
+    return sin_thetas
+
+
+def validate_koopman_walk_forward(
+    Z: np.ndarray,
+    num_rff: int = 100,
+    ridge_rho: float = 1e-6,
+    seed: int = 42,
+    solver: str = "auto",
+) -> Tuple[Optional[float], float]:
+    """
+    Evaluates out-of-sample 1-step EDMD forecast accuracy via walk-forward splits t = 2..T-1.
+    Returns (mean_relative_error, fit_confidence) where fit_confidence = exp(-mean_relative_error).
+    Returns (None, 0.0) when T < 3 (no held-out transition exists).
+    """
+    T, N, d = Z.shape
+    if T < 3 or N < 2 or d == 0:
+        return None, 0.0
+
+    input_dim = N * d
+    errors: List[float] = []
+    for t in range(2, T):
+        Z_sub = Z[:t]
+        Z_with_target = Z[: t + 1]
+        Delta_true = Z_with_target - Z_with_target.mean(axis=1, keepdims=True)
+        target_vec = Delta_true[-1].reshape(-1)
+        target_norm = float(np.linalg.norm(target_vec))
+        if target_norm <= 1e-12:
+            continue
+
+        Z_flat = Z_sub.reshape(t, input_dim)
+        Z_mean = Z_sub.mean(axis=1, keepdims=True)
+        Delta = Z_flat - np.tile(Z_mean, (1, N, 1)).reshape(t, input_dim)
+
+        rng = np.random.RandomState(seed)
+        W_f = rng.normal(0, 0.7 / np.sqrt(input_dim), size=(input_dim, num_rff))
+        b_f = rng.uniform(0, 2 * np.pi, size=(num_rff,))
+
+        Psi = lift_state(Delta[:-1, :], W_f, b_f)
+        Psi_plus = lift_state(Delta[1:, :], W_f, b_f)
+        psi_curr = lift_state(Delta[-1:, :], W_f, b_f)
+
+        obs_dim = Psi.shape[1]
+        S = Psi.shape[0]
+        use_dual = (solver == "dual") or (solver == "auto" and S < obs_dim and obs_dim > 200)
+
+        if use_dual:
+            G_dual = Psi @ Psi.T + ridge_rho * np.eye(S)
+            psi_next = (psi_curr @ Psi.T) @ np.linalg.solve(G_dual, Psi_plus)
+        else:
+            G = Psi.T @ Psi + ridge_rho * np.eye(obs_dim)
+            K_hat = np.linalg.solve(G, Psi.T @ Psi_plus)
+            psi_next = psi_curr @ K_hat
+
+        delta_pred = psi_next[0, 1 : 1 + input_dim]
+        rel_err = float(np.linalg.norm(delta_pred - target_vec) / target_norm)
+        errors.append(rel_err)
+
+    if not errors:
+        return None, 0.0
+
+    mean_err = float(np.mean(errors))
+    confidence = float(math.exp(-mean_err))
+    return round(mean_err, 4), round(confidence, 4)

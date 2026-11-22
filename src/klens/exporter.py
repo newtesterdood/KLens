@@ -15,6 +15,7 @@ DEFAULT_COLUMNS: List[str] = [
     "faction_count",
     "factions_summary",
     "centroid_top_keywords",
+    "effective_channels_k_star",
 ]
 
 

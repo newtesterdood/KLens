@@ -63,6 +63,7 @@ class FactionStance:
     consensus_weight: float = 0.0
     dynamical_role: str = "Synthesizing Compromiser"
     contributed_terms: List[str] = field(default_factory=list)
+    orthogonality_sin_theta: float = 0.0
 
 
 @dataclass(frozen=True)
@@ -125,6 +126,10 @@ class SpectralMetrics:
     agent_local_residuals: dict[str, float] = field(default_factory=dict)
     agent_migrations: List[str] = field(default_factory=list)
     effective_channels_k_star: float = 1.0
+    orthogonal_z_score: float = 0.0
+    is_statistically_orthogonal: bool = False
+    koopman_walk_forward_error: Optional[float] = None
+    koopman_fit_confidence: float = 0.0
 
     def __post_init__(self):
         if self.orthogonal_agent_detected and not self.rogue_agent_detected:
@@ -146,6 +151,7 @@ class SpectralMetrics:
             self.faction_count,
             self.factions_summary,
             self.centroid_top_keywords,
+            round(self.effective_channels_k_star, 4),
         ]
 
     def __getitem__(self, item: int) -> object:

@@ -283,21 +283,21 @@ Eight C-suite leaders debate public cloud migration vs. on-prem hardware. Seven 
 ```
 
 #### 9. Historic Public Debate Benchmarks (1858–1992)
-Seven curated historical debate benchmarks (`samples/debate_*.json`) evaluate multi-party persuasion, constitutional framing, ideological deadlock, and orthogonal dissent across 134 years of public discourse—comparing baseline spectral metrics (`main`) against $K^*$ effective channel capacity and conclusion attribution (`private/k-channels-attribution`):
+Seven curated historical debate benchmarks (`samples/debate_*.json`) evaluate multi-party persuasion, constitutional framing, ideological deadlock, and orthogonal dissent across 134 years of public discourse—comparing baseline spectral metrics against $K^*$ effective channel capacity, leave-one-out peer dissent attribution, and silent-speaker carry-forward:
 
 ![Bush-Clinton-Perot 1992 Debate Telemetry](assets/debate_bush_clinton_perot_telemetry.png)
 
 | Historical Debate | Sample File | Agents / Rounds | Peak Friction ($\lambda_2, T_{\text{cert}}$) | Final ($\lambda_2, T_{\text{cert}}$) | $K^*$ ($K^*_0 \to K^*_T$) | Orthogonal Agent & Synthesis Highlight |
 | :--- | :--- | :---: | :--- | :--- | :---: | :--- |
-| **Lincoln–Douglas (Freeport, 1858)** | [`debate_lincoln_douglas_1858.json`](samples/debate_lincoln_douglas_1858.json) | 3 / 5 | R2: `0.9776`, `133` | `0.7062`, `9` | `2.51 -> 2.35` | `Thomas J. Turner` (`ORTHOGONAL_PERSISTENCE`); *Popular Sovereignty & Dred Scott* |
-| **Kennedy–Nixon I (Chicago, 1960)** | [`debate_kennedy_nixon_1960.json`](samples/debate_kennedy_nixon_1960.json) | 6 / 5 | R3: `0.9814`, `160` | `0.8710`, `22` | `2.14 -> 2.69` | `Howard K. Smith` (`1.41x`); JFK `33%` vs. Nixon `29%`, R5-silent panelists `0%` |
-| **Scopes / Darrow–Bryan (1925)** | [`debate_darrow_bryan_scopes_1925.json`](samples/debate_darrow_bryan_scopes_1925.json) | 5 / 5 | R2: `0.9547`, `65` | `0.6703`, `8` | `3.04 -> 4.61` | `Judge John T. Raulston` (`1.03x`); *Earth Believes Literal vs. Scientific Witnesses* |
-| **Baldwin–Buckley (Cambridge, 1965)** | [`debate_baldwin_buckley_1965.json`](samples/debate_baldwin_buckley_1965.json) | 5 / 5 | R2: `0.9467`, `55` | `0.7020`, `9` | `1.95 -> 3.96` | `Mr. Burford` (`1.04x`); balanced 5-channel ethical/legal division (`18%–21%`) |
-| **Buckley–Vidal (ABC / Chicago, 1968)** | [`debate_buckley_vidal_1968.json`](samples/debate_buckley_vidal_1968.json) | 3 / 4 | R2: `0.9805`, `153` | `0.5484`, `5` | `2.59 -> 2.78` | `William F. Buckley Jr.` (`ORTHOGONAL_PERSISTENCE` R2–R4); *National Convention* |
-| **Chomsky–Foucault (Eindhoven, 1971)** | [`debate_chomsky_foucault_1971.json`](samples/debate_chomsky_foucault_1971.json) | 3 / 5 | R2: `0.9812`, `158` | `0.7168`, `9` | `1.84 -> 2.55` | Alternating orthogonals (Chomsky/Foucault); *Centralized Power vs. Proletariat Wages War* |
-| **Bush–Clinton–Perot (St. Louis, 1992)** | [`debate_bush_clinton_perot_1992.json`](samples/debate_bush_clinton_perot_1992.json) | 7 / 5 | R2: `0.9453`, `54` | `0.8837`, `25` | `3.15 -> 3.71` | **`Ross Perot`** (`1.42x`, **`Unreconciled Dissent | 21%`** on $4T debt/PAC gridlock) |
+| **Lincoln–Douglas (Freeport, 1858)** | [`debate_lincoln_douglas_1858.json`](samples/debate_lincoln_douglas_1858.json) | 3 / 5 | R2: `0.9776`, `133` | `0.7062`, `9` | `2.51 -> 2.35` | `Thomas J. Turner` (`Primary Attractor | 35%`, `ORTHOGONAL_PERSISTENCE`); *Popular Sovereignty & Dred Scott* |
+| **Kennedy–Nixon I (Chicago, 1960)** | [`debate_kennedy_nixon_1960.json`](samples/debate_kennedy_nixon_1960.json) | 6 / 5 | R3: `0.9814`, `160` | `0.8710`, `22` | `2.14 -> 2.69` | `Howard K. Smith` (`Primary Attractor | 38%`); JFK `33%` vs. Nixon `29%`, R5-silent panelists `Inactive Panelist | 0%` |
+| **Scopes / Darrow–Bryan (1925)** | [`debate_darrow_bryan_scopes_1925.json`](samples/debate_darrow_bryan_scopes_1925.json) | 5 / 5 | R2: `0.9547`, `65` | `0.6703`, `8` | `3.04 -> 4.61` | `Judge John T. Raulston` (`Primary Attractor | 23%`); *Earth Believes Literal vs. Scientific Witnesses* |
+| **Baldwin–Buckley (Cambridge, 1965)** | [`debate_baldwin_buckley_1965.json`](samples/debate_baldwin_buckley_1965.json) | 5 / 5 | R2: `0.9467`, `55` | `0.7020`, `9` | `1.95 -> 3.96` | `Mr. Burford` (`Primary Attractor | 21%`); balanced 5-channel ethical/legal division (`18%–21%`) |
+| **Buckley–Vidal (ABC / Chicago, 1968)** | [`debate_buckley_vidal_1968.json`](samples/debate_buckley_vidal_1968.json) | 3 / 4 | R2: `0.9805`, `153` | `0.5484`, `5` | `2.59 -> 2.78` | `William F. Buckley Jr.` (`Unreconciled Dissent | 34%`, `ORTHOGONAL_PERSISTENCE` R2–R4); *National Convention* |
+| **Chomsky–Foucault (Eindhoven, 1971)** | [`debate_chomsky_foucault_1971.json`](samples/debate_chomsky_foucault_1971.json) | 3 / 5 | R2: `0.9812`, `158` | `0.7168`, `9` | `1.84 -> 2.55` | Alternating orthogonals (Chomsky/Foucault); Elders `Primary Attractor | 36%` |
+| **Bush–Clinton–Perot (St. Louis, 1992)** | [`debate_bush_clinton_perot_1992.json`](samples/debate_bush_clinton_perot_1992.json) | 7 / 5 | R2: `0.9453`, `54` | `0.8837`, `25` | `3.15 -> 3.71` | **`Ross Perot`** (`1.42x`, **`Unreconciled Dissent | 21%`**); Bush `Primary Attractor | 29%`, 3 panelists `Inactive Panelist | 0%` |
 
-> **Detailed Guide**: For turn-by-turn logs, all seven telemetry dashboards, baseline (`main`) vs. $K^*$ (`private/k-channels-attribution`) comparisons, and methodology, see [docs/HUMAN_DELIBERATION_BENCHMARKS.md](docs/HUMAN_DELIBERATION_BENCHMARKS.md).
+> **Detailed Guide**: For turn-by-turn logs, all seven telemetry dashboards, baseline vs. $K^*$ & attribution comparisons, and methodology, see [docs/HUMAN_DELIBERATION_BENCHMARKS.md](docs/HUMAN_DELIBERATION_BENCHMARKS.md).
 
 ---
 
