@@ -165,13 +165,19 @@ def test_sample_puc_infrastructure(capsys):
         assert "Battery Storage" in out or "Decision 22-12-056" in out
 
 
-def _run_sample_test(capsys, filename: str, expected_substrings: list[str]) -> None:
+def _run_sample_test(
+    capsys,
+    filename: str,
+    expected_substrings: list[str],
+    extra_args: list[str] | None = None,
+) -> None:
     sample_file = os.path.join(SAMPLES_DIR, filename)
     assert os.path.exists(sample_file)
 
     with tempfile.TemporaryDirectory() as tmpdir:
         out_csv = os.path.join(tmpdir, f"out_{filename}.csv")
-        ret = main(["run", sample_file, "--output", out_csv])
+        args = ["run", sample_file, "--output", out_csv, *(extra_args or [])]
+        ret = main(args)
         assert ret == 0
         assert os.path.exists(out_csv)
 
@@ -297,5 +303,78 @@ def test_sample_city_council_policy(capsys):
         assert "Agents: 14" in out
         assert "Round  5" in out
         assert "Parking and Density" in out or "Vote Aye" in out
+
+
+def test_sample_scotus_trump_v_us_2024(capsys):
+    _run_sample_test(
+        capsys,
+        "scotus_trump_v_us_2024.json",
+        ["Agents: 11", "Round 10", "Absolute Immunity"],
+    )
+
+
+def test_sample_fomc_emergency_covid_mar2020(capsys):
+    _run_sample_test(
+        capsys,
+        "fomc_emergency_covid_mar2020.json",
+        ["Agents: 21", "Round  8", "Hierarchical K=8"],
+        extra_args=["--hierarchical"],
+    )
+
+
+def test_sample_senate_ai_oversight_2023(capsys):
+    _run_sample_test(
+        capsys,
+        "senate_ai_oversight_hearing_2023.json",
+        ["Agents: 10", "Round  8", "Chairman Peters"],
+    )
+
+
+def test_sample_kennedy_nixon_1960_full(capsys):
+    _run_sample_test(
+        capsys,
+        "debate_kennedy_nixon_1960_full.json",
+        ["Agents: 7", "Round  8", "Howard K. Smith"],
+    )
+
+
+def test_sample_bush_clinton_perot_1992_full(capsys):
+    _run_sample_test(
+        capsys,
+        "debate_bush_clinton_perot_1992_full.json",
+        ["Agents: 7", "Round 10", "Jim Lehrer"],
+    )
+
+
+def test_sample_real_llm_werewolf_gpt5_vs_gemini(capsys):
+    _run_sample_test(
+        capsys,
+        "real_llm_werewolf_gpt5_vs_gemini.json",
+        ["Agents: 6", "Round  7", "Alice"],
+    )
+
+
+def test_sample_real_llm_werewolf_wolves_win(capsys):
+    _run_sample_test(
+        capsys,
+        "real_llm_werewolf_wolves_win.json",
+        ["Agents: 5", "Round  7", "Oscar"],
+    )
+
+
+def test_sample_real_llm_negotiation_gpt4_coop(capsys):
+    _run_sample_test(
+        capsys,
+        "real_llm_negotiation_gpt4_coop.json",
+        ["Agents: 7", "Round 10", "SportCo"],
+    )
+
+
+def test_sample_real_llm_negotiation_targeted_adv(capsys):
+    _run_sample_test(
+        capsys,
+        "real_llm_negotiation_targeted_adv.json",
+        ["Agents: 6", "Round  9", "Environmental League"],
+    )
 
 

@@ -310,6 +310,21 @@ Seven curated historical debate benchmarks (`samples/debate_*.json`) evaluate mu
 
 > **Detailed Guide**: For turn-by-turn logs, all seven telemetry dashboards, baseline vs. $K^*$ & attribution comparisons, and methodology, see [docs/HUMAN_DELIBERATION_BENCHMARKS.md](docs/HUMAN_DELIBERATION_BENCHMARKS.md).
 
+#### 10. Extended Verbatim Proceedings, Full Historical Transcripts & Long Multi-LLM Deliberations
+To evaluate longer Koopman trajectories ($R = 7\text{–}10$ rounds) with verbatim primary-source fidelity, `scripts/ingest_real_corpora.py` also curates 9 additional full-length datasets:
+
+| Category | Sample File | Agents / Rounds / Turns | Final ($\lambda_2, T_{\text{cert}}$) | $K^*$ ($K^*_0 \to K^*_T$) | Spectral & Behavioral Highlight |
+| :--- | :--- | :---: | :--- | :---: | :--- |
+| **Institutional** | [`scotus_trump_v_us_2024.json`](samples/scotus_trump_v_us_2024.json) | 11 / 10 / 517 | `0.8673`, `22` | `2.84 -> 2.77` | Oyez *Trump v. United States* (2024); `MAD Z = 2.66`, isolates `Michael R. Dreeben` on *Particular Case vs. Absolute Immunity* |
+| **Institutional** | [`fomc_emergency_covid_mar2020.json`](samples/fomc_emergency_covid_mar2020.json) | 21 / 8 / 139 | `0.8634`, `21` | `4.04 -> 2.81` | March 15, 2020 emergency zero-rate FOMC transcript (`--hierarchical K=8`); tracks `Mr. Lehnert` stability briefings & `Chair Powell` closing |
+| **Institutional** | [`senate_ai_oversight_hearing_2023.json`](samples/senate_ai_oversight_hearing_2023.json) | 10 / 8 / 107 | `0.8668`, `21` | `1.46 -> 2.14` | GovInfo *AI Risks & Opportunities* hearing (`CHRG-118shrg52483`); `MAD Z = 3.05`, isolates `Chairman Peters` & `Senator Johnson` |
+| **Historical Full** | [`debate_kennedy_nixon_1960_full.json`](samples/debate_kennedy_nixon_1960_full.json) | 7 / 8 / 63 | `0.7716`, `12` | `2.90 -> 2.29` | Full American Presidency Project verbatim First Debate (Chicago, 1960); `MAD Z = 2.15`, *Social Security* policy pivot |
+| **Historical Full** | [`debate_bush_clinton_perot_1992_full.json`](samples/debate_bush_clinton_perot_1992_full.json) | 7 / 10 / 137 | `0.9239`, `38` | `2.84 -> 3.29` | Full 1992 St. Louis Debate verbatim transcript; strongest walk-forward predictability (`conf = 0.40`, `MAD Z = 3.08`) |
+| **Multi-LLM (Long)** | [`real_llm_werewolf_gpt5_vs_gemini.json`](samples/real_llm_werewolf_gpt5_vs_gemini.json) | 6 / 7 / 33 | `0.6647`, `8` | `1.85 -> 1.68` | `gpt-5` villagers vs. `gemini-2.5-pro` wolves; flags Wolf #1 (`Katia`) in R2–R4 and Koopman-forecasts Wolf #2 (`Alice`) in R7–R8 |
+| **Multi-LLM (Long)** | [`real_llm_werewolf_wolves_win.json`](samples/real_llm_werewolf_wolves_win.json) | 5 / 7 / 29 | `0.6067`, `6` | `1.96 -> 2.39` | `gemini-2.5-flash` villagers vs. `gemini-2.5-pro` wolves; deceptive wolf coalition wins via Day 2 fragmentation |
+| **Multi-LLM (Long)** | [`real_llm_negotiation_gpt4_coop.json`](samples/real_llm_negotiation_gpt4_coop.json) | 7 / 10 / 30 | `0.9469`, `55` | `1.18 -> 1.75` | Cooperative 7-agent GPT-4 Harbour Sport Park negotiation across 10 chronological windows |
+| **Multi-LLM (Long)** | [`real_llm_negotiation_targeted_adv.json`](samples/real_llm_negotiation_targeted_adv.json) | 6 / 9 / 26 | `0.8407`, `18` | `2.58 -> 1.59` | Targeted-adversary GPT-4o-mini negotiation; detects adversarial `Environmental League` across 7 consecutive rounds (R3–R9) |
+
 ---
 
 ### Empirical Findings: Human vs. Multi-Agent Deliberation Dynamics

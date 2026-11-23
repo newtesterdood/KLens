@@ -1,0 +1,550 @@
+{
+  "title": "U.S. Senate Hearing: Artificial Intelligence Risks & Opportunities (2023)",
+  "context": "Verbatim GovInfo transcript of S. Hrg. 118-25 featuring Senators Peters, Blumenthal, Hassan, Johnson, Padilla, Rosen, Sinema and expert witnesses Matheny, Venkatasubramanian, and Givens.",
+  "metadata": {
+    "category": "institutional_proceeding",
+    "institution": "U.S. Senate Committee on Homeland Security and Governmental Affairs",
+    "package_id": "CHRG-118shrg52483",
+    "source_url": "https://www.govinfo.gov/content/pkg/CHRG-118shrg52483/html/CHRG-118shrg52483.htm",
+    "agents": 10,
+    "rounds": 8,
+    "total_turns": 107
+  },
+  "turns": [
+    {
+      "round": 1,
+      "speaker": "Chairman Peters",
+      "text": "The Committee will come to order. --------------------------------------------------------------------------- \\1\\ The prepared statement of Senator Peters appears in the Appendix on page 33. --------------------------------------------------------------------------- Today's hearing will discuss both the potential risks as well as the opportunities associated with artificial intelligence (AI), examining how artificial intelligence affects our nation's competitiveness on a global stage, and discuss ways to ensure that these technologies are used both safely and responsibly. The adoption of artificial intelligence in government, industry, and civil society has led to the rapid growth of advanced technology in virtually every sector, transforming millions of Americans' lives, millions of Americans all across our country. From the development of lifesaving drugs and advanced manufacturing to helping businesses and governments better serve the public, to self-driving vehicles that will improve mobility and make our roads safer, artificial intelligence certainly holds great promise. But this rapidly evolving technology also presents potential risks that could impact our safety, our privacy, and our economic and national security. We must ensure that the use of this technology becomes more widespread. We have to make sure that there are also the right safeguards in place to ensure it is being used appropriately. One of the greatest challenges presented by artificial intelligence is the lack of transparency and accountability in how algorithms reach their results. Often, not even the scientists and the engineers who design the AI models fully understand how they arrive at the outputs that they produce. This lack of visibility into how AI systems make decisions creates challenges for building public trust in their use. AI models can also produce biased results that can have unintended, but harmful consequences for the people interacting with those systems. Some AI models, whether because of the data sets they are trained on or the way in which the algorithm is applied, are at risk of generating outputs that discriminate on the basis of race, sex, age, or disability. Whether these systems are being used in criminal justice, college admissions, or even determining eligibility for a home loan, biased decisions and the lack of transparency surrounding them, can lead to adverse outcomes for people who may not be even aware that AI has played a role in the decisionmaking process. Building more transparency and accountability into these systems will help prevent any kind of bias that could undermine the utility of AI. While many government organizations and businesses are working to build AI systems that enhance our daily lives, we must be open-eyed about the risks presented by bad actors and adversaries who may use AI to intentionally cause harm, or undermine our national interests. Generative artificial intelligence like Chat Generative Pre-trained Transformer (ChatGPT) or deepfakes can be used to create convincing, but false information that can distort reality, undermine public trust, and even be used to cause widespread panic and fear in a worst-case scenario. The risks from this kind of improper use also extend beyond our borders. Adversaries like the Chinese government are racing to be the world leaders in these technologies and to harness the economic advantages that dominance in artificial intelligence will certainly create. The United States must be at the forefront of developing our own AI systems and training people how to use them appropriately, to protect our global economic competitiveness. If we do not, not only are we at risk of American entities having to purchase these mature technologies from an economic competitor like the Chinese government, there will be tools with little accountability that have been developed by an adversary that does not share our core American values, a serious national security risk. Finally, artificial intelligence will have a significant impact on the future of work. There is no question that AI systems have the potential to disrupt the workplace as we currently know it. That is why it is essential as the United States develops these technologies, we are also developing a workforce that is ready to work alongside them. We must address concerns that AI tools could replace human workers and instead focus on how they can assist humans and enhance the workplace. Our goal in today's hearing is to examine these types of risks and challenges and discuss what steps Congress should take to ensure that we are able to harness these benefits and opportunities with this technology. This includes ensuring that these technologies are used appropriately, and to protect the civil rights and civil liberties of all Americans. Last Congress, I passed bipartisan laws that took steps to ensure the appropriate use of artificial intelligence by government, including through procurement safeguards and by boosting the knowledge of the acquisition workforce, to ensure they are properly trained to understand the risks and capabilities of these technologies. I look forward to building on those efforts this Congress, and working alongside my colleagues on the Committee to support the development of AI technologies, and ensure that they are being used both appropriately and effectively. I hope that today's discussion will be the first of several on this important topic, and I am pleased to have our panel of witnesses with us today who are experts in the field of artificial intelligence and who can discuss the adoption of these systems and the broader impacts on industry, civil society, and government. With that I would like to now turn it over to our acting Ranking Member, Senator Johnson."
+    },
+    {
+      "round": 1,
+      "speaker": "Senator Johnson",
+      "text": "Thank you, Mr. Chairman. I would like to start by asking consent to enter Dr. Jordan B. Peterson's testimony into the record.\\1\\ --------------------------------------------------------------------------- \\1\\ The statement submitted by Dr. Peterson appears in the Appendix on page 65. ---------------------------------------------------------------------------"
+    },
+    {
+      "round": 1,
+      "speaker": "Senator Johnson",
+      "text": "Thank you. Now let me explain why I had to do that. Last Thursday, I was pretty late in the process, and I was asked by Ranking Member Paul to act as Ranking Member because he had a conflict with a pretty important hearing in Senate Foreign Relations Committee (SFRC). I was happy to do so because I have been very interested in the subject. Artificial intelligence has incredible impact, or will have incredible impact on our society and on individuals, and so I have been doing a fair amount of research on the topic. As a result I became aware of Jordan Peterson's interest in the topic as well. As a matter of fact, two weekends ago I watched about an hour-and-a-half-long video of him interviewing Jim Keller and Jonathan, I think it is Pageau--I apologize if I am mispronouncing his name--on this topic. Again, they were thinking deeply about this subject and its impact on society. First of all, who is Jordan B. Peterson? He is an author, a psychologist, an online educator, and professor emeritus at University of Toronto. For 20 years he taught some of the most highly regarded courses at Harvard and the University of Toronto, while publishing more than 100 well cited scientific papers and maintaining an active clinical and consulting practice. His international lecture tour has sold out more than 400 venues, and his best-selling books include 12 Rules for Life: An Anecdote for Chaos and Beyond Order: 12 More Rules for Life. Unfortunately, the Chairman did not allow him to appear remotely, and we can talk about that a little bit later. But in lieu of an opening statement what I would like to do is read some of the key excerpts out of Dr. Peterson's testimony. We will see the insight and the thoughtfulness that we are missing by not having him here today. He starts his testimony talking about the large language models, for example, like ChatGPT. He says, ``Advanced large language models such as ChatGPT have burst onto the scene with a vengeance in the last six months. ChatGPT recently completed the standardized test (SAT) and scored 1020. A score of 1020 is equivalent to an intelligent quotient (IQ) of about 110, which make ChatGPT more intelligence than 75 percent of people. ``The significance of all this should not be underestimated. We now have AI systems capable of engaging in genuine conversation, able to write, able to produce computer code, able to 'think,' and they will be much smarter very soon.'' He goes on to talk about the rights given to the extended digital self. He writes, ``For centuries we were also simple enough so that our name sufficed to identify us. Online, however, things are very different. Our digital identity is composed of the tools we use--the apps, programs, services, websites, et cetera--that we choose voluntarily to employ, as well as the records of our virtual behavior, our browsing patterns, our purchases, our records of travel, but the written communications and images we issue on platforms such as Instagram, Facebook, and more ominously, TikTok, which essentially operates under the control of the Chinese Communist Party (CCP). That extended digital self has very few rights, and our legal structure has not been able to adapt itself to the immense changes on the virtual front. ``The logical extension of such danger, and most likely outcome,'' in his estimation, ``is the duplication in the West of something approximating the utter catastrophe of a so-called social credit system in China. Everything is tracked and controlled. The government can, with the stroke of a pen, seize the economic resources of any given individual or group.'' In parentheses he says, ``Something that happened very ominously in Canada in the case of the truckers' convoy.'' He goes on, ``Developing AI capabilities will radically extend the surveillance State. China has about 400 cameras watching every 1,000 people. We could well be entering an era of authoritarian AI-mediated social shunning. The use of cameras should be banned. Machines should never be given the authority to ticket, try, punish, or limit the economic or practical activities with human beings.'' He goes on to talk about additional dangers. ``In the next year, AI wizards will produce intelligence systems that will be able to produce representations of any person, doing anything that can be described, the so-called deepfakes. Imagine those being released on the eve of a critical election. Then imagine that happening everywhere, on every issue, thousands of times. Imagine being entirely unable to determine day-to-day what communication, from what person, photos, videos, auto recordings, writings is real and what is false. Then imagine that now, not in some distant future. That is where we are at. Steps must be taken on the legal front to make false digital representations of living persons not only illegal but seriously illegal.'' He concludes, ``The development of AI systems as intelligent as we are''--and I would add probably even more so--``is not some future possibility but a current actuality. The melding of AI-mediated intelligence systems with our capacity for monitoring and surveillance prepares the way for a tyranny so comprehensive that we can barely imagine it.'' Now again, these are just excerpts from his testimony, and I wish Dr. Peterson could have been here remotely to offer that. But for whatever reason, even though we have the technology here, the Chairman said he could not appear, we could not make it possible for him to appear remotely. Now behind the scenes over the weekend, there were other reasons supplied. Talk about some book. That was all a ruse. It was a pretext for not allowing Dr. Peterson to testify, and I really cannot guess why. Some kind of ideological reason. By the way, it was not unusual to get a witness pretty late in the process. As Chairman of this Committee over six years, it was very rare that I got testimony much more than the day before. Sometimes it could be hard to arrange witnesses. This was a somewhat unusual circumstance but not that unusual. So that should not be an excuse. So blocking Dr. Peterson because we supposedly could not accommodate a remote witness is simply not credible. For whatever reason, the Chairman and his staff did not want to allow our witness. This is an action that is beyond unfortunate and something we will not condone, which is why no Republicans will attend this hearing. I sincerely hope the Chairman will reconsider this partisan action and not repeat it in the future."
+    },
+    {
+      "round": 1,
+      "speaker": "Chairman Peters",
+      "text": "Senator Johnson, if I could respond to that. I have been the Chair now, this is going into the third year. We have never blocked the minority from having a witness, and we are not blocking the minority from having this witness here now."
+    },
+    {
+      "round": 1,
+      "speaker": "Senator Johnson",
+      "text": "Yes, you are. He is not here."
+    },
+    {
+      "round": 1,
+      "speaker": "Chairman Peters",
+      "text": "Let me go through the process. We started putting this together a month ago, one month, we would hope, that staff, in one month's time, could come up with witnesses. We did. We have three eminent witnesses that were presented to the Ranking Member. We go through interviews. All three of you had interviews with staff from both the majority and minority. It is what we do with every witness. For every single hearing we do that. We do not want to change that policy. That is a very important policy, so we have an understanding of who the witnesses are. We have an opportunity to prepare, to make this a good hearing. A month ago we did that. We went through the process. We continually went to the Ranking Member and said, ``Please provide your minority witness. We would like to move forward. We are excited about this hearing.'' We did not hear anything. We had to actually put a deadline. Please, by this deadline, last week, on Thursday, please provide a witness. We did not hear. We finally got a witness, not from the Ranking Member but another Member, at 8 p.m. on Friday, with two business days prior to a hearing. There was a request for video. This is not a hybrid hearing. We have, for well over a year, everybody has appeared in person. I know maybe Senator Johnson likes---- Senator Johnson.--On the technology here."
+    },
+    {
+      "round": 1,
+      "speaker": "Chairman Peters",
+      "text": "The witnesses appear in person. They have always appeared in person, for a long period of time. Perhaps Senator Johnson likes Coronavirus Disease 2019 (COVID-19) protocols. I am not sure. But we have had personal folks here, because I think it is important to have witnesses in person. Each and every one of you arranged your schedule to be here in person. You could have done video but you knew that was the rule of the Committee. This is not a hybrid hearing. This is to be in person, and I think you have a much better hearing as a result of that. We said that with this new person that came in at the end that we would need them to appear in person, just like each and every one of you took the time and trouble to get here, they would have to do the same thing. Perhaps if they had more time, if we actually heard from the minority in a normal time, they would have been able to make those arrangements to be here in person. He was welcome to be here. If he wanted to sit here today we would have welcomed that. He would have had to go through the interview. It would have been short because we only had two business days to do this. We would have had to have an interview, like each and every one of you have done, and every single witness that comes before this Committee does it. All we are asking Senator Johnson, is let us have the same process. I told you, or I told the Ranking Member, that your witnesses, we are going to have more AI hearings, he is welcome. If you want him to be your witness at a future hearing we would welcome him. He will be the minority witness. It was a time constraint."
+    },
+    {
+      "round": 1,
+      "speaker": "Senator Johnson",
+      "text": "OK. We will definitely take you up on that offer. But again, there were things happening behind the scenes, and again, I did not get brought into this process until late Thursday. We scrambled. We got him to agree to be a witness. We let you know it was going to be remote. The technology is obviously available. But again, as Chairman of this Committee, I did not take it upon myself to vet your witnesses, the minority witnesses. That is your job. If you end up with somebody with troubling circumstances around his testimony, that is on you, not on the Committee. Dr. Peterson is eminently qualified. He has been talking about this. He put a lot of work into his testimony and not able to provide it. Again, this situation, it is just not credible that we could not accommodate him remotely. It is not unusual that it is hard to sometimes find witnesses. I cannot speak for Senator Paul in terms of why he did not make the decision not to be Ranking Member, but I acted very expeditiously. I asked an eminently qualified individual to be a witness. He agreed. He put in the work. He provided insightful and thoughtful testimony. We should have allowed him to testify remotely, but we will take your offer for the next hearing and we will communicate that to Dr. Peterson."
+    },
+    {
+      "round": 1,
+      "speaker": "Chairman Peters",
+      "text": "Senator, we want witnesses to be here in person. This is not a hybrid hearing. It was never noticed as a hybrid hearing."
+    },
+    {
+      "round": 1,
+      "speaker": "Senator Johnson",
+      "text": "That is fine. We just do not want----"
+    },
+    {
+      "round": 1,
+      "speaker": "Chairman Peters",
+      "text": "I understand. Senator Johnson [continuing.] The majority blocking----"
+    },
+    {
+      "round": 1,
+      "speaker": "Chairman Peters",
+      "text": "We are not blocking. Senator Johnson [continuing.] Or even vetting our minority witnesses. That is honestly not your job. The minority has a right to have witnesses appear before the Committee on the topic at hand, and to have you have veto power over that is not proper."
+    },
+    {
+      "round": 1,
+      "speaker": "Chairman Peters",
+      "text": "Again, Senator Johnson, we can provide. We sent the letter to the Ranking Member, your witness can testify. They have to be in person, and they have to have an interview like every other witness, and yet that did not happen, and the reason it did not happen was because it was such a short timeline. I get that. I know you were thrown this responsibility at the last moment."
+    },
+    {
+      "round": 1,
+      "speaker": "Senator Johnson",
+      "text": "I acted expeditiously, and I came up with an excellent witness, and it would have been great to have him appear remotely."
+    },
+    {
+      "round": 2,
+      "speaker": "Chairman Peters",
+      "text": "We would have welcomed him."
+    },
+    {
+      "round": 2,
+      "speaker": "Senator Johnson",
+      "text": "Hopefully we will see him in person, as long as he is not too insulted by not being able to testify here today."
+    },
+    {
+      "round": 2,
+      "speaker": "Chairman Peters",
+      "text": "Hopefully he is not insulted that he is being treated like everybody else. If he thinks that he should be treated differently than everybody else, well, in this Committee we treat everybody fairly. Everybody is treated the same way, and we believe that those rules should be followed. We would hope that in the future, when you have a month to prepare for a hearing that you actually do the work and prepare for a hearing, and do not expect that everybody is just going to drop everything and change all the rules and do something different. Do the work. This is an important Committee. We have always worked on a consensus basis. You and I worked on a consensus basis."
+    },
+    {
+      "round": 2,
+      "speaker": "Senator Johnson",
+      "text": "That is right, but I never blocked any witnesses. But anyway, enough of this. Just get on with the hearing and we will attend the next one."
+    },
+    {
+      "round": 2,
+      "speaker": "Chairman Peters",
+      "text": "Let us hope we can return to working in a bipartisan way and have folks do the work necessary so that these hearings go forward. With that, let us get to the important business at hand. It is the practice of the Homeland Security and Governmental Affairs Committee (HSGAC) to swear in witnesses, so if each of you will please stand and raise your right hand. Do you swear that the testimony that you will give before this Committee will be the truth, the whole truth, and nothing but the truth, so help you, God?"
+    },
+    {
+      "round": 2,
+      "speaker": "Chairman Peters",
+      "text": "Great. Thank you. Today's first witness is Alexandra Reeve Givens. Ms. Givens is the President and Chief Executive Officer (CEO) of the Center for Democracy and Technology (CDT), whose mission is to ensure democracy and individual rights are at the center of the digital revolution. Previously, Ms. Givens served as the founding Executive Director of the Institute for Technology Law and Policy at Georgetown Law, and as Chief Counsel for Intellectual Property and Antitrust on the Senate Judiciary Committee. Ms. Givens has also served as an adjunct professor at Columbia University School of Law. Ms. Givens, welcome to the Committee and thank you for appearing. You are recognized for your opening statement. TESTIMONY OF ALEXANDRA REEVE GIVENS,\\1\\ PRESIDENT AND CHIEF EXECUTIVE OFFICER, CENTER FOR DEMOCRACY AND TECHNOLOGY"
+    },
+    {
+      "round": 2,
+      "speaker": "Ms. Givens",
+      "text": "Thank you very much, Senator Peters, and to Members of the Committee, thank you for inviting me to speak about the challenges and opportunities presented by AI. --------------------------------------------------------------------------- \\1\\ The prepared statement of Mr. Givens appears in the Appendix on page 35. --------------------------------------------------------------------------- The Center for Democracy and Technology, is a 28 year-old nonprofit, nonpartisan organization that works to protect civil rights, civil liberties, and democratic values in the digital age. CDT protects users' interests in areas ranging from commercial data practices to government surveillance to online content moderation to the use of technology in education and government services. AI is already transforming each one of these areas, so I am grateful for the Committee's focus on the topic today. While AI has the potential to generate new insights and make processes more efficient, it also poses risks, of being unreliable, biased, and hard to explain or hold accountable. My written testimony focuses on these risks in several areas that directly impact consumers. First, when AI or automated systems are used in decisions impacting people's access to economic opportunities, such as in employment, housing, and lending, and second, in the administration of government services, such as when AI or automated systems are used to detect fraud or determine benefits eligibility. When AI systems are used in these high-risk settings without responsible design and accountability, it can devastate people's lives. A person may be unfairly rejected from a job, be denied or unable to find housing, or be wrongly accused of fraud and stripped of the benefits they need to support their family. When this happens, the harm is felt not only by the people whose lives are upended by the decision but also by the businesses and government programs that are relying on these systems to work. Those businesses or government agencies are now bought into a system that is unfit for purpose, and may face legal, financial, and reputational consequences. That is why it benefits everyone to address the potential risks and limitations of AI. My written testimony details harms that have already arisen in these contexts. For example, hiring tools that systematically downgraded women's resumes or an automated video interview system where a reporter gave answers in German and yet was still found to be a 73 percent match for a company. In the government setting, the Michigan Integrated Data Automated System (MiDAS) in Michigan wrongfully classified up to 40,000 people's unemployment insurance applications as fraudulent based on design errors in the system. People who were already on the financial brink had their wages garnished, bank accounts levied, and were driven into bankruptcy. The State faced years of litigation and recently paid millions of dollars to victims. Government programs in Europe, the United Kingdom (UK), and Australia have had similar problems. When assessing these concerns, policymakers should consider several factors. First, poorly designed and governed AI systems can cause not just individual but systemic harm. In the hiring context, for example, an AI tool might replace the risk of a bad apple in human resource (HR), but it does so with a system that could be ineffective and discriminatory at scale. The resulting harms may impact an entire sector when a tool is used by multiple companies. Second, harms do not just impact the people who are the subject of the decision but the businesses and agencies relying on those tools. That is why we need robust, specific guidance to help people navigate these issues and to enforce existing laws to ensure that developers take their obligations seriously. Third, the subjects of AI decisionmaking often have no idea they are being assessed by an automated program, let alone how that tool may work, and neither do regulators. Without increased transparency about when AI systems are being used and how they have been designed and tested, society will be hamstrung in its efforts to identify and address harms. Fourth, AI systems need ongoing testing in their applied environment to make sure they are working as intended. But this is complicated because AI tools are often designed by one company and then deployed by many others in different settings. We need to work through the pathways of responsibility in this diffuse value chain. Given these challenges, we need a cross-society effort for the responsible design, deployment, use, and governance of AI. My written testimony outlines several ways in which the government can lead in this work. The first is to rapidly scale up guidance and resources to identify AI-related harms and mitigations. We need to help those non-expert businesses and agencies think about and address risk and when to say no to these tools altogether. The National Institute of Standards and Technology (NIST) AI Risk Management Framework (RMF) and the Blueprint for an AI Bill of Rights are good examples of this, but agencies across the Federal Government must lead in their respective sectors. Second is that we must increase transparency, which is where legislation like the Algorithmic Accountability Act or similar models can be useful. It is time to normalize the idea that companies designing and deploying AI tools in high-risk settings must first analyze and document how they work, accounting for potential risks and steps they have taken to address them. Third, as this Committee has well recognized, the Federal Government has an essential role to play in its own procurement, design, use, and funding of AI systems. Congress directed Office of Management and Budget (OMB) to issue guidance and principles for the Federal acquisition and use of AI, which was boosted by Executive Orders (EO) from both the Trump and Biden administrations. This work must continue without delay and we must continue to support agencies in this work, such as through the National AI Initiative Office (NAIIO) that this Committee and Congress created. I thank the Committee for its continued work in this and related areas, and I look forward to your questions. Thank you."
+    },
+    {
+      "round": 2,
+      "speaker": "Chairman Peters",
+      "text": "Thank you, Ms. Givens. Our next witness is Dr. Venkatasubramanian who currently serves as Professor of Computer Science and Data Science at Brown University. His expertise includes data mining, machine learning (ML), algorithms, and computational geometry, specifically algorithmic fairness and their impacts on decisionmaking on society. Previously Professor Venkatasubramanian served as the Assistant Director for Science and Justice in the White House Office of Science and Technology Policy. Professor, welcome to the Committee, and thank you for appearing. You are recognized for your opening statement. TESTIMONY OF SURESH VENKATASUBRAMANIAN,\\1\\ Ph.D., PROFESSOR OF COMPUTER SCIENCE AND DATA SCIENCE, BROWN UNIVERSITY"
+    },
+    {
+      "round": 2,
+      "speaker": "Mr. Venkatasubramanian",
+      "text": "Thank you, Senator Peters and Members of the Homeland Security and Government Affairs Committee. I thank you for inviting me to testify at this important hearing on the risks and opportunities of AI. I am a professor of computer science and director of the Center for Technological Responsibility at Brown University. --------------------------------------------------------------------------- \\1\\ The prepared statement of Dr. Venkatassubramanian appears in the Appendix on page 53. --------------------------------------------------------------------------- I recently completed a stint as tech policy advisor in the White House and helped develop the Blueprint for an AI Bill of Rights. I have spent the last decade studying and researching the impact of automated systems, and AI, on people's rights, opportunities, and access to services. I have also spent time advising State and local governments on sound approaches to governing the use of technology that impacts people's lives. We are here today to talk about AI, a field of study trying to design systems that can sense, interact, reason, and behave in the way humans do, and in some cases even surpass us. People learn from the data we receive, and thus one sub-area of AI that is dominant right now, fueled by the collection of vast amounts of data, is machine learning, the design of systems that can incorporate historical data into the predictions they produce, and in some cases keep adapting as more data appears. Virtually every sector of society is now touched by machine learning, and the most consequential decisions and experiences in our lives are mediated by algorithms--where we go to school, how we learn, how we get jobs, whether we can buy a house, what kind of loan we get, whether we get credit to start a small business, whether we are surveilled by law enforcement or incarcerated before a trial, how long a sentence for a convicted individual is, and whether we can get paroled. The list goes on and on, and keeps expanding, with systems like GPT3, ChatGPT, and Bard, and many others that ingest extremely large amounts of data and huge compute power to create the plausibly realistic conversations that have caught our imagination over the past few months. All these systems have something in common. They are algorithms for making algorithms. The distinctive feature of a machine learning system is that the output of the system is itself an algorithm that purports to solve an underlying problem, whether it is predicting your loan worthiness, searching for a face in a video stream, or even having a conversation with an individual. As a consequence of the above, we do not actually know for sure whether and how these algorithms work and why they produce the output that they do. This might come as a surprise given how much we hear every day about the amazing and miraculous successes of AI. Yet AI systems fail. They fail when the algorithms draw incorrect conclusions from data. They fail when they make predictions based on faulty or biased data. They fail when the results of one AI system are fed into another, or even the same one, amplifying errors along the way. They fail when they are so opaque that errors in how they function cannot even be detected. The truth is AI systems are not magic. AI is technology, and like any other piece of technology that has benefited us-- drugs, cars, planes--AI needs guardrails so we can be protected from the worst failures while still benefiting from the progress AI offers. What should these guardrails look like? Any automated system that has meaningful impact on our rights, opportunities for advancement, and access to critical services should be tested so it works, and works well. It should not exhibit discriminatory behavior, be limited and careful in its use of our personal data, be transparent, and easily understandable, and be accompanied by human supervision for all the times that it fails. Moreover, all these protections should be documented and reported on clearly for independent scrutiny. Congress should enshrine these ideas in legislation, not just for government use of AI but for private sector uses of AI that have people-facing impact. I am a computer scientist--a card-carrying computer scientist, I like to say--and my work is to imagine technological futures. There is a future in which automated technology is an assistant. It enables human freedom, liberty, and flourishing, where the technology we build is inclusive and helps all of us achieve our dreams and maximize our potential. But there is another future in which we are at the mercy of technology, where the world is shaped by algorithms and we are forced to conform, in which those who have access to resources and power control the world and the rest of us are left behind. I know which future I want to imagine and work toward. I believe it is our job to lay down the rules of the road, the guardrails and the protections, so that we can achieve that future. I know we can do it if we try. Thank you for giving me this opportunity to speak."
+    },
+    {
+      "round": 2,
+      "speaker": "Chairman Peters",
+      "text": "Thank you, Professor. Our next witness is Dr. Jason Matheny. Dr. Matheny currently serves as President of the RAND Corporation, a nonprofit institution that helps provide research and analysis to solve public policy challenges. Prior to his current role, Dr. Matheny led White House policy on technology and national security at the National Security Council (NSC) and the Office of Science and Technology Policy, and was the founding director of the Georgetown Center for Security and Emerging Technology. Dr. Matheny was congressionally appointed as a commissioner to the National Security Commission on Artificial Intelligence. Welcome to the Committee. You may proceed with your opening statement. TESTIMONY OF JASON MATHENY, Ph.D.,\\1\\ PRESIDENT AND CHIEF EXECUTIVE OFFICER, RAND CORPORATION"
+    },
+    {
+      "round": 2,
+      "speaker": "Mr. Matheny",
+      "text": "Thank you, Chairman Peters and members of the Committee for the opportunity to testify today. --------------------------------------------------------------------------- \\1\\ The prepared statement of Mr. Matheny appears in the Appendix on page 60. --------------------------------------------------------------------------- For the past 75 years, RAND has conducted nonpartisan policy research, and we currently manage four federally funded research and development (R&D) centers for the Federal Government, including one for the Department of Homeland Security and three for the Department of Defense (DOD). Today I will focus my comments on how AI affects national security and U.S. competitiveness. Among a broad set of technologies, AI stands out both for its rate of progress and for its scope of applications. AI holds the potential to broadly transform entire industries, including ones that are critical to our future competitiveness, such as medicine, manufacturing, and energy. Applications of AI also pose grave security challenges for which we are currently unprepared, including the development of novel cyber weapons, large-scale disinformation attacks, and the design of advanced biological weapons. Threats from AI pose special challenges for national security for several reasons: the technologies are driven by commercial entities that are frequently outside our national security frameworks; the technologies are advancing quickly, typically outpacing policies and organizational reforms within government; assessments of the technologies require expertise that is concentrated in the private sector and that has rarely been used for national security; and the technologies lack conventional intelligence signatures that distinguish benign from malicious use, differentiate intentional from accidental misuse, or that permit attribution with confidence. By most measures, the United States is currently the global leader in AI. However, this may change as the People's Republic of China seeks to become the world's primary AI innovation center by 2030, an explicit goal of China's AI national strategy. In addition, both China and Russia are pursuing militarized AI technologies, intensifying the challenges that I just outlined. In response, I will highlight eight actions that national security organizations, including the Department of Homeland Security (DHS), could take. First, ensure that DHS cybersecurity strategies and cyber Red Team activities track developments in AI that are likely to affect cyber defense and cyber offense. Second, within the National Institute of Standards and Technology industry stakeholders and U.S. allies and partners ensure that international standards for AI prioritize safety, security, and privacy, so that the technologies are less prone to misuse by surveillance States. Third, consider creating a regulatory framework for AI that is informed by an evaluation of risks and benefits of AI to U.S. national security, civil liberties, and competitiveness. Fourth, identify the high-performance computing hardware that is used for AI as critical infrastructure that can be stolen or subverted, and consider requirements for tracking where high-performance computing hardware goes and what it is being used for. Fifth, work with the intelligence community (IC) to significantly expand the collection and analysis of information on key foreign public-and private-sector actors in adversary States involved in AI, and create new partnerships and information-sharing agreements among Federal, State, and local government agencies, the research community, and industry. Sixth, leverage AI expertise in the private sector through short-term and part-time Federal appointments and security clearances for leading academic and industry AI experts who can advise the government on key technology developments, with appropriate checks on conflicts of interest. Seventh, in Federal purchases and development of AI systems, include requirements for security, safety, and privacy measures that prevent AI systems from misbehaving due to accidents or adversaries, and require socially beneficial techniques, such as privacy-preserving machine learning and watermarking to detect generated text and deepfakes. Eighth and last, increase our investments in biosecurity and biodefense, given the potential applications of AI to design pathogens that are much more destructive than those found in nature. I thank the Committee for the opportunity to testify, and I look forward to questions."
+    },
+    {
+      "round": 2,
+      "speaker": "Chairman Peters",
+      "text": "Thank you, Dr. Matheny. Professor Venkatasubramanian, this question is for you. In your statement you describe the so-called black box of the AI systems, where developers themselves do not fully understand exactly what happened in that black box as it is making those decisions. You mentioned in your opening comments and your written comments some of those risks, but for the Committee's benefit could you tell us more about the risks that are associated when you have non-transparent algorithms?"
+    },
+    {
+      "round": 2,
+      "speaker": "Mr. Venkatasubramanian",
+      "text": "Thank you, Senator, and you can call me Professor V. That is fine. My students do that too."
+    },
+    {
+      "round": 3,
+      "speaker": "Mr. Venkatasubramanian",
+      "text": "Professor V is just fine."
+    },
+    {
+      "round": 3,
+      "speaker": "Mr. Venkatasubramanian",
+      "text": "To your question, when we do not know how an algorithm works or why it works, we also do not know how it fails and under what circumstances it fails, and that is where the biggest problem is. We do not even know how to tell whether it is failing or not. If I use, for example, an algorithm to analyze a tissue scan, to determine whether a patient has cancer, such a failed algorithm could either falsely declare a patient free from cancer, which would be catastrophic, or falsely declare that they were positive for the test and therefore have to undergo harmful treatments that could be very harmful to them. We would not be able to tell the difference. That is why safety testing, investigation, and transparency are so critical, because of the way in which machine learning algorithms, and the fact that there are algorithms for generating algorithms, create these procedures that are very hard to understand. This comes up again with things like ChatGPT, where we do not know how they do what they do. They seem to be providing plausible answers, but as we have seen, it is very easy to get them to lie, or not lie but give answers that are false because we do not understand how they are working. That is where the lack of transparency is one of the biggest problems with understanding the effectiveness and whether these systems can work."
+    },
+    {
+      "round": 3,
+      "speaker": "Chairman Peters",
+      "text": "I appreciate that. Ms. Givens, you have done a lot of work in this area as well. I would certainly love to have your thoughts on the black box and accountability."
+    },
+    {
+      "round": 3,
+      "speaker": "Ms. Givens",
+      "text": "Thanks for the question. The thing that I think about is what is meaningful transparency, and the way to think about that is as somebody is deciding, as a small business, for example, whether to use one of these tools or even large and mid-sized businesses deciding right now whether they could integrate ChatGPT into some of their offerings. What are the resources that will help them make an informed decision? Right now there are many different tests and approaches to safety measurement, to mitigating and measuring bias, but we really need to fast-track that conversation to make sure that we are talking about well-established, robust approaches to identifying and addressing risks. We also need to think about a conversation of internal audits versus how we make that an external process that can have more accountability and visibility from the outside. Then, of course, how to make guidance and disclosures that are useful for users. All of those are areas where there is nascent work now, but we need to turbocharge those efforts to actually make transparency have value."
+    },
+    {
+      "round": 3,
+      "speaker": "Chairman Peters",
+      "text": "Thank you. Dr. V, we are talking about bias in these systems. As a computer scientist you have considerable expertise in this area. Could you tell the Committee how does bias actually get into these AI systems? We should know how it gets in so we can figure out how to deal with it."
+    },
+    {
+      "round": 3,
+      "speaker": "Mr. Venkatasubramanian",
+      "text": "Thanks for that. There is a phrase in computer science that is called ``garbage in, garbage out.'' It means that if you put bad data into an algorithm you will get a bad outcome. In machine learning, what we talk about now is ``bias in, bias out.'' A machine learning algorithm that takes data that has hidden biases in it will invariably, almost certainly, detect and amplify those biases in its output. We saw this happening when a company was training a system to predict who would be good people to hire. The system started picking up signals that the candidate was a woman, even if it was not explicitly mentioned--for example, a person whose curriculum vitae (CV) said that they went to Smith College--and then it started rejecting them. It turns out that in this case it was because the data being used to train the algorithm was itself biased. It was historical data on hiring from the company, and the company, as it turned out, had skewed and gender biased hiring practices. One very important example where bias gets into an AI system is when the underlying data used to train the algorithm has biases coming from historical context."
+    },
+    {
+      "round": 3,
+      "speaker": "Chairman Peters",
+      "text": "Can you mitigate that by having larger datasets? Is that one way to do it, or you still have to, in some way, examine those sometimes very large datasets that are training AI."
+    },
+    {
+      "round": 3,
+      "speaker": "Mr. Venkatasubramanian",
+      "text": "Unfortunately, merely having more data does not actually solve the problem because if that more data continues to have those kinds of biases then you will just make the problem even worse. What is required is a collection of procedures, among them procedures that examine the sources of data, examine the biases in the data, even if it is a large dataset, and try to understand how those biases might be affecting what the algorithm would do. Another set of procedures is to understand how the algorithm training is being done. There are certain best practices for how to train algorithms to try to mitigate these forms of bias, and they need to be put into place. When you do that you can mitigate a lot of these biases. Similarly looking at, in context, how the algorithm is used and deployed and how the results are showing up and whether biases are showing up in the output as well. In these three ways, if you have the appropriate practices put into place you could try to mitigate some of these biases. You may not remove all of them but you can definitely go a long way toward doing that."
+    },
+    {
+      "round": 3,
+      "speaker": "Chairman Peters",
+      "text": "Thank you. Ms. Givens, you have told us how public conversation about responsible AI has been evolving. Could you help us understand, what would a truly responsible AI system actually look like?"
+    },
+    {
+      "round": 3,
+      "speaker": "Ms. Givens",
+      "text": "You have already started an important conversation around bias, but I think we also need to pull out the broader frame of are these systems working as intended. There is a functionality question to be had about are we actually able to rely on rational and predictable outcomes. Is the model structured in a way to actually allow people to have trust in the results that are being generated? When NIST produced its AI Risk Management Framework they identified a number of characteristics of what makes a trustworthy AI system, and I think it is actually a very useful way to think about these issues. For them, the factors are is it valid and reliable; safe, secure, and resilient; accountable and transparent; explainable and interpretable; privacy enhanced; and fair with harmful bias managed. Really each of those elements is its own inquiry. We need our own bodies of work as to how to make sure each of those are being maintained. But I think that is an incredibly useful way of breaking down these different elements of what it is to develop responsible AI. Then the final piece is we have to think about this through the entire lifecycle, so not just at the moment the tool is being designed in the first place but how and where it is being deployed, what that looks like in its contextual setting, and then because these tools, the whole way that they work is by learning over time, ongoing auditing and checks to make sure that they are still reliable, trustworthy, and have not brought in additional biases. That is the way we need to think about a holistic approach to these questions."
+    },
+    {
+      "round": 3,
+      "speaker": "Chairman Peters",
+      "text": "Thank you. Senator Blumenthal, you are recognized for your questions."
+    },
+    {
+      "round": 3,
+      "speaker": "Senator Blumenthal",
+      "text": "Thank you very much, Mr. Chairman, and I want to thank you for having this hearing, and the panel that we have which is, as you referred to it as truly eminent, informed, very helpful, and I welcome your willingness to have additional hearings, which I think most certainly we will want to do. Professor, I was interested in your reference to algorithms, quoting Princeton professor Narayanan, as ``snake oil.'' For me the danger of that snake oil is not only the mistakes that can be made, that is, the failings, and you all have identified some of those failings, but sometimes how they work all too well, the algorithms which are essentially, for most people in this world, black boxes, driving content to children. I want to thank the Chairman for his support in the efforts that we are making to protect children better than we have before. But these algorithms that work all too well will identify an interest that a child has and then continue driving content to that child. The idea that artificial intelligence is something way off in the future I think is a little bit misleading because right now Google and others are using these algorithms to drive that content. Could you describe whether they have control--and I will ask the other Members of the panel as well--whether they have and could exercise more control over what these algorithms do and whether they could make them more transparent."
+    },
+    {
+      "round": 3,
+      "speaker": "Mr. Venkatasubramanian",
+      "text": "Thank you for the question, Senator. I should say up front I am not an expert on matters linked to children's safety online, but as an AI expert what I can tell you is that for all of these algorithms, and the kinds you mentioned, the things we have talked about today so far, the importance of governance, the importance of transparency of how these algorithms work, of having independent review and ongoing monitoring, are critically important to make sure that they do not have the consequences that we do not want them to have. That idea of governance in AI, it is an important part of the process of determining what is it we want out of these algorithms we are deploying. Oftentimes we do not ask that question, and algorithms are used for engagement or for selling ads, and we do not ask the question of what impact they are having. Having a broad framework, an overarching, comprehensive framework, where we can evaluate what these algorithms are, how they work, and what they are doing is a way, in general, that we can make sure that we can get the benefits of these systems and not get the harms. But to your specific point about child online safety I will defer to others on the panel who have more expertise."
+    },
+    {
+      "round": 3,
+      "speaker": "Ms. Givens",
+      "text": "Senator, I know you have been a longtime leader on this issue, and we have worked for a long time with your staff on comprehensive privacy protections, not just for kids but for all consumers, frankly, engaging in these online platforms, where the hyper-targeting of content and of ads really can have harmful effects. I agree that this is a priority area. We have heard policymakers across the country and internationally focused on these issues and thinking about what responses can look like. Within my organization, one of the things we think about is how do you create the right incentives for companies to do well without creating adverse incentives that may end up, unfortunately, impacting kids, teens and their ability to access important information online. I think sometimes there can be questions about what are the right levers to push, how do we incentivize responsible design practices without creating a culture where, for example, it might be hard for teenagers online to access information about reproductive care or information that might be useful for them when they are exploring their gender identity or their family identity. There is a balance to be struck here, but on the overall, making sure that companies are being responsible in this space is incredibly important."
+    },
+    {
+      "round": 4,
+      "speaker": "Senator Blumenthal",
+      "text": "Yes, I thank you for the work that you have done in this area, and particularly with my office, I know you have been very positive and constructive, so I thank you. I am hoping, to cut right to the chase, that we can move forward on the Kids Online Safety Act, which provides for more transparency and at the same time provides for tools and safeguards for children and parents to make judgments that give them, in effect, control back over their lives, which many feel now they are losing, and avoid the unintended consequences that you just referenced, unintended consequences that may involve constraints on free expression or other goals. I think there is a balance to be struck here. I think that is our goal. That is what the legislation has attempted to do. I do not know whether anyone, whether you have any comments on this question. Mr. Matheny."
+    },
+    {
+      "round": 4,
+      "speaker": "Mr. Matheny",
+      "text": "Thanks, Senator. The one thing I would add is just that the potential for misuse is grounds for considering an appropriate regulatory framework, and I think reason to be especially cautious about open sourcing large language models that could be misused."
+    },
+    {
+      "round": 4,
+      "speaker": "Senator Blumenthal",
+      "text": "One of the goals of the legislation is, in fact, greater transparency, and open sourcing certainly is a way of addressing that issue. Thank you, Mr. Chairman."
+    },
+    {
+      "round": 4,
+      "speaker": "Chairman Peters",
+      "text": "Thank you. Senator Hassan, you are recognized for your questions."
+    },
+    {
+      "round": 4,
+      "speaker": "Senator Hassan",
+      "text": "Thank you, Mr. Chair, and I want to thank the panel for being here and for your work. I want to start with a question to you, Dr. Metheny. I am Chair of the Subcommittee on Emerging Threats (ETSO), a Subcommittee of this Homeland Security Committee, and I focus there, among other things, on the risks that artificial intelligence could pose to the cybersecurity of critical infrastructure like electric grids and hospitals. You talked a little bit about some of the risks that AI poses, but can you expand a little bit, how does AI impact the cybersecurity threat landscape and are there opportunities to utilize AI to counter these threats?"
+    },
+    {
+      "round": 4,
+      "speaker": "Mr. Matheny",
+      "text": "Thanks, Senator, for the question. The application that has probably gained the most public attention of these large language models is generating language that we are familiar with, natural language, so creating an English poem or an English short story. What is getting less attention, but could be more impactful on security, is the application of these large language models to be used for software generation, code generation, and computer programming languages rather than a natural language. Some of these applications are already fairly sophisticated, and an increasing fraction of new software engineering is taking place with the use, or assistance, of large language models. If this trend continues, it is quite possible that the offense of cyber capabilities that today are accessible only to state-level actor offensive cyber programs could be accessible to a much larger number of actors, simply by having access to tools that are able to generate software at scale and requiring much less technical sophistication to do so. Those could pose risks then to critical infrastructure and other networks that are sensitive."
+    },
+    {
+      "round": 4,
+      "speaker": "Senator Hassan",
+      "text": "Thank you for that. Are there capacities that could help counter that, that AI gives us?"
+    },
+    {
+      "round": 4,
+      "speaker": "Mr. Matheny",
+      "text": "The same tools can also be used to scale up cyber defense, and I think this will be a cat-and-mouse race to figure out, are the applications on the defensive side keeping up with the applications on the offensive side. I do not know the answer to that question. I think it will be a continuous competition between offense and defense. But we need to make sure that our cybersecurity organizations are keeping up with the trends in these large language models as they are applied."
+    },
+    {
+      "round": 4,
+      "speaker": "Senator Hassan",
+      "text": "OK. Thank you. Another question for you, Dr. Matheny. AI capabilities will offer new opportunities for the intelligence community, theoretically at least, to improve national security. Are there ways you believe that AI can improve intelligence analysis?"
+    },
+    {
+      "round": 4,
+      "speaker": "Mr. Matheny",
+      "text": "Yes. I think that the application of AI systems, particularly in open source data, where the volumes of data exceed our ability to analyze using manual methods, is one of the most important areas for intelligence. We could be making use of a much broader range of open source imagery, open source text in order to understand what is happening in the world much faster, and be able to share it with the world much more quickly. As we are seeing from the war in Ukraine, when we are able to share open source information we are able to change the way the world understands what is happening in a part of the world that we do not have direct access to."
+    },
+    {
+      "round": 4,
+      "speaker": "Senator Hassan",
+      "text": "Thank you. Then another question for you, Dr. Matheny. We know that government initiatives generally involve a number of different Federal agencies, and one of the things I am interested in is how can the Federal Government ensure that their agencies are coordinating with one another on AI research and deployment for potential joint projects or initiatives?"
+    },
+    {
+      "round": 4,
+      "speaker": "Mr. Matheny",
+      "text": "Thanks, Senator. One of the things that RAND has been working on over the years is how investments by one organization within the Federal Government, say one of our R&D organizations, can be more broadly shared across the government faster and how we can harmonize different efforts so that we are not duplicating efforts in one area of research, so that tool that are created by one agency can be leveraged by another, and so that standards that are used by one agency, say for AI being used for a particular application, can be harmonized with those in another agency. I think there are great gains in efficiency. One of the ways of harmonizing this would be through Federal procurement and ensure that we are using a consistent set of standards. Another would be through agencies like the National Institute of Standards and Technology, that have a key role to play in creating test frameworks and testbeds where we can robustly evaluate the performance of these AI systems."
+    },
+    {
+      "round": 4,
+      "speaker": "Senator Hassan",
+      "text": "Thank you. Now a question for Professor V, as I will call you, and Ms. Givens. This is a question for both of you. There is growing concern among workers in many industries that AI could fundamentally change the nature of work in unpredictable ways. You have touched on this a little bit, but do you have recommendations for how the Federal Government should be addressing challenges that companies and employees face from the use of AI in the workplace? Dr. V, I will start with you."
+    },
+    {
+      "round": 5,
+      "speaker": "Mr. Venkatasubramanian",
+      "text": "Thank you for the question, Senator. I think there are two parts to this, to helping workers deal with displacement due to AI. One, of course, is training and skilling, and the Federal Government can invest effort and research into helping workers train for our science, technology, engineering and mathematics (STEM)-enabled world. I think the Federal Government is doing that, and we can do definitely a lot more on that. I think it is even more important that we make sure that that training and that access to those skills is widely distributed and not just to those who have access to those already. That is one thing. I think another component of this is when we talk about worker displacement due to AI. I fundamentally believe it is because of overpromising on the part of AI systems, that tends to not play out when these systems are deployed. Systems are presented as being able to replace because of efficiencies, workers, but in fact they cause more problems than they deserve, and it is precisely because there is not governance, there is not the supervision, there is not the human supervision around these systems. I would argue that rather than thinking about workers displaced by AI, if we put proper governance and structures in place we will need more jobs for workers, in fact, to make sure that these systems, that are supposed to assist them, are not replacing them and doing it badly."
+    },
+    {
+      "round": 5,
+      "speaker": "Senator Hassan",
+      "text": "Thank you. Ms. Givens."
+    },
+    {
+      "round": 5,
+      "speaker": "Ms. Givens",
+      "text": "One of the questions is to think not just about displacement but if we are striving for a goal of workers working alongside AI systems, what does that interaction actually look like? We are seeing this play out now. You can think about fulfillment centers, for example, where workers are actually tasked with extreme specificity to every motion that they take, in the name of efficiency. There are business reasons for doing that, but there are also very real human impacts on the workers who are micromanaged at that level and live in a far more surveilled environment than they did before. Delivery van drivers, there are many other examples of this. There we need to think about things like workplace health and safety. The Occupational Safety and Health (OSHA) has a role to play. The Department of Labor (DOL) has a role to play. We need to think about enforcement, both of existing laws and how we create a movement for employers to understand what responsible practices look like and for workers to know and understand their rights."
+    },
+    {
+      "round": 5,
+      "speaker": "Senator Hassan",
+      "text": "Thank you very much. Thank you, Mr. Chair."
+    },
+    {
+      "round": 5,
+      "speaker": "Chairman Peters",
+      "text": "Thank you, Senator Hassan. Senator Padilla, you are recognized for your questions."
+    },
+    {
+      "round": 5,
+      "speaker": "Senator Padilla",
+      "text": "Excited about the opportunities that advances in technology will offer to society. But as this conversation has already shown, with every disruptive technology there are risks that demand mitigation. For example, automated decisionmaking systems and tools risk actually exacerbating the many existing inequities in our society, and that actually leads me to my first question. It is clear that investments in AI research and education have not been distributed equally across the nation's researchers and innovators. Racial and gender diversity in AI and computer science programs are severely lacking. This lack of diversity among students gives rise to the corresponding lack of diversity in the workforce. A lack of diversity in the workforce then contributes to the development of AI tools and approaches that either do not account for or actively perpetuate systemic bias and limits the breadth of ideas incorporated into AI innovation. My question is for Dr. Venkatasubramanian. As an educator, how can we ensure our AI and computer science students and workforce reflect the diversity of our nation?"
+    },
+    {
+      "round": 5,
+      "speaker": "Mr. Venkatasubramanian",
+      "text": "Thank you, Senator, for that question. This is an issue that concerns me greatly, as you might imagine, as an educator. I see the students who come to me who are concerned about this, and more often than not the students who are most concerned about these issues are students who truly reflect the broad diversity in this country, which is in one way a very good thing, but it also shows where the gaps in our ability to deliver STEM education effectively to our population is. I would say that in my experience when students are able to see themselves in the work that they do, and the topics they study, they are more engaged with it and they feel like technology, in this case, can speak to them. Thestudents who come to speak to me about concerns around bias and responsible AI come to me because they have literally said, ``I finally see a place for myself in this tech ecosystem.'' One of the reasons why I spend a lot of time talking about concerns about bias and inequities in technology isbecause it is only by speaking out loud about those issues and pointing to the ways in which we can use technology to mitigate those issues that we can actually bring in a population that feels like they are now being heard and that their concerns are being heard. I view these as part of the same story, that by spending time recognizing the inequities of AI, by spending time recognizing the need to govern areas to take account of these inequities we are actually telling people, ``We welcome you in this technology and in this technology-enabled world.''"
+    },
+    {
+      "round": 5,
+      "speaker": "Senator Padilla",
+      "text": "Thank you. Ms. Givens, I would be remiss if I did not take the opportunity to ask the former Chief Intellectual Property Counsel for the Senate Judiciary Committee a question about intellectual property. AI is introducing novel questions about the extent of a creator's intellectual property rights, most notably in the world of copyrights. Do you have any advice for those of us on the Judiciary Committee as we enter this new era of internet protocol (IP) complexity?"
+    },
+    {
+      "round": 5,
+      "speaker": "Ms. Givens",
+      "text": "I am afraid I do not have a solution for you on this incredibly complex issue, but I do think it is an area where much attention is needed. There are photographers and designers and artists out there who understandably are deeply worried about the erosion of their industry and the role that they can play with the creation of generative AI, and also that their work is being used to train those tools. On the other hand, we have had a very long tradition of fair use principles, and uses for transformative works in the creative space. There has to be a healthy conversation around how we appreciate some of those concerns of creators without inhibiting what is, in itself, an expressive act, the creation of new and diverse and transformative works through these tools."
+    },
+    {
+      "round": 5,
+      "speaker": "Senator Padilla",
+      "text": "Thank you. To be continued. Dr. Matheny, large language models are rapidly improving and generative AI can have many important and positive applications. However, as a former elections administrator, I want to share a specific concern that I have about the ease with which this technology could facilitate election disinformation campaigns. Generative AI could radically reduce the cost and time while increasing the impact of misinformation and disinformation and propaganda. Not only could someone make it seem like one of us on the dais said something that we did not say or endorsing something that we do not endorse, but also the ability of foreign actors to supercharge their efforts to interfere in our elections is absolutely clear. Referencing back to the Judiciary Committee, we know from our law enforcement officials that it is actually domestic extremism and white supremacy that pose the largest national security threats to the United States. It is bad enough that Speaker McCarthy was willing to share with Tucker Carlson all the footage of January 6th, which is now being repackaged to make it seem like a whole different January 6, 2021, took place than what is reality. That is using actual footage. Imagine AI-generated video and the power that it can have in reshaping people's perspectives and attempts to redefine the truth. Doctor, in light of your testimony, how do you recommend that we prepare our elections infrastructure and political processes to address propaganda that is harder to detect?"
+    },
+    {
+      "round": 5,
+      "speaker": "Mr. Matheny",
+      "text": "Thanks for the question, Senator. For several years RAND has had a project on something we called ``truth decay,'' which is the vulnerability of democracies to disinformation attacks and other attacks against norms of evidence used in policy debates. One concern that we have had for several years is that the application of AI to disinformation campaigns could, as you point out, radically reduce the costs and increase the scale and speed of text, and speech potentially, that is used in disinformation, in ways that are very difficult to distinguish from human-generated forms of text and speech. I think one important area is in research on distinguishing generative model text and speech compared to ones that are authentic. First, how can we watermark the products of generative AI systems in ways that we can distinguish them, and second, for those systems that have not used watermarking, can we find other signatures that allow digital forensics to be able to distinguish that which is disinformation from that which is legitimate."
+    },
+    {
+      "round": 5,
+      "speaker": "Senator Padilla",
+      "text": "Also to be continued. Thank you, Mr. Chairman."
+    },
+    {
+      "round": 5,
+      "speaker": "Chairman Peters",
+      "text": "Thank you, Senator Padilla. Senator Sinema, you will be recognized for your questions. The vote has been called. I am going to run to vote. If you could take the gavel while I vote and then come back, and then Senator Rosen, I will be back shortly."
+    },
+    {
+      "round": 6,
+      "speaker": "Senator Sinema",
+      "text": "[presiding.] Sure. Thank you, Mr. Chairman. Thank you to our witnesses for being here today. AI has the potential to revolutionize Arizonans' lives in countless ways, both good and bad. As we continue to integrate AI into our society we must ensure that this technology is developed and deployed in an ethical, transparent, and responsible manner that safeguards our values, preserves our privacy, and protects our national security. My first question is for Dr. Matheny. Generative AI is suddenly everywhere, including ChatGPT and deepfakes--those are the fake videos that make people appear to say or do things they did not actually say or do. I have some experience with that. The key to solving this challenge is transparency, and one of the most promising solutions is so called content provenance data. This allows digital creators to embed data in content that disclosures whether it is authentic, altered, or entirely synthetic. Do you believe that increasing transparency around what content is original versus what is AI-generated should be a policy priority for policymakers, and if so, is promoting content provenance efforts one of the most promising ways to create that transparency?"
+    },
+    {
+      "round": 6,
+      "speaker": "Mr. Matheny",
+      "text": "Some work that RAND has done over the past few years has identified watermarking and other ways of asserting provenance for digital media as being an important countermeasure against deepfakes, other forms of generated media that could be malicious. We also need to increase our ability to do forensics on media that may have been generated but does not leave as easy telltale signatures, either because the entities that generated that media have not participated in various kinds of regulatory efforts to introduce watermarking or provenance. I think what is likely to be required are investments in each of these categories, some way of asserting provenance, some way of watermarking, and investments and research on forensics for those that do not participate in the other two."
+    },
+    {
+      "round": 6,
+      "speaker": "Senator Sinema",
+      "text": "Thank you. Ms. Givens, as Chair of this Committee's Government Operations Subcommittee I am committed to ensuring that the Federal Government serves as a role model for society when it comes to responsibly and ethically deploying AI. I also serve as the Chair of the Commerce Subcommittee that oversees NIST, which just released its first-ever AI Risk Management Framework. What is your assessment of the Federal Government's current AI practices, particularly with respect to transparency, bias, accuracy, and effectiveness, and how can government better manage these risks when it deploys AI?"
+    },
+    {
+      "round": 6,
+      "speaker": "Ms. Givens",
+      "text": "This Committee has taken some important steps to show the need for rigorous processes and how agencies think about their use, design, procurement of AI. I think there is still quite a lot of room for growth. The AI Risk Management Framework released by NIST is an excellent starting point, but we really need to operationalize it. We need to make sure that it is useful for people in the sectors of applicability where they are working. NIST needs to keep up its work on measurement strategies and ways to actually identify bias and assess whether or not interventions are working and are appropriate. Then one of the leading things that this Committee helped generate, and it is being bolstered by a number of Executive Orders, is the inventory of agency uses of AI and guidance coming from OMB, and those are still works in progress as far as I understand. One of the priorities, I think, needs to be expediting that work, for OMB to play its central coordinating role, helping guide acquisition and use principles, and then starting the cycle of agencies inventorying their uses and showing how they are going to comply with that guidance in a meaningful way."
+    },
+    {
+      "round": 6,
+      "speaker": "Senator Sinema",
+      "text": "Thank you. My next question is for Dr. Venkatasubramanian--I practiced that one--and Dr. Metheny. I would like to continue on the topic of ethical AI but in the context of U.S.-China competition. As we compete against Beijing to win the AI race, America may lose if we focus solely on the size of our datasets, since, frankly, China's authoritarian system lends itself to vacuuming up vast volumes of data with few privacy protections. In contrast, America's competitive advantage may be our values, if we can translate these values into developing AI that is transparent, efficient, and fair. What advantages and disadvantages does our country face in the AI competition with China, and do you agree thatinstead of viewing our values as a liability in this competition America could and should view them as an asset?"
+    },
+    {
+      "round": 6,
+      "speaker": "Mr. Venkatasubramanian",
+      "text": "Thank you for the question, Senator. I completely agree with the idea that the United States has values that can be transmitted into the systems we build, and I would argue this is happening already, but unfortunately the United States is not leading on this. For example, in the European Union (EU), with the development of the AI Act and other legislation that is going to govern the use of technology, especially AI technology, there is an attempt to push forward on the kinds of responsible practices that I think have been, frankly, developed here in the United States but are now being used in Europe. I think the United States can take the innovative lead, on these practices and provide a model for, frankly, the rest of the world to follow in how we do AI that is innovative, as well as responsible, as well as ethical at the same time. I think we should push forward on that, we should emphasize that, and we should prioritize investments in those directions by prioritizing it within Congress and within the Federal Government."
+    },
+    {
+      "round": 6,
+      "speaker": "Mr. Matheny",
+      "text": "I think that the United States has a couple of asymmetric advantages compared to China in AI. The first is that we are a much more attractive destination for the world's computer scientists and engineers. The United States has only four percent of the global population. China has only 18 percent. The other 78 percent is sort of up for grabs. The United States does a much better job of attracting scientists and engineers from overseas. Many of the scientists and engineers are attracted by our values, so I think those values are a deep part of our asymmetric advantage. A second advantage that we have is our ability to work with allies and partners. The United States and China each are responsible for about 25 percent of global research and development spending. When you add the United States and its allies, and add China and its allies, China's percentage does not increase because it does not have alliances with strong technological powers. The United States increases from 25 percent to about 65 percent. Again, this is a place where having friends who are attracted to our values, who share our commitment to privacy, democratic governance, and the rule of law works to our advantage."
+    },
+    {
+      "round": 6,
+      "speaker": "Senator Sinema",
+      "text": "Thank you. Senator Rosen."
+    },
+    {
+      "round": 6,
+      "speaker": "Senator Rosen",
+      "text": "Thank you, Senator Sinema, and thank you to the witnesses for testifying today. I want to really speak a lot about skilled workforce because it is challenging across all platforms, as we see. Everyone who comes to talk to me is challenged with finding a skilled workforce, and our Federal agencies and the digital Workforce, no different. The National Security Commission on Artificial Intelligence does warn, and I am going to quote here, ``The human talent deficit is the government's most conspicuous AI deficit and the single greatest inhibitor to buying, building, and fielding AI- enabled technologies for national security purposes.'' The government, of course, we cannot compete with private sector salaries. We suffer from recruitment and retention issues, and the sustained AI talent shortage at government agencies, everyone would argue, could undermine our competitiveness. Dr. Matheny, what are the specific ways you think the Federal agencies can really work to improve and expand that AI talent pipeline, and how might academic partnerships and initiatives be leveraged right now, public-private sector, to fill some of these gaps perhaps?"
+    },
+    {
+      "round": 6,
+      "speaker": "Mr. Matheny",
+      "text": "Thanks so much for the question, Senator. I think that one of our most important levers or tools like the Intergovernmental Personnel Act, which allows the Federal Government to leverage expertise that is in academia and that is in other parts of the private sector, to bring in technical experts for short-term appointments, where they can serve as subject matter experts within Federal agencies. I think we also have roles, like special government experts, that allow those in the private sector to maintain their positions in the private sector while they still advise government. We certainly need to buildup the expertise within our own Federal workforce, but we also need to find more agile ways of leveraging the expertise that is distributed throughout the private sector, and those are two, I think, of our most important authorities to do so."
+    },
+    {
+      "round": 6,
+      "speaker": "Senator Rosen",
+      "text": "Thank you. Professor V, I am going to turn to you because what kind of research and development investments should we be making to do just this, to uphill, reskill, or some might say right-skill the folks that are out there that do want to work, giving them an onramp to these jobs that can continue to grow?"
+    },
+    {
+      "round": 6,
+      "speaker": "Mr. Venkatasubramanian",
+      "text": "Thank you, Senator. As I mentioned earlier in response to Senator Padilla, one of the reasons that animates students from across the spectrum to work in technology, especially those who have not been seen by technology or are not being represented by technology earlier, is a desire to do something in the public good, to do something to improve the way all of us get the benefits of technology. I feel like the Federal Government is a place where a lot of these students, university students, come and say they want to work in the Federal Government. They do not want to work in the private sector because they want to do some good. I think that is where the Federal Government has a comparative advantage over the private sector, becausethe Federal Government can articulate a value of public good in working with technology. I think the Federal Government should advertise that, should focus on developing technology to help bring it to all in a responsible and ethical manner. I think Congress should continue its work to grow Federal expertise through training and skilling programs in the Federal Government. I think Congress should bring back the Office of Technology Assessment to help Members of Congress, the legislature, get more expertise on these topics as well."
+    },
+    {
+      "round": 6,
+      "speaker": "Senator Rosen",
+      "text": "I could not agree more, as a former software developer, and so I am going to continue on this vein as we think about AI, the application that we use it for, cybersecurity, that can help us in these hunt forward operations, highlighting, or flagging, if you will, things for then humans to discern what seems right. So AI technology is rapidly evolving, and like I said, we really have to work on this. The National Cybersecurity Commission calls for more AI funding for AI-enabled cyber defenses. Again, Professor V, how do you think we can enable and use AI to detect malware, pattern recognition, the things that computers are really good at, on the defensive side, and how can we use that to harden our security against cyber threats?"
+    },
+    {
+      "round": 6,
+      "speaker": "Mr. Venkatasubramanian",
+      "text": "Senator Rosen, I think I will defer that question to Mr. Matheny here. He has much more expertise than I do on the national security side."
+    },
+    {
+      "round": 7,
+      "speaker": "Mr. Matheny",
+      "text": "You are too kind. I am worried about the long run arms race between offense and defense on cyber. I think both sides are amplified in their abilities by applications of different kinds of AI approaches. On the defense side, as you mentioned, pattern recognition for looking for network activity that could suggest that there is an attack in progress. Most attacks are discovered weeks after. It would be nice if we detected them while they were happening so that we could do something about them. I do think that AI offers some applications in this area and there are active projects at the Intelligence Advanced Research Projects Activity (IARPA) and Defense Advanced Research Projects Agency (DARPA) to apply AI to cyber defense. On the offensive side, I think one concern is that we are going to see increased levels of sophistication among relatively moderately skilled programmers in developing code much more quickly that can be used offensively. I think the main thing here is for Federal agencies to be aware of how AI is being applied both offensively and defensively so that we are not surprised."
+    },
+    {
+      "round": 7,
+      "speaker": "Senator Rosen",
+      "text": "Yes, I think you are right about that. I am going to continue in this vein about this national strategy because you spoke earlier about the EU publishing their coordinated plan on AI, and they are encouraging each of its member States to develop their own national strategies. Of course, last week the White House released our national cybersecurity strategy. What do you think would be the potential value for the U.S. national artificial intelligence strategy, more broadly, and how can interagency collaboration on AI be improved so we can detect and respond to threats more rapidly?"
+    },
+    {
+      "round": 7,
+      "speaker": "Mr. Matheny",
+      "text": "First I think all agencies would benefit from being able to draw in greater expertise, and that need not just mean full-time employees. It can mean advisors, consultants. Second is having a common frameworkfor AI standards that all Federal agencies can leverage. Here I think there is a key role for NIST to serve in developing uniform guidance for standards, ensuring that we also participate in international standards like ISO, SC 42. Then third, I think shared Federal procurement rules that allow agencies to be developing tools that are built toward common standards with a common test framework."
+    },
+    {
+      "round": 7,
+      "speaker": "Senator Rosen",
+      "text": "Speaking as a former software developer, the word ``common framework'' is music to my ears, so I am just going to leave it at that. Mr. Chairman, I yield back. Chairman Peters [presiding.] Thank you. Thank you, Senator Rosen. Dr. Matheny, you have extensive experience investigating threats posed by AI and national security, which is why it is so wonderful to have you here today. You have also written in support of export bans on the Chinese government. Could you tell us more about the threats that AI poses in the hands of the Chinese government and its State-sponsored companies and why bans may be appropriate to look at?"
+    },
+    {
+      "round": 7,
+      "speaker": "Mr. Matheny",
+      "text": "Thanks, Mr. Chairman. One of the things that I worry about, and I am a bit of a Debbie Downer on this, is that AI can be used to accelerate the development of other technologies. We are seeing early forms of this, where tools like AlphaFold were used to solve a very hard problem in biochemistry, the protein folding problem. The upside potential of this is enormous. We can imagine this being applied to medicine in a variety of beneficial ways. It can also be used, though, to develop novel pathogens, and States that have historically not hadas many taboos as democracies around the use of technologies such as biotechnology for malicious use, I worry deeplyabout how AI will be used to supercharge different research and development efforts. The same goes for offensive cyber, and the same goes also for disinformation used both domestically within China's own population for human rights abuses, for surveillance applications in Xinjiang and elsewhere in China, and used to influence foreign populations."
+    },
+    {
+      "round": 7,
+      "speaker": "Chairman Peters",
+      "text": "You talk about other uses, the dual use of this, and we know that AI has a great deal ofpotential to deal with diseases that we have been attempting to cure forever, diseases like cancer. But I am curious of your thoughts about AI systems being weaponized perhaps, to find biotoxins or chemical warfare agents. How concerned should we be about that?"
+    },
+    {
+      "round": 7,
+      "speaker": "Mr. Matheny",
+      "text": "Countries like China that have historically invested in biological weapons and that havedemonstrated an interest in ethnically targeted weapons greatly concern me. The use of AI for so-called genome-wideassociation studies to try to identify how one would ethnically target particular pathogens is one area of special concern. We know, from a variety of research efforts historically, that the most virulent or transmissible pathogens are not those that are found in nature but ones that can be constructed artificially. AI creates opportunity to enhance pathogens much more quickly and perhaps in ways that deliver effects to specific populations that are vulnerable."
+    },
+    {
+      "round": 7,
+      "speaker": "Chairman Peters",
+      "text": "Ms. Givens, you have talked about AI and privacy and how our privacy is in danger, and this actually picks up a little bit on this question about creating pathogens. Would you talk a little bit about the privacy risk associated with using AI in the context of biometric data? We are providing more biometric data in databases. What are some of the concerns that you have associated with that?"
+    },
+    {
+      "round": 7,
+      "speaker": "Ms. Givens",
+      "text": "Absolutely. Biometric data is one of the most sensitive types of data we can have. If there is a data breach and my faceprint is taken--I am not changing my face any time soon and I do not have the capacity to do so--so this information is highly in need of protection. That makes it challenging when we think about the use of biometric identifiers, for example, in the delivery of government services. An increasing focus in fraud detection, for example, uses face recognition technology, one-to-one matching. Of course, there are law enforcement uses that are underway in the United States as well. We really need to think long and hard about the security vulnerabilities that can be created through this technology. In addition, there are real concerns about equity when these types of technologies are being used. When, for example, your ability to access government services is contingent on you being able to snap a good selfie on your phone, that can exclude a large number of people that do not have that technology on their phone. Government agencies need to think about responsible onramps, responsible transitions for others as well. But the cybersecurity and privacy vulnerabilities are real, and that is why it is so important to come back tothis language we have been talking about around real procurement standards, real safeguards, to make sure that when the government is considering using this technology there is a weighing of pros and cons, and then making sure that risks are mitigated."
+    },
+    {
+      "round": 7,
+      "speaker": "Chairman Peters",
+      "text": "Thank you. Professor V, I have heard concerns about effective computing, which tries to discern someone's emotion from those facial expressions that Ms. Givens was just talking about. Could you tell the Committee more about effective computing and if you have concerns?"
+    },
+    {
+      "round": 7,
+      "speaker": "Mr. Venkatasubramanian",
+      "text": "Yes. Thank you for that. The premise, or the stated premise of effective computing is that we can infer information about people's internal States, their emotions, their cognitive States, their affect, from external features, external features like facial recognition, external features like how they walk, what kind of microtargeted expressions on their face, wrinkles, frowns, and so on. I have great concerns about this. The premise of effective computing is unfounded. It has no basis. AI systems cannot do this. They might claim they do but they cannot because there is no underlying science to back this up. There is no underlying science that says that you can, in fact, do this kind of inference of people's internal States from external features. It just does not work, and most claims are, pardon my expression, completely bogus."
+    },
+    {
+      "round": 7,
+      "speaker": "Chairman Peters",
+      "text": "Professor V, based on your time at the Office of Science and Technology Policy and your contributions to the Blueprint for an AI Bill of Rights, could you paint a picture for us of what a truly accountable AI system would look like within a Federal agency?"
+    },
+    {
+      "round": 7,
+      "speaker": "Mr. Venkatasubramanian",
+      "text": "Yes. This Federal agency procures and wants to procure an AI system that would be used to impact people, it would start by consulting with advocates, community partners, and other stakeholders to ensure that any system it might want to procure truly benefits those being impacted, in an equitable manner. The agency will lay out strict guidelines and specifications to make sure that only the specific task is being sold, and that the system is not being repurposed for other tasks as well. It will make sure that the procurement process incorporates information about testing and validation for the specific task, that the system, in fact, works, and that as appropriate, disparity mitigation has been performed and results of these disparity mitigations are presented to the agency before procurement. It would not hand over people's data to the vendor, and if necessary would only share data with the vendor in a very controlled environment, for development purposes only. Any deployed algorithm, once the system is deployed, would be supervised by agency experts who have expertise in the domain of interest and can tell when the algorithm or the system might be generating inaccurate outputs. The system would be regularly re-evaluated on a standard, on a cadence, to make sure data shifts have not affected its behavior. The vendor would need to provide tools to explain the algorithm's behavior. I think an agency that is doing deployment of accountable AI well would be doing all of these things."
+    },
+    {
+      "round": 8,
+      "speaker": "Chairman Peters",
+      "text": "Professor, if Congress were to requirement all the practices that you mentioned, what government body do you think would be best suited to hold agencies accountable?"
+    },
+    {
+      "round": 8,
+      "speaker": "Mr. Venkatasubramanian",
+      "text": "I think it is helpful to maybe distinguish between private sector use cases and government use cases. For private sector use cases, the FTC and its new Office of Technology would be perhaps the best place to do this, and should be given the resources to do this kind of work. For government uses, using the National AI Office that Congress had created, and OMB would probably be the best place to have high- level guidance and supervision of these systems."
+    },
+    {
+      "round": 8,
+      "speaker": "Chairman Peters",
+      "text": "Is there an example of an agency now that is using AI effectively and responsibly, in your opinion?"
+    },
+    {
+      "round": 8,
+      "speaker": "Mr. Venkatasubramanian",
+      "text": "The Department of Health and Human Services (HHS) has done an excellent job complying with congressional mandates around the inventory of AI, for example, and around executive orders around AI. They are being very careful, for example, in their Updates Rule 1557 and the development of guidelines together with the Food and Drug Administration (FDA) around the use of AI in diagnostics, and that is one agency I would definitely hold up as doing a good job in this space."
+    },
+    {
+      "round": 8,
+      "speaker": "Chairman Peters",
+      "text": "Great. Dr. Metheny, this Committee has focused on laying some of the groundwork for responsible agency use and acquisition of AI. In our legislation we require standards and safeguards for acquiring and deploying these technologies and ensuring that the Federal workforce is up to the task to do that. Can you elaborate on what else we could be doing to make sure that government procures and uses AI effectively and responsibly?"
+    },
+    {
+      "round": 8,
+      "speaker": "Mr. Matheny",
+      "text": "Thank you, Mr. Chairman. I think the U.S. Government has a fair amount of purchasing power that it can leverage to require that procured technologies meet certain standards of safety, reliability, robustness, and those standards could be verified in compliance through a third-party audit. I think that is one important lever that the Federal Government has. It will still not be the primary purchaser, but the private sector, in order to comply with such standards, it would simply make business sense for them to ensure that their systems, on the whole, are compliant. A second key area, I think, is ensuring that democracies-- the United States, its allies, and partners ensure that the international standards for AI systems are ones that support democratic norms around privacy and self-determination. We have the opportunity, through the international standards processes such as SC 42 that I mentioned earlier, to make those standards be ones that are privacy preserving, that are compatible with encryption, for example, and I think that is an opportunity we should seize."
+    },
+    {
+      "round": 8,
+      "speaker": "Chairman Peters",
+      "text": "Thank you. The last question before we wrap up this hearing I am going to pose to each of you. I will start with you, Ms. Givens, and then we will just work down the dais there. We have heard commentators and academics have warned about the risk of human-like artificial intelligence, or artificial general intelligence, and those tend to be a lot of apocalyptic, scary stories that people talk about. But my question to each of you is, what are the risks that artificial general intelligence pose, and realistically, how likely is that actually in the near future? What is your assessment of how fast this is going and when we may beconfronted with some of those even more challenging questions and issues? I will start with you, Ms. Givens."
+    },
+    {
+      "round": 8,
+      "speaker": "Ms. Givens",
+      "text": "I will leave to some of my more technical colleagues to do the likelihood question. I never want to make a prediction on a congressional panel. But I will say that when we are talking about such sophisticated technology, it raises many of the issues that we are already facing now, but simply supercharged, which is why we have to get the fundamentals in front of us correct now. When we are thinking about, for example, rules-based systems and controls, we already have a hard enough time thinking about how to respond to machine learning models now. When we think about these advanced systems, the notion that those are going to evolve rapidly over time makes it even harder to contemplate. We have to address these questions of competency, of responsible design practices from the beginning, and we have to get our fundamentals right now, in the opportunity before us immediately, the ways in which AI is harming people in their daily lives right now, and the lack of ability for government agencies right now to be able to meaningfully respond to it, for us to even begin to think about how we tackle the next generation of issues."
+    },
+    {
+      "round": 8,
+      "speaker": "Chairman Peters",
+      "text": "I think it is an important point. The technology we know, that we heard from the experts here, is advancing very rapidly. In the past we have tended to look at technology as it is developed and just be excited about the promise of it. It gets developed and then we start seeing some adverse consequences, and then we look at regulation or other types of ways of dealing with it. In this case this is moving so fast that I am concerned that if it gets way ahead of us that we cannot use the model of the past, where we see how things work out and then we address it. We really have to be thinking ahead, thinking a few steps ahead, which is why I am asking this question about the probability of even more powerful systems. Professor V, that is in your wheelhouse."
+    },
+    {
+      "round": 8,
+      "speaker": "Mr. Venkatasubramanian",
+      "text": "Yes. People ask me what keeps me up at night. AGI does not keep me up at night. The reason why it does not is because, as Ms. Givens mentioned, the problems we are likely to face with the apocalyptic visions of AGI are the same problems we are already facing right now with the systems that are alreadyin play. I worry about people being sent to jail because of an error in an ML system. Whether you use some fancy AGI to do the same thing, it is the same problem, and we are seeing this problem right now. I think that the Committee's time is well spent pondering the harms that we are facing right now from these systems, and I would say, again, it is hard to predict. I am a computer scientist so maybe I should predict. But I would say that my bet is that the harms we are going to see as these more powerful systems come online, even with ChatGPT, are no different from the harms we are seeing right now. If we focus our efforts and our energies on governance and regulation and guardrails to address the harms we are seeing right now, they will be able to adjust as the technology improves. I am not worried that what we have put in place today will be out of date or out of sync with the new tech. The new tech is like the old tech, just supercharged."
+    },
+    {
+      "round": 8,
+      "speaker": "Chairman Peters",
+      "text": "Thank you. Dr. Matheny, you will have the last word."
+    },
+    {
+      "round": 8,
+      "speaker": "Mr. Matheny",
+      "text": "As is typically my last words, I do not know, and I think it is a really hard question. I think whether or not artificial general intelligence proves to be nearer than thought or farther than thought, I think there are things that we can do today that are important in either case, including regulatory frameworks that include standards with third-party tests or audits. The governance of our hardware supply chain so that we understand where large amounts of computing is going, and we prevent large amounts of computing from going to places that do not have the same ethical standards that we and other democracies have. Increasing the overall level of awareness and capability within the policy community, as you are doing today."
+    },
+    {
+      "round": 8,
+      "speaker": "Chairman Peters",
+      "text": "Great. Thank you. I would like to thank our witnesses for joining us today, and certainly I am grateful for your contributions to this very important discussion. As you heard at the outset, this is not the end. We are going to have more hearings on this and continue to dig deeper into the subject matter and look forward to working with you on that. We know that today, as has been pretty clearly outlined, that AI systems can write like humans, they can assess business outlooks for companies, and they can even, hopefully, help us cure cancer at some point in the future. As we have heard, however, these new developments certainly bring new risks, and without responsible designs, the use of AI can be devastating and discriminatory. Biased AI systems can unfairly deny people job opportunities and open users to legal liability. AI can supercharge the privacy risks posed by biometric data collection. We also have heard that advancements in AI pose new challenges for our global competitiveness and national security. China is challenging the United States for leadership in AI innovation, and both China and Russia are developing military applications for AI as well. AI developments can create entirely new types of cyber and biological threats, and we must prepare for this new AI--enhanced world. As we have heard today, recent advancements in computing research and data collection and processing power means that now is the moment to act on artificial intelligence. As Chairman of the Committee I am going to work to ensure the United States continues to lead on AI, and we can be leaders in both AI research and production and in responsible AI design. They are not mutually exclusive. We can do all of the above, and we must. Your testimony here today will help inform the Committee's future legislative activities and oversight actions on that issue, and we look forward to being continually engaged with each and every one of you. The record for this hearing will remain open for 15 days, until 5 p.m. on March 23, 2023, for the submission of statements and questions for the record. This hearing is now adjourned. [Whereupon, at 11:30 a.m., the hearing was adjourned.] A P P E N D I X ---------- [GRAPHIC(S) NOT AVAILABLE IN TIFF FORMAT]"
+    }
+  ]
+}

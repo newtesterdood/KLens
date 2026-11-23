@@ -1,0 +1,165 @@
+{
+  "title": "Real Multi-LLM Stakeholder Negotiation: 7 Cooperative GPT-4 Agents (30 Turns)",
+  "context": "Authentic NeurIPS LLM-Deliberation log of 7 GPT-4 city stakeholders (SportCo, Mayor, Union, Environmental League, Heritage, Tourism, Other cities) negotiating a multi-issue stadium deal across 10 chronological windows.",
+  "metadata": {
+    "category": "real_multi_llm_deliberation",
+    "regime": "cooperative_7player_gpt4",
+    "finished_rounds": 29,
+    "source_url": "https://raw.githubusercontent.com/S-Abdelnabi/LLM-Deliberation/main/logs/all_coop_base_7player_gpt4/all_coop_7players/history19_28_45.json",
+    "agents": 7,
+    "rounds": 10,
+    "total_turns": 30
+  },
+  "turns": [
+    {
+      "round": 1,
+      "speaker": "SportCo",
+      "text": "A1, B1, C4, D1, E5, F4"
+    },
+    {
+      "round": 1,
+      "speaker": "Local Labour Union",
+      "text": "I propose a balanced deal that addresses job creation, environmental concerns, and cultural integration while also considering the financial aspects of the project. My proposal is: A2, B2, C1, D2, E3, F2 ."
+    },
+    {
+      "round": 1,
+      "speaker": "Environmental League",
+      "text": "I appreciate the proposals on the table and would like to suggest a balanced deal that addresses our environmental concerns while also considering job creation and cultural integration. My proposal is: A2, B3, C2, D2, E3, F2 ."
+    },
+    {
+      "round": 2,
+      "speaker": "Mayor",
+      "text": "I propose a balanced deal that takes into account the financial viability of the project, job creation for our local community, and environmental and cultural considerations. My proposal is: A2, B2, C1, D1, E3, F2 ."
+    },
+    {
+      "round": 2,
+      "speaker": "SportCo",
+      "text": "Taking into account everyone's concerns and the need for a balanced approach, I propose the following deal: A2, B2, C2, D1, E4, F3 . This proposal addresses the critical need for a high governmental loan, job creation, environmental considerations, and cultural integration."
+    },
+    {
+      "round": 2,
+      "speaker": "Other cities",
+      "text": "Considering the interests of all parties and aiming for a balanced agreement, I propose the following deal: A2, B2, C1, D3, E2, F2 . This proposal supports job creation, environmental balance, cultural integration, and fair compensation."
+    },
+    {
+      "round": 3,
+      "speaker": "National Heritage Committee",
+      "text": "Acknowledging the concerns and preferences of all parties, I propose a balanced deal that supports environmental improvement, cultural integration, and financial viability: A2, B3, C2, D1, E3, F2 ."
+    },
+    {
+      "round": 3,
+      "speaker": "Department of Tourism",
+      "text": "After considering everyone's input and the importance of reaching a balanced agreement, I propose the following deal: A2, B3, C2, D3, E3, F1 . This proposal takes into account environmental improvement, fair employment distribution, reasonable compensation to other cities, and a strong emphasis on cultural integration and preservation."
+    },
+    {
+      "round": 3,
+      "speaker": "Environmental League",
+      "text": "I propose a deal that aligns with our shared interests in environmental protection and cultural integration, while also considering the financial aspects important to SportCo and the Department of Tourism. My proposal is: A2, B3, C2, D2, E3, F1 ."
+    },
+    {
+      "round": 4,
+      "speaker": "National Heritage Committee",
+      "text": "Considering the interests of all parties and aiming for a balanced agreement, I propose the following deal: A2, B3, C2, D1, E3, F1 . This proposal supports environmental improvement, cultural integration, and financial viability."
+    },
+    {
+      "round": 4,
+      "speaker": "Mayor",
+      "text": "Considering the interests of all parties and aiming for a balanced agreement, I propose the following deal: A2, B2, C1, D1, E3, F3 . This proposal supports a high governmental loan, job creation, environmental balance, and cultural integration."
+    },
+    {
+      "round": 4,
+      "speaker": "Local Labour Union",
+      "text": "Taking into account the preferences of all parties and aiming for a balanced agreement, I propose the following deal: A2, B2, C1, D1, E3, F2 . This proposal supports a high governmental loan, prioritizes job creation for our union, and offers a compromise on cultural integration and environmental concerns."
+    },
+    {
+      "round": 5,
+      "speaker": "Department of Tourism",
+      "text": "After careful consideration, I propose a balanced deal that addresses environmental, cultural, and financial concerns: A2, B3, C4, D3, E3, F1 . This deal supports environmental improvement, cultural integration, and a reasonable governmental loan."
+    },
+    {
+      "round": 5,
+      "speaker": "SportCo",
+      "text": "Taking into account the preferences of all parties and aiming for a balanced agreement, I propose the following deal: A2, B2, C3, D1, E3, F2 . This proposal supports a high governmental loan, fair employment distribution, environmental balance, and cultural integration."
+    },
+    {
+      "round": 5,
+      "speaker": "Other cities",
+      "text": "Taking into account the interests of all parties and aiming for a balanced agreement, I propose the following deal: A2, B3, C2, D3, E2, F2 . This proposal offers a fair compromise on infrastructure, supports environmental and cultural interests, provides reasonable compensation to our cities, and aligns with the preferences of the Local Labour Union."
+    },
+    {
+      "round": 6,
+      "speaker": "National Heritage Committee",
+      "text": "Acknowledging the importance of cultural heritage and environmental conservation, and considering the financial interests of SportCo and the Department of Tourism, I propose the following balanced deal: A2, B3, C2, D1, E3, F1 ."
+    },
+    {
+      "round": 6,
+      "speaker": "Environmental League",
+      "text": "Acknowledging the importance of environmental protection and cultural heritage, and considering the financial aspects for all parties, I propose the following balanced deal: A2, B3, C2, D2, E3, F2 . This deal offers a compromise on infrastructure, prioritizes ecological improvement, and supports cultural integration."
+    },
+    {
+      "round": 6,
+      "speaker": "SportCo",
+      "text": "Considering the interests of all parties and the importance of reaching a balanced agreement, I propose the following deal: A2, B2, C3, D2, E4, F2 . This proposal offers a compromise on the governmental loan and ecological impact, while still supporting fair employment distribution and cultural integration."
+    },
+    {
+      "round": 7,
+      "speaker": "Mayor",
+      "text": "Considering the interests of all parties and aiming for a balanced agreement, I propose the following deal: A2, B2, C1, D1, E3, F2 . This proposal ensures a strong governmental loan, prioritizes local employment, and offers a compromise on environmental and cultural issues."
+    },
+    {
+      "round": 7,
+      "speaker": "Other cities",
+      "text": "Acknowledging the common ground found in previous proposals and the need for a balanced agreement, I suggest we consider the following deal: A2, B3, C2, D2, E2, F2 . This deal offers a fair compromise on infrastructure, supports environmental and cultural interests, provides reasonable compensation to our cities, and aligns with the preferences of the Local Labour Union."
+    },
+    {
+      "round": 7,
+      "speaker": "Local Labour Union",
+      "text": "Considering the common preferences and the need for a balanced agreement, I propose the following deal: A2, B3, C1, D2, E3, F2 . This proposal takes into account the environmental concerns, ensures a strong preference for local employment, and offers a fair compromise on the governmental loan and cultural integration."
+    },
+    {
+      "round": 8,
+      "speaker": "Department of Tourism",
+      "text": "Considering the interests of all parties and aiming for a balanced agreement, I propose the following deal: A2, B3, C4, D2, E3, F1 . This proposal offers a fair compromise on the governmental loan, prioritizes environmental improvement, and ensures strong cultural integration, which is important for tourism."
+    },
+    {
+      "round": 8,
+      "speaker": "Mayor",
+      "text": "After considering everyone's concerns and priorities, I propose a balanced deal that supports local employment, a reasonable governmental loan, and cultural integration, while also addressing environmental and infrastructure concerns. I believe this deal will benefit all parties involved and ensure the project's success. Here is the proposed deal: A2, B2, C1, D2, E3, F2 ."
+    },
+    {
+      "round": 8,
+      "speaker": "Department of Tourism",
+      "text": "Taking into account the preferences of all parties and aiming for a balanced agreement that benefits tourism and respects environmental and cultural values, I propose the following deal: A2, B3, C2, D2, E3, F1 . This proposal offers a fair compromise on the governmental loan, prioritizes environmental improvement, and ensures strong cultural integration, which is important for tourism and the heritage of Crete."
+    },
+    {
+      "round": 9,
+      "speaker": "SportCo",
+      "text": "Taking into account the preferences of all parties and aiming for a balanced agreement, I propose the following deal: A2, B2, C2, D2, E4, F1 . This proposal offers a fair compromise on the governmental loan, addresses ecological concerns, supports fair employment distribution, and ensures cultural integration."
+    },
+    {
+      "round": 9,
+      "speaker": "National Heritage Committee",
+      "text": "Acknowledging the importance of cultural heritage and environmental conservation, and considering the interests of SportCo and the Department of Tourism, I propose a balanced deal that should be acceptable to all parties: A2, B3, C2, D2, E3, F1 ."
+    },
+    {
+      "round": 9,
+      "speaker": "Other cities",
+      "text": "Taking into account the preferences of all parties and aiming for a balanced agreement, I propose the following deal: A2, B3, C2, D2, E3, F2 . This deal offers a fair compromise on infrastructure, supports environmental and cultural interests, provides reasonable compensation to our cities, and aligns with the preferences of the Local Labour Union."
+    },
+    {
+      "round": 10,
+      "speaker": "Environmental League",
+      "text": "After careful consideration of everyone's input, I propose a balanced deal that addresses our environmental and cultural concerns while also respecting the interests of all parties: A2, B3, C2, D2, E3, F1 . This proposal should be acceptable to all and lead to a successful agreement."
+    },
+    {
+      "round": 10,
+      "speaker": "Local Labour Union",
+      "text": "Acknowledging the common ground we've found on several issues and the importance of job creation for our local community, I propose a deal that balances our collective interests: A2, B3, C2, D2, E4, F1 . This deal aligns with the preferences of key parties and ensures a strong focus on employment for our union members."
+    },
+    {
+      "round": 10,
+      "speaker": "SportCo",
+      "text": "New proposal with C3: A2 (7), B3 (0), C3 (8), D2 (22), E3 (10), F2 (2) = 49 This is still below our minimum score. We need to find a way to increase our score without losing the support of the Department of Tourism. Since the Department of Tourism is interested in B3 and F1, we could consider shifting from C2 to C3, which gives us a higher score and may be acceptable to the Local Labour Union. New proposal with C3: A2 (7), B3 ("
+    }
+  ]
+}
