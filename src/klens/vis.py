@@ -2384,7 +2384,10 @@ def render_concept_flow_dashboard(
             )
             ax_flow.add_patch(patch)
 
-    wrap_w = max(24, int(115 / max(1, T)))
+    def _clip_line(s: str, limit: int) -> str:
+        return s if len(s) <= limit else s[: max(4, limit - 1)].rstrip() + "…"
+
+    wrap_w = max(18, int(132 / max(1, T)))
     for t in range(T):
         x_center = float(t)
         ax_flow.text(
@@ -2393,7 +2396,7 @@ def render_concept_flow_dashboard(
             f"Round {resolved_rounds[t]}  (K* = {k_star_series[t]:.2f})",
             ha="center",
             va="center",
-            fontsize=9.5,
+            fontsize=9.2 if T <= 5 else 8.2,
             fontweight="bold",
             color="#0f172a",
             bbox=dict(boxstyle="round,pad=0.22", facecolor="#e2e8f0", edgecolor="#94a3b8", lw=0.9),
@@ -2422,21 +2425,26 @@ def render_concept_flow_dashboard(
             )
 
             badge_prefix = f"[#{c['badge_id']}] " if c["badge_id"] else ""
-            header_line = f"{badge_prefix}{c['event_type'].upper()} ({len(c['members'])}): {c['short_members']}"
-            header_line = textwrap.shorten(header_line, width=wrap_w + 6, placeholder="...")
+            header_line = _clip_line(
+                f"{badge_prefix}{c['event_type'].upper()} ({len(c['members'])})\n{c['short_members']}",
+                wrap_w + 18,
+            )
+            if "\n" in header_line:
+                h0, h1 = header_line.split("\n", 1)
+                header_line = f"{_clip_line(h0, wrap_w)}\n{_clip_line(h1, wrap_w)}"
 
-            wedge_txt = ", ".join(c["wedge_terms"][:3]) if c["wedge_terms"] else c["topic"]
-            shared_txt = ", ".join(c["shared_terms"][:3]) if c["shared_terms"] else ""
+            wedge_txt = ", ".join(c["wedge_terms"][:2]) if c["wedge_terms"] else c["topic"]
+            shared_txt = ", ".join(c["shared_terms"][:2]) if c["shared_terms"] else ""
 
             lines_to_draw = [header_line]
             if wedge_txt:
-                lines_to_draw.append(textwrap.shorten(f"▲ Wedge: {wedge_txt}", width=wrap_w + 4, placeholder="..."))
+                lines_to_draw.append(_clip_line(f"▲ {wedge_txt}", wrap_w + 1))
             if shared_txt and c_h >= 0.17:
-                lines_to_draw.append(textwrap.shorten(f"● Shared: {shared_txt}", width=wrap_w + 4, placeholder="..."))
+                lines_to_draw.append(_clip_line(f"● {shared_txt}", wrap_w + 1))
             if c["medoid_claim"] and c_h >= 0.14:
                 max_claim_len = wrap_w * (2 if c_h >= 0.24 else 1)
-                c_snip = textwrap.shorten(c["medoid_claim"], width=max_claim_len, placeholder="...")
-                lines_to_draw.append(textwrap.fill(f"\"{c_snip}\" ({c['medoid_short_speaker']})", width=wrap_w + 2))
+                c_snip = _clip_line(c["medoid_claim"], max_claim_len)
+                lines_to_draw.append(textwrap.fill(f"\"{c_snip}\" ({c['medoid_short_speaker']})", width=wrap_w))
 
             ax_flow.text(
                 x_center,
@@ -2444,9 +2452,9 @@ def render_concept_flow_dashboard(
                 "\n".join(lines_to_draw),
                 ha="center",
                 va="center",
-                fontsize=7.1 if T <= 4 else 6.6,
+                fontsize=7.0 if T <= 4 else (6.4 if T <= 5 else 5.8),
                 color=head_col if len(lines_to_draw) == 1 else "#1e293b",
-                linespacing=1.22,
+                linespacing=1.20,
                 zorder=6,
             )
 
@@ -2743,6 +2751,17 @@ def render_narrative_dashboard(
             zorder=4,
         )
 
+    placed_phase_labels: List[Tuple[float, float]] = []
+    min_dx = v_max * 0.18
+    min_dy = (k_max - 0.8) * 0.13
+    candidate_offsets = [
+        (0.018 * v_max, 0.08),
+        (0.018 * v_max, -0.18),
+        (-0.025 * v_max, 0.16),
+        (-0.025 * v_max, -0.22),
+        (0.022 * v_max, 0.26),
+        (0.022 * v_max, -0.32),
+    ]
     for pr in phase_rounds:
         is_piv = pr["is_pivot"]
         col = "#d97706" if is_piv else ("#059669" if pr["round_idx"] == T - 1 else "#2563eb")
@@ -2752,14 +2771,25 @@ def render_narrative_dashboard(
             tag += f" (↻{pr['rotation_deg']:.0f}°)"
         if pr["surge_terms"]:
             tag += f"\n{', '.join(pr['surge_terms'][:2])}"
-        ax_phase.text(
-            pr["velocity"] + 0.018 * v_max,
-            pr["k_star"] + 0.08,
+
+        lx = pr["velocity"] + candidate_offsets[0][0]
+        ly = pr["k_star"] + candidate_offsets[0][1]
+        for dx, dy in candidate_offsets:
+            cx, cy = pr["velocity"] + dx, pr["k_star"] + dy
+            if not any(abs(cx - px) < min_dx and abs(cy - py) < min_dy for px, py in placed_phase_labels):
+                lx, ly = cx, cy
+                break
+        placed_phase_labels.append((lx, ly))
+        ax_phase.annotate(
             tag,
-            fontsize=7.0,
+            xy=(pr["velocity"], pr["k_star"]),
+            xytext=(lx, ly),
+            fontsize=6.9,
             fontweight="bold" if is_piv else "normal",
             color="#92400e" if is_piv else "#1e293b",
-            va="bottom",
+            ha="left" if lx >= pr["velocity"] else "right",
+            va="bottom" if ly >= pr["k_star"] else "top",
+            arrowprops=dict(arrowstyle="-", color="#94a3b8", lw=0.7, alpha=0.65) if abs(ly - pr["k_star"]) > 0.14 else None,
             zorder=7,
         )
 

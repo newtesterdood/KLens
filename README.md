@@ -67,6 +67,15 @@ For low-level dynamical systems tracking, KLens plots the Koopman eigenvalues on
 * **2D Semantic Manifold & Centroid Drift (Panel C)**: Projects lifted state trajectories into principal observable coordinates (PC 1 vs. PC 2) and tracks the drift of the **Consensus Centroid $\bar{z}(t)$** (dashed gold path).
 * **Forward Trajectory Projection & Contraction Cone (Panel D)**: Projects agent belief states forward $k$ rounds ($\hat{\Psi}_{t+k} = \Psi_t \hat{K}^k$) to forecast whether subsequent rounds will contract toward consensus or expand into deadlock.
 
+### 4. Trajectory Paths, Alluvial Concept Flow & Narrative Insights
+
+Beyond eigenvalue spectra, KLens includes dedicated views for persuasion paths, concept merges/splits, and structural power dynamics:
+
+* **Directed Paths & Inflection Dossier (`--style paths`)**: Traces each participant from start diamond (`◇`) to end marker (`●`) in silence-aware PCA space, overlays semantic axis poles and concept pins, marks top merges (`Collection`) and splits (`Divergence`) with numbered badges (`#1`–`#K`), and lists contrastive wedge concepts and verbatim medoid claims in Panel D.
+* **Alluvial Faction-Flow (`--style flow`)**: Connects per-round cluster blocks across rounds with cubic Bezier participant ribbons to visualize coalition merges and splits directly beside contrastive wedge concepts, shared terms, and synchronized `K*(t)` contraction.
+* **Deliberation Narrative (`--style narrative`)**: Surfaces asymmetric **Framing Anchors vs. Co-opted Conceders** with lagged concept-transfer arcs, plots the $(K^*, \text{Velocity})$ deliberation phase portrait with agenda pivots ($\ge 45^\circ$), flags **False Consensus** (high shared vocabulary alongside high $\sin\theta$), and ranks **Catalyst / Bridge Turns**.
+* **Interactive Explorer (`--html`)**: Zero-dependency HTML5 timeline toggling between `2D Spatial Map`, `Alluvial Faction-Flow`, and `Narrative Insights` with clickable Cluster Lens term highlighting and verbatim round claims.
+
 ---
 
 ## Human-Understandable Semantic Topic Synthesis
@@ -80,23 +89,25 @@ While Koopman operators track the continuous-time geometry of belief vectors in 
 
 ### Live Benchmark Outputs
 
-#### 1. Clinical SLM Deployment Benchmark (`samples/clinical_slm_debate.json`)
-Six specialist agents deliberate deploying Small Language Models in hospital triage. A contrarian regulatory entity objects to automated clinical decisions:
+#### 1. Real Multi-Agent LLM Debate Benchmark (`samples/real_llm_debate_bitcoin.json`)
+Three expert LLM personas debate over 7 rounds whether Bitcoin is strictly digital vs. grounded in physical hardware wallets (`Multi-Agent-LLMs/DEBATE`):
 
 ```
 === Deliberation Semantic Synthesis ===
-• Center of Disagreement: Zero AI vs. Selective Judge Auditing
-  "The primary debate axis centers on the trade-off between zero ai and selective judge auditing."
-• Consensus Centroid Concept: Selective Judge Auditing & Hybrid SLM Orchestration
-  "Agreement on hybrid SLM orchestration with selective judge auditing for clinical rigor."
+• Effective Reasoning Channels (K*): 1.29 -> 1.28 (2 channels identified)
+• Operator Validation: Walk-Forward err=0.783, conf=0.46 | Orthogonal MAD Z=3.13 (significant)
+• Center of Disagreement: Hardware Wallets vs. Bitcoin S Digital
+  "The primary debate axis centers on the trade-off between hardware wallets and bitcoin s digital."
+• Consensus Centroid Concept: Access Bitcoin & Cryptocurrency Expert
+  "**Interpretation of the Question**: The Cryptocurrency Expert's point that the question's meaning hinges on whether it refers to the physicality of bitcoin itself or includes the means to access it, is crucial, but it should not override the fundamental nature of bitcoin as digital."
 
 --- Faction Topics & Positions ---
-• Faction 1 (5 members): Selective Judge Auditing
-  Position: "Agreement on hybrid SLM orchestration with selective judge auditing for clinical rigor."
+• Faction 1 [Synthesizing Compromiser | 51% Conclusion Weight | sin(θ)=0.56] (2 members): Nature of Bitcoin
+  Position: "The Digital Wallet Specialist's emphasis on physical devices for access is noted, but I believe the fundamental nature of bitcoin as digital, as emphasized by the Cryptocurrency Expert and myself, takes precedence."
 
---- Rogue Dissent Position (Agent 5 (Regulatory/Adversary)) ---
-• Stance:   Zero AI
-  Position: "AI must not touch clinical decisions under any condition."
+--- Orthogonal / Dissent Position (Digital Wallet Specialist) [Conceding Coalition | 49% Conclusion Weight | sin(θ)=0.56] ---
+• Stance: Hardware Wallets
+  Position: "The Cryptocurrency Expert's point about indirect representation via physical devices like hardware wallets is crucial."
 ```
 
 #### 2. Executive Boardroom Infrastructure Benchmark (`samples/boardroom_deadlock_polarization.jsonl`)
@@ -396,18 +407,18 @@ To bridge geometric dynamics with human reasoning, KLens extracts human-interpre
 
 ```
 === Deliberation Semantic Synthesis ===
-• Center of Disagreement: Zero AI vs. Selective Judge Auditing
-  "The primary debate axis centers on the trade-off between zero ai and selective judge auditing."
-• Consensus Centroid Concept: Selective Judge Auditing & Hybrid SLM Orchestration
-  "Agreement on hybrid SLM orchestration with selective judge auditing for clinical rigor."
+• Center of Disagreement: Working Families vs. Washington Gridlock
+  "The primary debate axis centers on the trade-off between working families and washington gridlock."
+• Consensus Centroid Concept: Working Families & Economic Growth
+  "Governor Clinton, President Bush, and Ross Perot will each summarize their vision for the nation's economy, debt, and future."
 
 --- Faction Topics & Positions ---
-• Faction 1 (5 members): Selective Judge Auditing
-  Position: "Agreement on hybrid SLM orchestration with selective judge auditing for clinical rigor."
+• Faction 3 (George H.W. Bush): Post-cold War
+  Position: "With lower interest rates, trade expansion, lower taxes, and spending discipline, America will lead the global economy and protect working families without big-government programs."
 
---- Rogue Dissent Position (Agent 5 (Regulatory/Adversary)) ---
-• Stance:   Zero AI
-  Position: "AI must not touch clinical decisions under any condition."
+--- Orthogonal / Dissent Position (Ross Perot) ---
+• Stance: Lobbyists and Washington
+  Position: "If we do not confront the four-trillion-dollar debt, special-interest lobbyists, and Washington gridlock head-on, we leave our children a bankrupt nation instead of the American Dream."
 ```
 
 ---
@@ -432,11 +443,16 @@ pip install -e ".[dev]"
 Pass any multi-agent transcript (JSON or JSONL) to `klens plot` or the standalone file loader script:
 
 ```bash
-# Render 4-panel diagnostic dashboard matching the clinical debate benchmark
-klens plot samples/clinical_slm_debate.json --output out/clinical_telemetry.png
+# Render 4-panel diagnostic dashboard on a multi-candidate debate
+klens plot samples/debate_bush_clinton_perot_1992.json --style diagnostic --output out/bush_perot_telemetry.png
+
+# Render trajectory paths, alluvial concept flow, narrative insights, and interactive HTML explorer
+klens plot samples/debate_bush_clinton_perot_1992.json --style paths --output out/bush_perot_paths.png --html out/bush_perot.html
+klens plot samples/real_llm_debate_bitcoin.json --style flow --output out/bitcoin_flow.png
+klens plot samples/real_llm_debate_bitcoin.json --style narrative --output out/bitcoin_narrative.png
 
 # Or use the standalone Python file loader
-python examples/visualize_transcript.py samples/clinical_slm_debate.json --output out/clinical_telemetry.png
+python examples/visualize_transcript.py samples/debate_bush_clinton_perot_1992.json --output out/bush_perot_telemetry.png
 ```
 
 ### 2. Run Built-in 6-Agent Simulation
@@ -450,8 +466,8 @@ klens demo --plot out/demo_telemetry.png --output spectral_debate_log.csv --t-ce
 KLens includes realistic deliberation traces in [samples/](samples/) covering diverse multi-agent topologies:
 
 ```bash
-# 1. Clinical SLM Deployment & Regulatory Audit (JSON)
-klens run samples/clinical_slm_debate.json --plot out/clinical_telemetry.png --output out/metrics_clinical.csv
+# 1. Real Multi-Agent LLM Debate (JSON, 7 rounds)
+klens run samples/real_llm_debate_bitcoin.json --plot out/bitcoin_narrative.png --style narrative --output out/metrics_bitcoin.csv
 
 # 2. Multi-Agent LLM Safety Consensus Debate (JSON)
 klens run samples/llm_safety_consensus.json --plot out/safety_telemetry.png --output out/metrics_safety.csv
@@ -483,8 +499,8 @@ from klens import (
 
 # --- Option A: One-line transcript visualization ---
 processor, saved_path = plot_from_transcript_file(
-    transcript_path="samples/clinical_slm_debate.json",
-    output_path="out/clinical_telemetry.png",
+    transcript_path="samples/delaware_merger_deliberation.json",
+    output_path="out/delaware_telemetry.png",
     show=False,
 )
 

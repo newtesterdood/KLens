@@ -39,8 +39,8 @@ def test_extract_candidate_sentences():
     assert sentences[1] == ("Latency is critical!", "A", 1)
 
 
-def test_semantic_synthesis_clinical_sample():
-    with open("samples/clinical_slm_debate.json") as f:
+def test_semantic_synthesis_real_llm_bitcoin_sample():
+    with open("samples/real_llm_debate_bitcoin.json") as f:
         data = json.load(f)
 
     records = [
@@ -77,7 +77,7 @@ def test_semantic_synthesis_clinical_sample():
     assert "vs." in synth.center_of_disagreement
     assert len(synth.center_of_disagreement_statement) > 20
     assert len(synth.centroid_concept) > 0
-    assert "orchestration" in synth.centroid_statement.lower() or "hybrid" in synth.centroid_statement.lower()
+    assert "bitcoin" in synth.centroid_statement.lower() or "digital" in synth.centroid_statement.lower()
 
     assert len(synth.factions) >= 1
     for f in synth.factions:
@@ -85,7 +85,7 @@ def test_semantic_synthesis_clinical_sample():
         assert len(f.representative_statement) > 10
 
     assert synth.rogue_stance is not None
-    assert synth.rogue_stance.members == ["Agent 5 (Regulatory/Adversary)"]
+    assert synth.rogue_stance.members == [rogue_spk]
     assert len(synth.rogue_stance.topic) > 0
     assert len(synth.rogue_stance.representative_statement) > 10
 
