@@ -461,10 +461,11 @@ Pass any multi-agent transcript (JSON or JSONL) to `klens plot` or the standalon
 # Render 4-panel diagnostic dashboard on a multi-candidate debate
 klens plot samples/debate_bush_clinton_perot_1992.json --style diagnostic --output out/bush_perot_telemetry.png
 
-# Render trajectory paths, alluvial concept flow, narrative insights, and interactive HTML explorer
+# Render trajectory paths, alluvial concept flow, narrative insights, spectral rigor, and interactive HTML explorer
 klens plot samples/debate_bush_clinton_perot_1992.json --style paths --output out/bush_perot_paths.png --html out/bush_perot.html
 klens plot samples/real_llm_debate_bitcoin.json --style flow --output out/bitcoin_flow.png
 klens plot samples/real_llm_debate_bitcoin.json --style narrative --output out/bitcoin_narrative.png
+klens plot samples/real_llm_negotiation_targeted_adv.json --style rigor --output out/adv_rigor.png
 
 # Or use the standalone Python file loader
 python examples/visualize_transcript.py samples/debate_bush_clinton_perot_1992.json --output out/bush_perot_telemetry.png

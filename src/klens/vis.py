@@ -15,13 +15,16 @@ from klens.spectral import (
     cluster_factions,
     compute_effective_channels_k_star,
     compute_koopman_metrics,
+    compute_multi_cluster_residuals,
     compute_nnls_subspace_orthogonality,
+    compute_orthogonal_significance,
     detect_orthogonal_from_states,
     detect_rogue_from_states,
     extract_centroid_keywords,
     extract_last_active_states,
     lift_state,
     predict_agent_trajectories,
+    validate_koopman_walk_forward,
 )
 
 if TYPE_CHECKING:
@@ -83,11 +86,11 @@ def _short_speaker_labels(speakers: Sequence[str], max_len: int = 12) -> List[st
         cleaned_names.append(base_name or cleaned)
         tokens = (base_name or cleaned).split()
         if len(tokens) >= 2 and tokens[-1].rstrip(".,").lower() in suffixes:
-            tok = tokens[-2]
+            tok = tokens[-2].rstrip(".,")
         elif len(tokens) >= 2 and tokens[0].lower() == "agent":
-            tok = " ".join(tokens[:2])
+            tok = " ".join(tokens[:2]).rstrip(".,")
         elif tokens:
-            tok = tokens[-1]
+            tok = tokens[-1].rstrip(".,")
         else:
             tok = ""
         last_tokens.append(tok)
@@ -134,11 +137,20 @@ def _project_silence_aware_pca(
 
     nonzero_states = Z[active_mask]
     fit_data = nonzero_states if len(nonzero_states) >= 2 else Z.reshape(-1, d)
-    pca = PCA(n_components=2, random_state=42)
-    pca.fit(fit_data)
-
-    Z_2d = pca.transform(Z.reshape(-1, d)).reshape(T, N, 2)
-    Z_mean_2d = pca.transform(Z.mean(axis=1))
+    n_comp = min(2, fit_data.shape[0], d)
+    if n_comp <= 0:
+        Z_2d = np.zeros((T, N, 2), dtype=float)
+        Z_mean_2d = np.zeros((T, 2), dtype=float)
+    else:
+        pca = PCA(n_components=n_comp, random_state=42)
+        pca.fit(fit_data)
+        proj_all = pca.transform(Z.reshape(-1, d))
+        proj_mean = pca.transform(Z.mean(axis=1))
+        if n_comp < 2:
+            proj_all = np.hstack([proj_all, np.zeros((proj_all.shape[0], 2 - n_comp), dtype=float)])
+            proj_mean = np.hstack([proj_mean, np.zeros((proj_mean.shape[0], 2 - n_comp), dtype=float)])
+        Z_2d = proj_all.reshape(T, N, 2)
+        Z_mean_2d = proj_mean
 
     Z_display_2d = Z_2d.copy()
     for i in range(N):
@@ -1297,6 +1309,16 @@ def render_spectral_dashboard(
             output_path=output_path,
             show=show,
             title=title or "Deliberation Narrative: Influence, Concept Transfers, Phase Regimes & Catalyst Turns",
+            dpi=dpi,
+        )
+    elif style == "rigor":
+        return render_spectral_rigor_dashboard(
+            source=source,
+            speakers=speakers,
+            rounds=rounds,
+            output_path=output_path,
+            show=show,
+            title=title or "Spectral Rigor & Alignment: Stability, Walk-Forward Verification, Isolation & Δ-Cosine",
             dpi=dpi,
         )
 
@@ -2900,6 +2922,412 @@ def render_narrative_dashboard(
     return fig
 
 
+def _extract_spectral_rigor_data(
+    Z: np.ndarray,
+    speakers: Sequence[str],
+    rounds: Sequence[int],
+    seed: int = 42,
+    num_rff: int = 100,
+    ridge_rho: float = 1e-6,
+    unit_filter: float = 0.985,
+) -> dict:
+    T, N, d = Z.shape
+    short_names = _short_speaker_labels(speakers, max_len=12)
+    short_map = dict(zip(speakers, short_names))
+
+    local_residuals, _, _ = compute_multi_cluster_residuals(Z, seed=seed)
+
+    round_metrics: List[dict] = []
+    persistence_counts = {s: 0 for s in speakers}
+    for t in range(T):
+        r_id = int(rounds[t])
+        Z_sub = Z[: t + 1]
+        delta_t = Z[t] - Z[t].mean(axis=0, keepdims=True)
+        dis_norm = float(np.linalg.norm(delta_t))
+        k_star = compute_effective_channels_k_star(Z[t])
+        o_spk, o_idx, mad_z, is_sig = compute_orthogonal_significance(Z_sub, speakers, seed=seed)
+
+        if t >= 1 and N >= 2:
+            l2, t_cert, _, _ = compute_koopman_metrics(
+                Z_sub, num_rff=num_rff, ridge_rho=ridge_rho, unit_filter=unit_filter, seed=seed
+            )
+            persistence_counts[o_spk] = persistence_counts.get(o_spk, 0) + 1
+            if l2 >= 1.0:
+                regime = "Divergent"
+            elif l2 >= 0.85:
+                regime = "Slow / Metastable"
+            else:
+                regime = "Contractive"
+        else:
+            l2 = None
+            t_cert = None
+            regime = "Init"
+
+        round_metrics.append({
+            "round": r_id,
+            "round_idx": t,
+            "lambda_2": round(float(l2), 4) if l2 is not None else None,
+            "t_cert": int(t_cert) if t_cert is not None else None,
+            "disagreement_norm": round(dis_norm, 4),
+            "k_star": round(float(k_star), 3),
+            "ortho_speaker": o_spk,
+            "ortho_short": short_map.get(o_spk, o_spk),
+            "ortho_idx": int(o_idx),
+            "mad_z": round(float(mad_z), 3),
+            "is_stat_ortho": bool(is_sig),
+            "regime": regime,
+        })
+
+    wf_steps: List[dict] = []
+    if T >= 3 and N >= 2 and d > 0:
+        input_dim = N * d
+        for t in range(2, T):
+            Z_sub = Z[:t]
+            Delta_true = Z[: t + 1] - Z[: t + 1].mean(axis=1, keepdims=True)
+            target_vec = Delta_true[-1].reshape(-1)
+            target_norm = float(np.linalg.norm(target_vec))
+
+            Z_flat = Z_sub.reshape(t, input_dim)
+            Z_mean = Z_sub.mean(axis=1, keepdims=True)
+            Delta = Z_flat - np.tile(Z_mean, (1, N, 1)).reshape(t, input_dim)
+
+            rng = np.random.RandomState(seed)
+            W_f = rng.normal(0, 0.7 / np.sqrt(input_dim), size=(input_dim, num_rff))
+            b_f = rng.uniform(0, 2 * np.pi, size=(num_rff,))
+
+            Psi = lift_state(Delta[:-1, :], W_f, b_f)
+            Psi_plus = lift_state(Delta[1:, :], W_f, b_f)
+            psi_curr = lift_state(Delta[-1:, :], W_f, b_f)
+            S, obs_dim = Psi.shape
+            use_dual = S < obs_dim and obs_dim > 200
+            if use_dual:
+                G_dual = Psi @ Psi.T + ridge_rho * np.eye(S)
+                psi_next = (psi_curr @ Psi.T) @ np.linalg.solve(G_dual, Psi_plus)
+            else:
+                G = Psi.T @ Psi + ridge_rho * np.eye(obs_dim)
+                K_hat = np.linalg.solve(G, Psi.T @ Psi_plus)
+                psi_next = psi_curr @ K_hat
+
+            delta_pred = psi_next[0, 1 : 1 + input_dim]
+            pred_norm = float(np.linalg.norm(delta_pred))
+            rel_err = float(np.linalg.norm(delta_pred - target_vec) / target_norm) if target_norm > 1e-12 else 0.0
+            wf_steps.append({
+                "round": int(rounds[t]),
+                "round_idx": t,
+                "actual_norm": round(target_norm, 4),
+                "predicted_norm": round(pred_norm, 4),
+                "rel_error": round(rel_err, 4),
+            })
+
+    wf_mean_err, wf_conf = validate_koopman_walk_forward(Z, num_rff=num_rff, ridge_rho=ridge_rho, seed=seed)
+
+    terminal_eigs: List[dict] = []
+    if T >= 2 and N >= 2 and d > 0:
+        Z_flat = Z.reshape(T, N * d)
+        Z_mean = Z.mean(axis=1, keepdims=True)
+        Delta = Z_flat - np.tile(Z_mean, (1, N, 1)).reshape(T, N * d)
+        max_delta = float(np.max(np.linalg.norm(Delta, axis=1)))
+        max_diff = float(np.max(np.linalg.norm(np.diff(Delta, axis=0), axis=1)))
+        if max_delta <= 1e-12:
+            terminal_eigs = [{"real": 0.0, "imag": 0.0, "mag": 0.0, "is_bias": False, "is_subdominant": True}]
+        elif max_diff <= 1e-12:
+            terminal_eigs = [
+                {"real": 1.0, "imag": 0.0, "mag": 1.0, "is_bias": True, "is_subdominant": False},
+                {"real": 1.0, "imag": 0.0, "mag": 1.0, "is_bias": False, "is_subdominant": True},
+            ]
+        else:
+            input_dim = N * d
+            rng = np.random.RandomState(seed)
+            W_f = rng.normal(0, 0.7 / np.sqrt(input_dim), size=(input_dim, num_rff))
+            b_f = rng.uniform(0, 2 * np.pi, size=(num_rff,))
+            Psi = lift_state(Delta[:-1, :], W_f, b_f)
+            Psi_plus = lift_state(Delta[1:, :], W_f, b_f)
+            S, obs_dim = Psi.shape
+            use_dual = S < obs_dim and obs_dim > 200
+            if use_dual:
+                eigs = np.linalg.eigvals(np.linalg.solve(Psi @ Psi.T + ridge_rho * np.eye(S), Psi_plus @ Psi.T))
+            else:
+                eigs = np.linalg.eigvals(np.linalg.solve(Psi.T @ Psi + ridge_rho * np.eye(obs_dim), Psi.T @ Psi_plus))
+                if obs_dim > S:
+                    eigs = eigs[np.argsort(np.abs(eigs))[::-1][:S]]
+            tol = max(1e-6, 1.0 - unit_filter)
+            dist_one = np.abs(eigs - 1.0)
+            bias_idx = int(np.argmin(dist_one)) if (len(eigs) > 1 and dist_one[int(np.argmin(dist_one))] <= tol) else -1
+            non_bias = [k for k in range(len(eigs)) if k != bias_idx]
+            sub_idx = max(non_bias, key=lambda k: abs(eigs[k])) if non_bias else 0
+            for k, ev in enumerate(eigs):
+                terminal_eigs.append({
+                    "real": round(float(ev.real), 4),
+                    "imag": round(float(ev.imag), 4),
+                    "mag": round(float(abs(ev)), 4),
+                    "is_bias": bool(k == bias_idx),
+                    "is_subdominant": bool(k == sub_idx),
+                })
+
+    Z_first = np.zeros((N, d), dtype=float)
+    Z_last, _ = extract_last_active_states(Z)
+    for i in range(N):
+        for t in range(T):
+            if np.linalg.norm(Z[t, i]) > 1e-12:
+                Z_first[i] = Z[t, i]
+                break
+
+    sim_init = cosine_similarity(Z_first) if N > 0 else np.zeros((0, 0))
+    sim_final = cosine_similarity(Z_last) if N > 0 else np.zeros((0, 0))
+    delta_sim = sim_final - sim_init
+    np.fill_diagonal(delta_sim, 0.0)
+
+    order: List[int] = []
+    if N > 0:
+        remaining = list(range(N))
+        cur = int(np.argmax(sim_final.mean(axis=1)))
+        order.append(cur)
+        remaining.remove(cur)
+        while remaining:
+            nxt = max(remaining, key=lambda j: sim_final[order[-1], j])
+            order.append(nxt)
+            remaining.remove(nxt)
+
+    ordered_speakers = [speakers[i] for i in order]
+    ordered_short = [short_map[speakers[i]] for i in order]
+    delta_sim_ordered = delta_sim[np.ix_(order, order)] if N > 0 else delta_sim
+
+    pair_shifts: List[dict] = []
+    for i in range(N):
+        for j in range(i + 1, N):
+            pair_shifts.append({
+                "speaker_a": speakers[i],
+                "speaker_b": speakers[j],
+                "short_a": short_map[speakers[i]],
+                "short_b": short_map[speakers[j]],
+                "initial_cos": round(float(sim_init[i, j]), 3),
+                "final_cos": round(float(sim_final[i, j]), 3),
+                "delta_cos": round(float(delta_sim[i, j]), 3),
+            })
+
+    top_converged = sorted([p for p in pair_shifts if p["delta_cos"] > 0.01], key=lambda p: -p["delta_cos"])[:3]
+    top_polarized = sorted([p for p in pair_shifts if p["delta_cos"] < -0.01], key=lambda p: p["delta_cos"])[:3]
+
+    return {
+        "round_metrics": round_metrics,
+        "walk_forward_steps": wf_steps,
+        "walk_forward_error": wf_mean_err,
+        "walk_forward_confidence": wf_conf,
+        "terminal_eigenvalues": terminal_eigs,
+        "residual_matrix": np.round(local_residuals, 4).tolist(),
+        "orthogonal_persistence": persistence_counts,
+        "ordered_speakers": ordered_speakers,
+        "ordered_short_speakers": ordered_short,
+        "order_indices": order,
+        "delta_cosine_matrix": np.round(delta_sim_ordered, 4).tolist(),
+        "top_converged_pairs": top_converged,
+        "top_polarized_pairs": top_polarized,
+    }
+
+
+def render_spectral_rigor_dashboard(
+    source: Union[LiveTranscriptStreamProcessor, np.ndarray],
+    speakers: Optional[Sequence[str]] = None,
+    rounds: Optional[Sequence[int]] = None,
+    output_path: Optional[str] = None,
+    show: bool = False,
+    title: str = "Spectral Rigor & Alignment: Stability, Walk-Forward Verification, Isolation & Δ-Cosine",
+    dpi: int = 200,
+):
+    plt = _ensure_matplotlib(show=show)
+    Z, resolved_speakers, resolved_rounds, _ = _resolve_source_data(source, speakers, rounds)
+    T, N, d = Z.shape
+
+    rigor = _extract_spectral_rigor_data(Z, resolved_speakers, resolved_rounds)
+    rm = rigor["round_metrics"]
+    wf_steps = rigor["walk_forward_steps"]
+    term_eigs = rigor["terminal_eigenvalues"]
+    res_mat = np.asarray(rigor["residual_matrix"], dtype=float)
+    delta_mat = np.asarray(rigor["delta_cosine_matrix"], dtype=float)
+    ord_short = rigor["ordered_short_speakers"]
+    ord_idx = rigor["order_indices"]
+    persistence = rigor["orthogonal_persistence"]
+
+    fig = plt.figure(figsize=(16.8, 11.4))
+    gs = fig.add_gridspec(2, 2, hspace=0.35, wspace=0.28, left=0.075, right=0.955, top=0.885, bottom=0.07)
+
+    # Panel A: Spectral Stability Trajectory |lambda_2(t)| + Terminal Complex Spectrum Inset
+    ax_a = fig.add_subplot(gs[0, 0])
+    eval_rounds = [r["round"] for r in rm if r["lambda_2"] is not None]
+    eval_l2 = [r["lambda_2"] for r in rm if r["lambda_2"] is not None]
+    eval_tcert = [r["t_cert"] for r in rm if r["lambda_2"] is not None]
+    y_top = max(1.26, (max(eval_l2) * 1.22) if eval_l2 else 1.26)
+
+    ax_a.axhspan(0.0, 0.85, color="#ecfdf5", alpha=0.85, zorder=0)
+    ax_a.axhspan(0.85, 1.0, color="#fffbeb", alpha=0.85, zorder=0)
+    ax_a.axhspan(1.0, y_top, color="#fef2f2", alpha=0.85, zorder=0)
+    ax_a.axhline(0.85, color="#d97706", linestyle="--", linewidth=1.1, alpha=0.8)
+    ax_a.axhline(1.0, color="#dc2626", linestyle="--", linewidth=1.3, alpha=0.9)
+
+    if eval_rounds:
+        ax_a.plot(eval_rounds, eval_l2, color="#1d4ed8", linewidth=2.4, marker="o", markersize=6.5, zorder=4)
+        for rx, l2v, tc in zip(eval_rounds, eval_l2, eval_tcert):
+            col = "#dc2626" if l2v >= 1.0 else ("#d97706" if l2v >= 0.85 else "#059669")
+            ax_a.scatter([rx], [l2v], color=col, s=55, edgecolor="white", linewidth=1.0, zorder=5)
+        peak_i = int(np.argmax(eval_l2))
+        dx_off = 44 if peak_i == 0 else (-44 if peak_i == len(eval_rounds) - 1 else 0)
+        dy_off = -28 if eval_l2[peak_i] > 0.80 else 16
+        ax_a.annotate(
+            f"Peak |λ₂|={eval_l2[peak_i]:.3f}\nT_cert={eval_tcert[peak_i]}",
+            xy=(eval_rounds[peak_i], eval_l2[peak_i]),
+            xytext=(dx_off, dy_off),
+            textcoords="offset points",
+            ha="center",
+            fontsize=8,
+            fontweight="bold",
+            color="#0f172a",
+            arrowprops=dict(arrowstyle="->", color="#64748b", lw=0.9),
+            bbox=dict(boxstyle="round,pad=0.22", facecolor="white", edgecolor="#94a3b8", alpha=0.94),
+        )
+
+    ax_a.text(0.02, 0.05, "Contractive (|λ₂| < 0.85)", transform=ax_a.transAxes, fontsize=8, color="#047857", fontweight="bold")
+    ax_a.text(0.98, 0.92, "Divergent / Stalemate (≥ 1.0)", transform=ax_a.transAxes, ha="right", fontsize=8, color="#b91c1c", fontweight="bold")
+    ax_a.set_title("A. Spectral Stability Trajectory |λ₂(t)| & Terminal Spectrum", fontsize=11, fontweight="bold", pad=10)
+    ax_a.set_xlabel("Debate Round", fontsize=9.5)
+    ax_a.set_ylabel("Sub-Dominant Eigenvalue |λ₂(t)|", fontsize=9.5)
+    ax_a.set_ylim(0.0, y_top)
+    if eval_rounds:
+        ax_a.set_xticks(eval_rounds)
+    ax_a.grid(True, linestyle=":", alpha=0.45)
+
+    if term_eigs:
+        inset = ax_a.inset_axes([0.70, 0.09, 0.27, 0.38])
+        th = np.linspace(0, 2 * np.pi, 120)
+        inset.plot(np.cos(th), np.sin(th), color="#64748b", linestyle="--", linewidth=0.9)
+        inset.axhline(0, color="#cbd5e1", linewidth=0.6)
+        inset.axvline(0, color="#cbd5e1", linewidth=0.6)
+        max_rad = max(1.15, max(e["mag"] for e in term_eigs) * 1.12)
+        for ev in term_eigs:
+            if ev["is_bias"]:
+                inset.scatter([ev["real"]], [ev["imag"]], marker="x", color="#94a3b8", s=26, zorder=3)
+            elif ev["is_subdominant"]:
+                inset.scatter([ev["real"]], [ev["imag"]], marker="*", color="#dc2626", s=68, zorder=5)
+            else:
+                inset.scatter([ev["real"]], [ev["imag"]], marker="o", color="#2563eb", s=20, alpha=0.75, zorder=4)
+        inset.set_xlim(-max_rad, max_rad)
+        inset.set_ylim(-max_rad, max_rad)
+        inset.set_aspect("equal")
+        inset.set_xticks([])
+        inset.set_yticks([])
+        inset.set_title("Terminal λ", fontsize=7.5, pad=2, color="#334155")
+        inset.patch.set_alpha(0.92)
+
+    # Panel B: Out-of-Sample Walk-Forward Verification
+    ax_b = fig.add_subplot(gs[0, 1])
+    all_r = [r["round"] for r in rm]
+    obs_norms = [r["disagreement_norm"] for r in rm]
+    ax_b.plot(all_r, obs_norms, color="#0f172a", linewidth=2.3, marker="o", markersize=6, label="Observed Disagreement ||Δ(t)||₂", zorder=4)
+
+    if wf_steps:
+        wf_r = [s["round"] for s in wf_steps]
+        wf_act = [s["actual_norm"] for s in wf_steps]
+        wf_pred = [s["predicted_norm"] for s in wf_steps]
+        ax_b.plot(wf_r, wf_pred, color="#0d9488", linewidth=2.1, linestyle="--", marker="s", markersize=5.5, label="Causal 1-Step EDMD Forecast ||Δ̂(t|t-1)||₂", zorder=5)
+        ax_b.fill_between(wf_r, wf_act, wf_pred, color="#14b8a6", alpha=0.18, label="Out-of-Sample Forecast Gap")
+        wf_err = rigor["walk_forward_error"]
+        wf_conf = rigor["walk_forward_confidence"]
+        badge_txt = f"Walk-Forward Mean Rel. Err: {wf_err:.3f}\nOperator Fit Confidence: {wf_conf:.2f}" if wf_err is not None else "Walk-Forward: n/a"
+        ax_b.text(
+            0.97, 0.94, badge_txt, transform=ax_b.transAxes, ha="right", va="top",
+            fontsize=8.5, fontweight="bold", color="#0f172a",
+            bbox=dict(boxstyle="round,pad=0.35", facecolor="#f0fdfa", edgecolor="#0d9488", alpha=0.94),
+        )
+    else:
+        ax_b.text(
+            0.5, 0.5, "Walk-forward validation requires ≥ 3 rounds",
+            transform=ax_b.transAxes, ha="center", va="center", fontsize=9.5, color="#64748b",
+            bbox=dict(boxstyle="round,pad=0.3", facecolor="#f8fafc", edgecolor="#cbd5e1"),
+        )
+
+    ax_b.set_title("B. Out-of-Sample Walk-Forward Koopman Verification", fontsize=11, fontweight="bold", pad=10)
+    ax_b.set_xlabel("Debate Round", fontsize=9.5)
+    ax_b.set_ylabel("Disagreement Energy ||Δ(t)||₂", fontsize=9.5)
+    ax_b.set_xticks(all_r)
+    max_b = max(obs_norms + ([s["predicted_norm"] for s in wf_steps] if wf_steps else [0.0]) + [0.2])
+    ax_b.set_ylim(0.0, max_b * 1.26)
+    ax_b.legend(loc="lower left", fontsize=8.2, framealpha=0.92)
+    ax_b.grid(True, linestyle=":", alpha=0.45)
+
+    # Panel C: Full-Dimensional Local Residual Heatmap & MAD Z(t) Significance
+    ax_c = fig.add_subplot(gs[1, 0])
+    res_ord = res_mat[:, ord_idx].T if (res_mat.size > 0 and len(ord_idx) > 0) else np.zeros((max(1, N), max(1, T)))
+    vmax_r = max(0.25, float(np.max(res_ord))) if res_ord.size > 0 else 1.0
+    im_c = ax_c.imshow(res_ord, aspect="auto", cmap="YlOrRd", vmin=0.0, vmax=vmax_r)
+    cbar_c = fig.colorbar(im_c, ax=ax_c, fraction=0.046, pad=0.03)
+    cbar_c.set_label("Local Residual d_i(t)", fontsize=8.5)
+
+    idx_to_row = {orig_i: row_i for row_i, orig_i in enumerate(ord_idx)}
+    for r_info in rm:
+        t_col = r_info["round_idx"]
+        row_i = idx_to_row.get(r_info["ortho_idx"])
+        if row_i is not None and t_col >= 1:
+            ax_c.scatter([t_col], [row_i], marker="X", s=68, color="#0f172a", edgecolor="white", linewidth=0.9, zorder=5)
+
+    ax_c.set_xticks(range(T))
+    x_labels_c = [
+        f"R{r['round']}\nZ={r['mad_z']:.1f}{'*' if r['is_stat_ortho'] else ''}" if r["round_idx"] >= 1 else f"R{r['round']}"
+        for r in rm
+    ]
+    ax_c.set_xticklabels(x_labels_c, fontsize=8)
+    for tick_idx, tick_lbl in enumerate(ax_c.get_xticklabels()):
+        if tick_idx < len(rm) and rm[tick_idx]["is_stat_ortho"] and tick_idx >= 1:
+            tick_lbl.set_color("#b91c1c")
+            tick_lbl.set_fontweight("bold")
+
+    y_labels_c = [
+        f"{ord_short[row_i]} (×{persistence.get(rigor['ordered_speakers'][row_i], 0)})"
+        if persistence.get(rigor["ordered_speakers"][row_i], 0) >= 2
+        else ord_short[row_i]
+        for row_i in range(len(ord_short))
+    ]
+    ax_c.set_yticks(range(len(y_labels_c)))
+    ax_c.set_yticklabels(y_labels_c, fontsize=8.3)
+    ax_c.set_title("C. High-Dim Isolation Rhythm d_i(t) & MAD Z(t) (× = Orthogonal, * = Z ≥ 2)", fontsize=10.5, fontweight="bold", pad=10)
+    ax_c.set_xlabel("Round & Orthogonal Significance (MAD Z)", fontsize=9.5)
+
+    # Panel D: Lossless Pairwise Alignment Shift (Delta Cosine Matrix)
+    ax_d = fig.add_subplot(gs[1, 1])
+    im_d = ax_d.imshow(delta_mat, cmap="RdBu", vmin=-1.0, vmax=1.0, aspect="equal")
+    cbar_d = fig.colorbar(im_d, ax=ax_d, fraction=0.046, pad=0.03)
+    cbar_d.set_label("← Polarized | Δ Cosine | Converged →", fontsize=8.5)
+
+    if 0 < N <= 12:
+        for i in range(N):
+            for j in range(N):
+                val = delta_mat[i, j]
+                if i == j:
+                    continue
+                txt_col = "white" if abs(val) >= 0.55 else "#0f172a"
+                ax_d.text(j, i, f"{val:+.2f}", ha="center", va="center", fontsize=7.2 if N <= 8 else 6.2, color=txt_col)
+
+    ax_d.set_xticks(range(len(ord_short)))
+    ax_d.set_xticklabels(ord_short, rotation=38, ha="right", fontsize=8.2)
+    ax_d.set_yticks(range(len(ord_short)))
+    ax_d.set_yticklabels(ord_short, fontsize=8.2)
+    ax_d.set_title("D. Pairwise Alignment Shift ΔS_ij = cos(T) − cos(t₀) (No PCA Loss)", fontsize=10.5, fontweight="bold", pad=10)
+
+    synth = source.latest_metrics.topic_synthesis if (hasattr(source, "latest_metrics") and source.latest_metrics) else None
+    subtitle = (
+        f"Center of Disagreement: {synth.center_of_disagreement}"
+        if (synth and synth.center_of_disagreement)
+        else f"Full {d}D Spectral Verification • {N} Agents across {T} Rounds"
+    )
+    fig.suptitle(title, fontsize=13.5, fontweight="bold", y=0.965, color="#0f172a")
+    fig.text(0.5, 0.928, subtitle, ha="center", fontsize=10, style="italic", color="#475569")
+
+    if output_path:
+        os.makedirs(os.path.dirname(os.path.abspath(output_path)), exist_ok=True)
+        fig.savefig(output_path, dpi=dpi)
+    if show:
+        plt.show()
+    else:
+        plt.close(fig)
+    return fig
 
 
 def export_interactive_timeline_html(
@@ -2948,6 +3376,7 @@ def export_interactive_timeline_html(
         round_clusters=round_clusters,
         round_claims=round_claims,
     )
+    rigor_data = _extract_spectral_rigor_data(Z, resolved_speakers, resolved_rounds)
     synth = source.latest_metrics.topic_synthesis if (hasattr(source, "latest_metrics") and source.latest_metrics) else None
 
     speaker_meta: dict[str, dict] = {}
@@ -3029,6 +3458,7 @@ def export_interactive_timeline_html(
         "concept_pins": concept_pins,
         "inflection_events": inflection_events,
         "narrative": narrative_data,
+        "rigor": rigor_data,
         "synthesis": {
             "center_of_disagreement": synth.center_of_disagreement if synth else "",
             "centroid_concept": synth.centroid_concept if synth else "",
@@ -3304,6 +3734,7 @@ def export_interactive_timeline_html(
     <button id="modeMapBtn">2D Spatial Map</button>
     <button id="modeFlowBtn" class="secondary">Alluvial Faction-Flow</button>
     <button id="modeNarrativeBtn" class="secondary">Narrative Insights</button>
+    <button id="modeRigorBtn" class="secondary">Spectral Rigor</button>
     <button id="clearFocusBtn" class="secondary" style="display:none;">Reset Lens</button>
     <div class="slider-wrapper">
       <span style="font-size: 12px; color: #94a3b8;">Round:</span>
@@ -3343,6 +3774,7 @@ const playBtn = document.getElementById("playBtn");
 const modeMapBtn = document.getElementById("modeMapBtn");
 const modeFlowBtn = document.getElementById("modeFlowBtn");
 const modeNarrativeBtn = document.getElementById("modeNarrativeBtn");
+const modeRigorBtn = document.getElementById("modeRigorBtn");
 const clearFocusBtn = document.getElementById("clearFocusBtn");
 const claimsPanel = document.getElementById("claimsPanel");
 const tooltip = document.getElementById("tooltip");
@@ -3500,9 +3932,50 @@ function renderNarrativePanel() {{
   }});
 }}
 
+function renderRigorPanel() {{
+  const rig = DATA.rigor || {{}};
+  const rm = rig.round_metrics || [];
+  const wfErr = rig.walk_forward_error;
+  const wfConf = rig.walk_forward_confidence || 0;
+  let html = `<div class="summary-box">
+    <div class="summary-label">Koopman Operator Validation</div>
+    <div>Walk-Forward Rel. Err: <strong>${{wfErr !== null && wfErr !== undefined ? wfErr.toFixed(3) : "n/a"}}</strong> • Fit Confidence: <strong>${{wfConf.toFixed(2)}}</strong></div>
+  </div>`;
+  const conv = rig.top_converged_pairs || [];
+  if (conv.length > 0) {{
+    html += `<div class="summary-box"><div class="summary-label" style="color:#6ee7b7;">Strongest Pairwise Convergence (Δcos &gt; 0)</div>`;
+    conv.forEach(p => {{
+      html += `<div style="margin-top:4px;font-size:11.5px;"><strong>${{escapeHtml(p.short_a)}} ↔ ${{escapeHtml(p.short_b)}}</strong>: +${{p.delta_cos.toFixed(2)}} (${{p.initial_cos.toFixed(2)}} → ${{p.final_cos.toFixed(2)}})</div>`;
+    }});
+    html += `</div>`;
+  }}
+  const pol = rig.top_polarized_pairs || [];
+  if (pol.length > 0) {{
+    html += `<div class="summary-box"><div class="summary-label" style="color:#fca5a5;">Strongest Pairwise Polarization (Δcos &lt; 0)</div>`;
+    pol.forEach(p => {{
+      html += `<div style="margin-top:4px;font-size:11.5px;"><strong>${{escapeHtml(p.short_a)}} ↔ ${{escapeHtml(p.short_b)}}</strong>: ${{p.delta_cos.toFixed(2)}} (${{p.initial_cos.toFixed(2)}} → ${{p.final_cos.toFixed(2)}})</div>`;
+    }});
+    html += `</div>`;
+  }}
+  if (rm.length > 0) {{
+    html += `<div class="summary-box"><div class="summary-label">Per-Round Spectral Regimes & Outlier Z</div>`;
+    rm.forEach(r => {{
+      if (r.lambda_2 === null || r.lambda_2 === undefined) return;
+      const sig = r.is_stat_ortho ? " ★" : "";
+      html += `<div style="margin-top:4px;font-size:11px;">R${{r.round}}: |λ₂|=${{r.lambda_2.toFixed(3)}} (T=${{r.t_cert}}) • ${{escapeHtml(r.ortho_short)}} (Z=${{r.mad_z.toFixed(1)}}${{sig}})</div>`;
+    }});
+    html += `</div>`;
+  }}
+  claimsPanel.innerHTML = html;
+}}
+
 function renderClaimsPanel() {{
   if (viewMode === "narrative") {{
     renderNarrativePanel();
+    return;
+  }}
+  if (viewMode === "rigor") {{
+    renderRigorPanel();
     return;
   }}
   const rData = DATA.rounds[currentRoundIdx];
@@ -3857,6 +4330,118 @@ function renderNarrativeCanvas() {{
   }});
 }}
 
+function renderRigorCanvas() {{
+  const rig = DATA.rigor || {{}};
+  const rm = (rig.round_metrics || []).filter(r => r.lambda_2 !== null && r.lambda_2 !== undefined);
+  const wf = rig.walk_forward_steps || [];
+  const dmat = rig.delta_cosine_matrix || [];
+  const names = rig.ordered_short_speakers || [];
+
+  // Top-left: |lambda_2(t)| trajectory
+  const ax1 = {{ x0: 56, y0: 42, w: 410, h: 230 }};
+  ctx.fillStyle = "#0f172a";
+  ctx.fillRect(ax1.x0, ax1.y0, ax1.w, ax1.h);
+  ctx.strokeStyle = "#334155";
+  ctx.strokeRect(ax1.x0, ax1.y0, ax1.w, ax1.h);
+  ctx.fillStyle = "#e2e8f0";
+  ctx.font = "bold 12px sans-serif";
+  ctx.fillText("Spectral Stability Trajectory |λ₂(t)|", ax1.x0, ax1.y0 - 12);
+  const maxL2 = Math.max(1.15, ...rm.map(r => r.lambda_2 * 1.12));
+  const yOfL2 = v => ax1.y0 + ax1.h - (Math.min(maxL2, Math.max(0, v)) / maxL2) * ax1.h;
+  ctx.strokeStyle = "#ef4444";
+  ctx.setLineDash([4, 4]);
+  ctx.beginPath(); ctx.moveTo(ax1.x0, yOfL2(1.0)); ctx.lineTo(ax1.x0 + ax1.w, yOfL2(1.0)); ctx.stroke();
+  ctx.strokeStyle = "#f59e0b";
+  ctx.beginPath(); ctx.moveTo(ax1.x0, yOfL2(0.85)); ctx.lineTo(ax1.x0 + ax1.w, yOfL2(0.85)); ctx.stroke();
+  ctx.setLineDash([]);
+  if (rm.length > 0) {{
+    ctx.strokeStyle = "#38bdf8";
+    ctx.lineWidth = 2.2;
+    ctx.beginPath();
+    rm.forEach((r, idx) => {{
+      const x = ax1.x0 + 24 + (rm.length > 1 ? (idx / (rm.length - 1)) * (ax1.w - 48) : (ax1.w - 48) / 2);
+      const y = yOfL2(r.lambda_2);
+      if (idx === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    }});
+    ctx.stroke();
+    rm.forEach((r, idx) => {{
+      const x = ax1.x0 + 24 + (rm.length > 1 ? (idx / (rm.length - 1)) * (ax1.w - 48) : (ax1.w - 48) / 2);
+      const y = yOfL2(r.lambda_2);
+      ctx.fillStyle = r.lambda_2 >= 1.0 ? "#ef4444" : (r.lambda_2 >= 0.85 ? "#f59e0b" : "#10b981");
+      ctx.beginPath(); ctx.arc(x, y, 5, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = "#cbd5e1";
+      ctx.font = "10px sans-serif";
+      ctx.fillText(`R${{r.round}}`, x - 8, ax1.y0 + ax1.h + 14);
+    }});
+  }}
+
+  // Top-right: Walk-forward actual vs predicted ||Delta(t)||
+  const ax2 = {{ x0: 510, y0: 42, w: 390, h: 230 }};
+  ctx.fillStyle = "#0f172a";
+  ctx.fillRect(ax2.x0, ax2.y0, ax2.w, ax2.h);
+  ctx.strokeStyle = "#334155";
+  ctx.strokeRect(ax2.x0, ax2.y0, ax2.w, ax2.h);
+  ctx.fillStyle = "#e2e8f0";
+  ctx.font = "bold 12px sans-serif";
+  ctx.fillText("Walk-Forward Observed vs. Predicted ||Δ(t)||₂", ax2.x0, ax2.y0 - 12);
+  const allRm = rig.round_metrics || [];
+  const maxD = Math.max(0.5, ...allRm.map(r => r.disagreement_norm * 1.15), ...wf.map(s => s.predicted_norm * 1.15));
+  const xOfRIdx = rIdx => ax2.x0 + 22 + (allRm.length > 1 ? (rIdx / (allRm.length - 1)) * (ax2.w - 44) : (ax2.w - 44) / 2);
+  const yOfD = v => ax2.y0 + ax2.h - (Math.max(0, v) / maxD) * ax2.h;
+  if (allRm.length > 0) {{
+    ctx.strokeStyle = "#f8fafc";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    allRm.forEach((r, idx) => {{
+      const x = xOfRIdx(idx), y = yOfD(r.disagreement_norm);
+      if (idx === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    }});
+    ctx.stroke();
+  }}
+  if (wf.length > 0) {{
+    ctx.strokeStyle = "#2dd4bf";
+    ctx.setLineDash([5, 4]);
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    wf.forEach((s, idx) => {{
+      const x = xOfRIdx(s.round_idx), y = yOfD(s.predicted_norm);
+      if (idx === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    }});
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }}
+
+  // Bottom: Pairwise Delta Cosine Matrix
+  const bx = 56, by = 326, bw = 844, bh = 256;
+  ctx.fillStyle = "#0f172a";
+  ctx.fillRect(bx, by, bw, bh);
+  ctx.strokeStyle = "#334155";
+  ctx.strokeRect(bx, by, bw, bh);
+  ctx.fillStyle = "#e2e8f0";
+  ctx.font = "bold 12px sans-serif";
+  ctx.fillText("Lossless Pairwise Alignment Shift ΔS_ij = cos(T) − cos(t₀)  (Blue = Converged, Red = Polarized)", bx, by - 10);
+  const N = dmat.length;
+  if (N > 0) {{
+    const cell = Math.min(28, Math.floor((bh - 36) / N), Math.floor((bw - 180) / N));
+    const gx0 = bx + 110, gy0 = by + 18;
+    for (let i = 0; i < N; i++) {{
+      ctx.fillStyle = "#cbd5e1";
+      ctx.font = "10px sans-serif";
+      ctx.textAlign = "right";
+      ctx.fillText(names[i] || "", gx0 - 6, gy0 + i * cell + cell * 0.68);
+      for (let j = 0; j < N; j++) {{
+        const val = dmat[i][j] || 0;
+        const mag = Math.min(1, Math.abs(val));
+        ctx.fillStyle = val >= 0
+          ? `rgba(59, 130, 246, ${{0.12 + 0.85 * mag}})`
+          : `rgba(239, 68, 68, ${{0.12 + 0.85 * mag}})`;
+        ctx.fillRect(gx0 + j * cell, gy0 + i * cell, cell - 1, cell - 1);
+      }}
+    }}
+    ctx.textAlign = "left";
+  }}
+}}
+
 function renderCanvas() {{
   ctx.clearRect(0, 0, W, H);
   lastDrawnNodes = [];
@@ -3866,9 +4451,10 @@ function renderCanvas() {{
   const rTo = DATA.rounds[animToIdx];
   const activeCluster = getActiveCluster();
 
-  if (viewMode === "flow" || viewMode === "narrative") {{
+  if (viewMode === "flow" || viewMode === "narrative" || viewMode === "rigor") {{
     if (viewMode === "flow") renderFlowCanvas(rTo);
-    else renderNarrativeCanvas();
+    else if (viewMode === "narrative") renderNarrativeCanvas();
+    else renderRigorCanvas();
     label.innerText = `Round ${{rTo.round}}`;
     const kStr = (rTo.k_star !== undefined) ? `K*: ${{rTo.k_star.toFixed(2)}} | ` : "";
     stats.innerText = `${{kStr}}Dispersion: ${{rTo.dispersion.toFixed(3)}}`;
@@ -4151,6 +4737,7 @@ function setViewMode(mode) {{
   modeMapBtn.classList.toggle("secondary", mode !== "map");
   modeFlowBtn.classList.toggle("secondary", mode !== "flow");
   modeNarrativeBtn.classList.toggle("secondary", mode !== "narrative");
+  modeRigorBtn.classList.toggle("secondary", mode !== "rigor");
   renderClaimsPanel();
   renderCanvas();
 }}
@@ -4158,6 +4745,7 @@ function setViewMode(mode) {{
 modeMapBtn.addEventListener("click", () => setViewMode("map"));
 modeFlowBtn.addEventListener("click", () => setViewMode("flow"));
 modeNarrativeBtn.addEventListener("click", () => setViewMode("narrative"));
+modeRigorBtn.addEventListener("click", () => setViewMode("rigor"));
 
 clearFocusBtn.addEventListener("click", () => {{
   focusedSpeaker = null;

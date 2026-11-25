@@ -36,6 +36,13 @@ def compute_koopman_metrics(
     Z_mean_tiled = np.tile(Z_mean, (1, N, 1)).reshape(T, N * d)
     Delta = Z_flat - Z_mean_tiled
 
+    max_delta_norm = float(np.max(np.linalg.norm(Delta, axis=1)))
+    if max_delta_norm <= 1e-12:
+        return 0.0, 1, Delta, Z_mean[:, 0, :]
+    max_step_diff = float(np.max(np.linalg.norm(np.diff(Delta, axis=0), axis=1)))
+    if max_step_diff <= 1e-12:
+        return 1.0, 999, Delta, Z_mean[:, 0, :]
+
     input_dim = N * d
     rng = np.random.RandomState(seed)
     W_f = rng.normal(0, 0.7 / np.sqrt(input_dim), size=(input_dim, num_rff))
@@ -59,11 +66,16 @@ def compute_koopman_metrics(
         A = Psi.T @ Psi_plus
         K_hat = np.linalg.solve(G, A)
         eigenvalues, _ = np.linalg.eig(K_hat)
+        if obs_dim > S:
+            top_idx = np.argsort(np.abs(eigenvalues))[::-1][:S]
+            eigenvalues = eigenvalues[top_idx]
 
-    filtered_mask = np.abs(eigenvalues) < unit_filter
-    valid_eigs = eigenvalues[filtered_mask]
-
-    if len(valid_eigs) == 0:
+    tol = max(1e-6, 1.0 - unit_filter)
+    dist_to_one = np.abs(eigenvalues - 1.0)
+    closest_idx = int(np.argmin(dist_to_one))
+    if dist_to_one[closest_idx] <= tol and len(eigenvalues) > 1:
+        valid_eigs = np.delete(eigenvalues, closest_idx)
+    else:
         valid_eigs = eigenvalues
 
     sub_dom_idx = int(np.argmax(np.abs(valid_eigs)))
@@ -77,7 +89,7 @@ def compute_koopman_metrics(
     else:
         denom = -math.log(abs_l2)
         T_pred = math.log(1.0 / epsilon) / (denom + 1e-12)
-        T_cert = int(math.ceil(T_pred))
+        T_cert = min(999, int(math.ceil(T_pred)))
 
     return abs_l2, T_cert, Delta, Z_mean[:, 0, :]
 

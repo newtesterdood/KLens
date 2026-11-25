@@ -37,6 +37,7 @@ from klens.vis import (
     render_concept_flow_dashboard,
     render_narrative_dashboard,
     render_spectral_dashboard,
+    render_spectral_rigor_dashboard,
     render_trajectory_paths_dashboard,
 )
 
@@ -74,6 +75,7 @@ __all__ = [
     "render_concept_flow_dashboard",
     "render_narrative_dashboard",
     "render_spectral_dashboard",
+    "render_spectral_rigor_dashboard",
     "render_trajectory_paths_dashboard",
     "synthesize_deliberation_topics",
     "validate_koopman_walk_forward",
