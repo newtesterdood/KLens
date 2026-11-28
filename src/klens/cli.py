@@ -166,6 +166,7 @@ def run_file(
     show_plot: bool = False,
     plot_style: str = "telemetry",
     html_path: Optional[str] = None,
+    video_path: Optional[str] = None,
 ) -> int:
     if not os.path.exists(transcript_file):
         print(f"Error: file not found: {transcript_file}", file=sys.stderr)
@@ -258,6 +259,18 @@ def run_file(
             title=f"KLens Interactive Evolution: {os.path.basename(transcript_file)}",
         )
         print(f"Interactive timeline HTML exported to: {out_html}")
+
+    if video_path is not None:
+        from klens.vis import render_concept_fields_video
+        resolved_vid = video_path if len(video_path) > 0 else os.path.join(
+            "out", f"{os.path.splitext(os.path.basename(transcript_file))[0]}_3d_fields.mp4"
+        )
+        out_vid = render_concept_fields_video(
+            processor,
+            output_path=resolved_vid,
+            title=f"KLens 3D Concept Fields: {os.path.basename(transcript_file)}",
+        )
+        print(f"3D Concept Fields video saved to: {out_vid}")
 
     return 0
 
@@ -357,9 +370,9 @@ def main(argv: Optional[List[str]] = None) -> int:
     )
     run_parser.add_argument(
         "--style",
-        choices=["telemetry", "diagnostic", "evolution", "shortcut", "paths", "flow", "narrative", "rigor"],
+        choices=["telemetry", "diagnostic", "evolution", "shortcut", "paths", "flow", "narrative", "rigor", "fields", "envelopes", "footprints", "ribbons"],
         default="telemetry",
-        help="Plot style: telemetry, diagnostic, evolution, shortcut, paths, flow, narrative, or rigor (default: telemetry)",
+        help="Plot style: telemetry, diagnostic, evolution, shortcut, paths, flow, narrative, rigor, fields, envelopes, footprints, or ribbons (default: telemetry)",
     )
     run_parser.add_argument(
         "--html",
@@ -367,6 +380,13 @@ def main(argv: Optional[List[str]] = None) -> int:
         const="",
         default=None,
         help="Export standalone interactive HTML5 evolution timeline (default: out/<basename>_interactive.html)",
+    )
+    run_parser.add_argument(
+        "--video",
+        nargs="?",
+        const="",
+        default=None,
+        help="Record 3D Concept Fields & Planar Distinction MP4 tour (default: out/<basename>_3d_fields.mp4)",
     )
     run_parser.add_argument(
         "--show",
@@ -385,9 +405,9 @@ def main(argv: Optional[List[str]] = None) -> int:
     )
     plot_parser.add_argument(
         "--style",
-        choices=["telemetry", "diagnostic", "evolution", "shortcut", "paths", "flow", "narrative", "rigor"],
+        choices=["telemetry", "diagnostic", "evolution", "shortcut", "paths", "flow", "narrative", "rigor", "fields", "envelopes", "footprints", "ribbons"],
         default="telemetry",
-        help="Plot style: telemetry, diagnostic, evolution, shortcut, paths, flow, narrative, or rigor (default: telemetry)",
+        help="Plot style: telemetry, diagnostic, evolution, shortcut, paths, flow, narrative, rigor, fields, envelopes, footprints, or ribbons (default: telemetry)",
     )
     plot_parser.add_argument(
         "--html",
@@ -395,6 +415,13 @@ def main(argv: Optional[List[str]] = None) -> int:
         const="",
         default=None,
         help="Export standalone interactive HTML5 evolution timeline (default: out/<basename>_interactive.html)",
+    )
+    plot_parser.add_argument(
+        "--video",
+        nargs="?",
+        const="",
+        default=None,
+        help="Record 3D Concept Fields & Planar Distinction MP4 tour (default: out/<basename>_3d_fields.mp4)",
     )
     plot_parser.add_argument(
         "--show",
@@ -456,11 +483,12 @@ def main(argv: Optional[List[str]] = None) -> int:
             show_plot=args.show,
             plot_style=args.style,
             html_path=args.html,
+            video_path=args.video,
         )
     elif args.command == "plot":
         temp_csv = args.csv or os.path.join("out", f"_tmp_{os.path.basename(args.transcript)}.csv")
         plot_target = args.output
-        if not plot_target and not args.show and args.html is None:
+        if not plot_target and not args.show and args.html is None and args.video is None:
             base = os.path.splitext(os.path.basename(args.transcript))[0]
             if args.style == "evolution":
                 suffix = "_evolution.png"
@@ -472,6 +500,14 @@ def main(argv: Optional[List[str]] = None) -> int:
                 suffix = "_narrative.png"
             elif args.style == "rigor":
                 suffix = "_rigor.png"
+            elif args.style == "fields":
+                suffix = "_fields.png"
+            elif args.style == "envelopes":
+                suffix = "_envelopes.png"
+            elif args.style == "footprints":
+                suffix = "_footprints.png"
+            elif args.style == "ribbons":
+                suffix = "_ribbons.png"
             else:
                 suffix = "_telemetry.png"
             plot_target = os.path.join("out", f"{base}{suffix}")
@@ -486,6 +522,7 @@ def main(argv: Optional[List[str]] = None) -> int:
             show_plot=args.show,
             plot_style=args.style,
             html_path=args.html,
+            video_path=args.video,
         )
         if args.csv is None and os.path.exists(temp_csv):
             try:

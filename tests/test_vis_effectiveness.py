@@ -9,10 +9,13 @@ from klens.cli import main
 from klens.stream import LiveTranscriptStreamProcessor
 from klens.vis import (
     _extract_cluster_events_and_flow,
+    _extract_concept_fields_3d,
     _extract_narrative_dynamics,
     _extract_spectral_rigor_data,
     _project_silence_aware_pca,
     export_interactive_timeline_html,
+    render_concept_fields_dashboard,
+    render_concept_fields_video,
     render_spectral_dashboard,
     render_spectral_rigor_dashboard,
 )
@@ -229,6 +232,10 @@ def test_all_eight_styles_render_legible_nonblank_figures():
         "flow": 2,
         "narrative": 4,
         "rigor": 4,
+        "fields": 4,
+        "envelopes": 3,
+        "footprints": 6,
+        "ribbons": 2,
     }
     with tempfile.TemporaryDirectory() as tmpdir:
         for style, min_axes in expected_min_axes.items():
@@ -265,8 +272,14 @@ def test_interactive_html_payload_schema_and_rigor_tab():
             "Alluvial Faction-Flow",
             "Narrative Insights",
             "Spectral Rigor",
+            "3D Concept Fields",
+            "Positional Shapes",
             "renderRigorCanvas",
             "renderRigorPanel",
+            "renderFields3DCanvas",
+            "renderFieldsPanel",
+            "renderPositions3DCanvas",
+            "renderPositionsPanel",
         ]:
             assert expected_ui in html_txt
 
@@ -276,7 +289,9 @@ def test_interactive_html_payload_schema_and_rigor_tab():
 
         assert len(payload["rounds"]) == len(proc.latest_rounds)
         assert payload["speakers"] == proc.latest_speakers
-        assert "narrative" in payload and "rigor" in payload
+        assert "narrative" in payload and "rigor" in payload and "fields3d" in payload and "positions" in payload
+        assert len(payload["fields3d"]["fields"]) >= 2
+        assert len(payload["positions"]["speaker_profiles"]) == len(proc.latest_speakers)
         rig = payload["rigor"]
         assert len(rig["round_metrics"]) == len(proc.latest_rounds)
         assert len(rig["walk_forward_steps"]) == len(proc.latest_rounds) - 2
@@ -304,3 +319,48 @@ def test_cli_rigor_style_run_and_plot(capsys):
         out_raw = os.path.join(tmpdir, "raw_rigor.png")
         fig = render_spectral_rigor_dashboard(Z, speakers=["A", "B", "C", "D"], output_path=out_raw)
         assert fig is not None and os.path.getsize(out_raw) > 8000
+
+
+def test_concept_fields_planar_distinction_and_relations():
+    # Plant 4 orthogonal concept groups: 2 large-variance floor axes (PC1, PC2) + 2 distinct PC3 strata (+z vs -z)
+    # whose 2D floor projections sit near (0, 0), proving PC3 separates 2D shadow overlap!
+    speakers = ["FloorPosX", "FloorNegX", "FloorPosY", "FloorNegY", "UpperStratum", "LowerStratum"]
+    rounds = [1, 2, 3]
+    features = ["taxes", "cuts", "healthcare", "jobs", "lobbyists", "gridlock", "tariffs", "nafta"]
+    Z = np.zeros((3, 6, 8), dtype=float)
+    for t in range(3):
+        # High-variance floor axes along dims (0,1) vs (2,3)
+        Z[t, 0] = [2.4, 2.2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+        Z[t, 1] = [0.1, 0.1, 2.4, 2.2, 0.0, 0.0, 0.0, 0.0]
+        Z[t, 2] = [2.1, 2.0, 2.1, 2.0, 0.0, 0.0, 0.0, 0.0]
+        Z[t, 3] = [0.2, 0.2, 0.2, 0.2, 0.0, 0.0, 0.0, 0.0]
+        # Medium-variance 3rd axis splitting UpperStratum (dims 4,5) vs LowerStratum (dims 6,7)
+        Z[t, 4] = [1.1, 1.0, 1.1, 1.0, 1.5, 1.4, 0.0, 0.0]
+        Z[t, 5] = [1.1, 1.0, 1.1, 1.0, 0.0, 0.0, 1.5, 1.4]
+
+    fdata = _extract_concept_fields_3d(Z, speakers, rounds, features, max_fields=4, grid_res=40)
+    s_end = {s["speaker"]: s for s in fdata["speaker_3d_rounds"][-1]}
+
+    # UpperStratum and LowerStratum have nearly identical 2D floor coordinates (x, y)
+    assert abs(s_end["UpperStratum"]["x"] - s_end["LowerStratum"]["x"]) < 0.05
+    assert abs(s_end["UpperStratum"]["y"] - s_end["LowerStratum"]["y"]) < 0.05
+    # Yet PC3 cleanly separates them onto opposite elevation strata (+z vs -z)!
+    assert abs(s_end["UpperStratum"]["z"] - s_end["LowerStratum"]["z"]) > 1.2
+    assert s_end["UpperStratum"]["z"] * s_end["LowerStratum"]["z"] < 0.0
+
+    # Verify CLI --style fields and direct API
+    sample_file = os.path.join(SAMPLES_DIR, "debate_bush_clinton_perot_1992.json")
+    with tempfile.TemporaryDirectory() as tmpdir:
+        out_png = os.path.join(tmpdir, "bush_fields.png")
+        assert main(["plot", sample_file, "--style", "fields", "--output", out_png]) == 0
+        assert os.path.exists(out_png) and os.path.getsize(out_png) > 12000
+
+        out_raw = os.path.join(tmpdir, "raw_fields.png")
+        fig = render_concept_fields_dashboard(Z, speakers=speakers, output_path=out_raw)
+        assert fig is not None and os.path.getsize(out_raw) > 10000
+
+        out_mp4 = os.path.join(tmpdir, "bush_3d_tour.mp4")
+        saved_vid = render_concept_fields_video(
+            Z, speakers=speakers, output_path=out_mp4, fps=10, duration_sec=2.4, width=800, height=460
+        )
+        assert saved_vid == out_mp4 and os.path.exists(out_mp4) and os.path.getsize(out_mp4) > 15000

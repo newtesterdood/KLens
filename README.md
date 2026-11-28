@@ -466,6 +466,11 @@ klens plot samples/debate_bush_clinton_perot_1992.json --style paths --output ou
 klens plot samples/real_llm_debate_bitcoin.json --style flow --output out/bitcoin_flow.png
 klens plot samples/real_llm_debate_bitcoin.json --style narrative --output out/bitcoin_narrative.png
 klens plot samples/real_llm_negotiation_targeted_adv.json --style rigor --output out/adv_rigor.png
+klens plot samples/debate_bush_clinton_perot_1992.json --style fields --output out/bush_perot_fields.png
+klens plot samples/debate_bush_clinton_perot_1992.json --style envelopes --output out/bush_perot_envelopes.png
+klens plot samples/debate_bush_clinton_perot_1992.json --style footprints --output out/bush_perot_footprints.png
+klens plot samples/debate_bush_clinton_perot_1992.json --style ribbons --output out/bush_perot_ribbons.png
+klens plot samples/debate_bush_clinton_perot_1992.json --video out/bush_perot_3d_fields.mp4
 
 # Or use the standalone Python file loader
 python examples/visualize_transcript.py samples/debate_bush_clinton_perot_1992.json --output out/bush_perot_telemetry.png

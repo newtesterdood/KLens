@@ -330,3 +330,93 @@ def test_semantic_simplex_conservation_and_svd_axis():
     axis_lower = synth.center_of_disagreement.lower()
     assert any(tok in axis_lower for tok in ("privacy", "encryption", "compliance"))
     assert any(tok in axis_lower for tok in ("cloud", "latency", "scaling", "throughput"))
+
+
+def test_concept_fields_3d_bessel_pythagorean_and_planar_axioms():
+    from klens.vis import _extract_concept_fields_3d
+
+    rng = np.random.RandomState(29)
+    T, N, d = 5, 6, 8
+    Z = np.abs(rng.randn(T, N, d))
+    speakers = [f"Spk_{i}" for i in range(N)]
+    rounds = list(range(1, T + 1))
+    features = [f"concept_{j}" for j in range(d)]
+
+    fdata = _extract_concept_fields_3d(Z, speakers, rounds, features, max_fields=4, grid_res=32)
+
+    # 1. Pythagorean residual inequality: r_perp(t, i) >= |z(t, i)| for every speaker-round
+    for r_list in fdata["speaker_3d_rounds"]:
+        for item in r_list:
+            assert item["r_perp"] + 1e-4 >= abs(item["z"])
+
+    # 2. Exact Bessel partition of unity for unit-norm feature weights: eta^2 + pc3^2 + res^2 == 1
+    for fld in fdata["fields"]:
+        eta = fld["in_plane_fidelity"]
+        zeta = fld["pc3_fidelity"]
+        res = fld["residual_fidelity"]
+        assert 0.0 <= eta <= 1.0
+        assert 0.0 <= zeta <= 1.0
+        assert (eta ** 2 + zeta ** 2 + res ** 2) == pytest.approx(1.0, abs=1e-3)
+
+    # 3. Bhattacharyya spatial overlap in [0, 1], symmetric, unit diagonal; orientation angle in [0, 180]
+    ov = np.asarray(fdata["spatial_overlap_matrix"])
+    ang = np.asarray(fdata["orientation_angle_deg_matrix"])
+    assert np.allclose(ov, ov.T, atol=1e-6)
+    assert np.allclose(np.diag(ov), 1.0, atol=1e-6)
+    assert np.all((ov >= 0.0) & (ov <= 1.0))
+    assert np.allclose(ang, ang.T, atol=1e-6)
+    assert np.allclose(np.diag(ang), 0.0, atol=1e-6)
+    assert np.all((ang >= 0.0) & (ang <= 180.0))
+
+
+def test_positional_envelopes_simplex_sharpness_and_overlap_axioms():
+    from klens.vis import _extract_positional_envelopes
+
+    # 3 orthogonal concept blocks: SpearA commits 100% to block 0, SpearB commits 100% to block 1,
+    # Hedger commits equally across all 3 blocks, and Mover shifts from block 0 -> block 1 across rounds.
+    speakers = ["SpearA", "SpearB", "Hedger", "Mover"]
+    rounds = [1, 2, 3]
+    features = ["c0_a", "c0_b", "c1_a", "c1_b", "c2_a", "c2_b"]
+    Z = np.array([
+        [
+            [1.0, 1.0, 0.0, 0.0, 0.0, 0.0],
+            [0.0, 0.0, 1.0, 1.0, 0.0, 0.0],
+            [0.6, 0.6, 0.6, 0.6, 0.6, 0.6],
+            [1.0, 1.0, 0.0, 0.0, 0.0, 0.0],
+        ],
+        [
+            [1.0, 1.0, 0.0, 0.0, 0.0, 0.0],
+            [0.0, 0.0, 1.0, 1.0, 0.0, 0.0],
+            [0.6, 0.6, 0.6, 0.6, 0.6, 0.6],
+            [0.5, 0.5, 0.5, 0.5, 0.0, 0.0],
+        ],
+        [
+            [1.0, 1.0, 0.0, 0.0, 0.0, 0.0],
+            [0.0, 0.0, 1.0, 1.0, 0.0, 0.0],
+            [0.6, 0.6, 0.6, 0.6, 0.6, 0.6],
+            [0.0, 0.0, 1.0, 1.0, 0.0, 0.0],
+        ],
+    ], dtype=float)
+
+    pdata = _extract_positional_envelopes(Z, speakers, rounds, features, max_fields=3)
+    K = len(pdata["fields"])
+    assert K == 3
+    profs = {p["speaker"]: p for p in pdata["speaker_profiles"]}
+
+    # Simplex conservation & Herfindahl sharpness bounds [1/K, 1]
+    for p in profs.values():
+        assert sum(p["final_profile"]) == pytest.approx(1.0, abs=1e-3)
+        assert (1.0 / K) - 1e-3 <= p["sharpness"] <= 1.0 + 1e-3
+
+    # SpearA and SpearB have sharpness 1.0; Hedger has minimum sharpness 1/3; Mover has TV shift 1.0
+    assert profs["SpearA"]["sharpness"] == pytest.approx(1.0, abs=1e-3)
+    assert profs["Hedger"]["sharpness"] == pytest.approx(1.0 / 3.0, abs=1e-2)
+    assert profs["SpearA"]["shift_tv"] == pytest.approx(0.0, abs=1e-3)
+    assert profs["Mover"]["shift_tv"] == pytest.approx(1.0, abs=1e-3)
+
+    # Volumetric overlap matrix: Mover & SpearB converge to 1.0 overlap, SpearA & SpearB have 0.0 overlap
+    ov = np.asarray(pdata["final_overlap_matrix"])
+    assert np.allclose(ov, ov.T, atol=1e-6)
+    assert ov[0, 1] == pytest.approx(0.0, abs=1e-3)
+    assert ov[1, 3] == pytest.approx(1.0, abs=1e-3)
+    assert ov[0, 2] == pytest.approx(1.0 / 3.0, abs=1e-2)
